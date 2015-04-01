@@ -1,6 +1,5 @@
 package GUI;
 
-import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
@@ -15,20 +14,23 @@ public class Controller {
 	TextField numMoves;
 	
 	@FXML
-	ChoiceBox<String> difficulty;
+	ChoiceBox<String> difficultyBox;
 	
 	@FXML
-	ChoiceBox<String> boardStyle;
+	ChoiceBox<String> boardStyleBox;
 	
 	
 	@FXML
 	private void initialize() {
-		difficulty = new ChoiceBox<String>(FXCollections.observableArrayList(
-			"Easy", "Medium", "Hard")
-		);
-		boardStyle = new ChoiceBox<String>(FXCollections.observableArrayList(
-			"Style1", "Style2", "Style3")
-		);
-		
+        setUpBoxes();
 	}
+
+
+
+    private void setUpBoxes() {
+        difficultyBox.getItems().addAll("Easy", "Medium", "Hard");
+        difficultyBox.setValue("Medium");
+        boardStyleBox.getItems().addAll("Style1", "Style2", "Style3");
+        boardStyleBox.setValue("Style1");
+    }
 }

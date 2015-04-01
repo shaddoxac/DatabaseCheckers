@@ -51,7 +51,7 @@
                               <Font size="18.0" />
                            </font>
                         </Text>
-                        <ChoiceBox fx:id="difficulty" prefWidth="150.0" />
+                        <ChoiceBox fx:id="difficultyBox" prefWidth="150.0" />
                      </children>
                   </HBox>
                   <HBox prefHeight="29.0" prefWidth="200.0" />
@@ -62,7 +62,7 @@
                               <Font size="18.0" />
                            </font>
                         </Text>
-                        <ChoiceBox fx:id="boardStyle" prefWidth="150.0" />
+                        <ChoiceBox fx:id="boardStyleBox" prefWidth="150.0" />
                      </children>
                   </HBox>
                   <HBox prefHeight="29.0" prefWidth="200.0" />

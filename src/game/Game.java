@@ -43,12 +43,19 @@ public class Game {
 
     private boolean checkJump(Piece piece) {
         if (isNotEdge(piece.destination)) {
+            if (!nextSpaceOccupied(piece)) {
 
+            }
         }
         //TODO
         else {
             //check different criteria for different edges
         }
+        return false;
+    }
+
+    private boolean nextSpaceOccupied(Piece piece) {
+        //TODO
         return false;
     }
 
