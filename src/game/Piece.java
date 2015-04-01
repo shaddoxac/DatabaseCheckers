@@ -1,12 +1,13 @@
 package game;
 
-public enum Piece {
-    BLACK, WHITE, BLACKKING, WHITEKING;
+public class Piece {
+    public int location, destination;
+    public PieceType type;
+    public int NEValue, NWValue, SEValue, SWValue;
 
-    public Player getTeam() {
-        if (this.equals(BLACK) || this.equals(BLACKKING)) {
-            return Player.BLACK;
-        }
-        return Player.WHITE;
+    public Piece(PieceType type, int loc, int dest) {
+        this.type=type;
+        location=loc;
+        destination=dest;
     }
 }

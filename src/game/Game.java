@@ -20,29 +20,29 @@ public class Game {
         blackKingPos=0;
     }
 
-    private void changeMove(Piece pieceType, int loc, int dest) {
+    private void changeMove(PieceType pieceType, int loc, int dest) {
         int bitBoard=getBitBoard(pieceType);
         bitBoard=bitBoard & ~loc;
         bitBoard=bitBoard | dest;
         setBitBoard(bitBoard,pieceType);
     }
 
-    private void setBitBoard(int bitBoard, Piece pieceType) {
-        if (pieceType.equals(Piece.BLACK)) {blackPos=bitBoard;}
-        else if (pieceType.equals(Piece.WHITE)) {whitePos=bitBoard;}
-        else if (pieceType.equals(Piece.BLACKKING)) {blackKingPos=bitBoard;}
+    private void setBitBoard(int bitBoard, PieceType pieceType) {
+        if (pieceType.equals(PieceType.BLACK)) {blackPos=bitBoard;}
+        else if (pieceType.equals(PieceType.WHITE)) {whitePos=bitBoard;}
+        else if (pieceType.equals(PieceType.BLACKKING)) {blackKingPos=bitBoard;}
         else {whiteKingPos=bitBoard;}
     }
 
-    private int getBitBoard(Piece pieceType) {
-        if (pieceType.equals(Piece.BLACK)) {return blackPos;}
-        if (pieceType.equals(Piece.WHITE)) {return whitePos;}
-        if (pieceType.equals(Piece.BLACKKING)) {return blackKingPos;}
+    private int getBitBoard(PieceType pieceType) {
+        if (pieceType.equals(PieceType.BLACK)) {return blackPos;}
+        if (pieceType.equals(PieceType.WHITE)) {return whitePos;}
+        if (pieceType.equals(PieceType.BLACKKING)) {return blackKingPos;}
         return whiteKingPos;
     }
 
-    private boolean checkJump(Piece pieceType, int dest) {
-        if (isNotEdge(dest)) {
+    private boolean checkJump(Piece piece) {
+        if (isNotEdge(piece.destination)) {
 
         }
         //TODO
@@ -67,13 +67,13 @@ public class Game {
         return false;
     }
 
-    private boolean checkMove(Piece pieceType, int dest) {
-        if (checkOccupied(whitePos, dest) || checkOccupied(blackPos, dest) || checkOccupied(blackKingPos, dest) || checkOccupied(whiteKingPos, dest)) {
+    private boolean checkMove(Piece piece) {
+        if (checkOccupied(whitePos, piece.destination) || checkOccupied(blackPos, piece.destination) || checkOccupied(blackKingPos, piece.destination) || checkOccupied(whiteKingPos, piece.destination)) {
             //TODO if there are no jumps
                 return true;
             //}
         }
-        else if (checkJump(pieceType, dest)) {
+        else if (checkJump(piece)) {
             return true;
         }
         return false;
