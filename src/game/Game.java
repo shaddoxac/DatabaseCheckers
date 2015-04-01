@@ -42,20 +42,40 @@ public class Game {
     }
 
     private boolean checkJump(Piece pieceType, int dest) {
+        if (isNotEdge(dest)) {
+
+        }
         //TODO
-        //check edge piece
-            //different criteria for different edges
+        else {
+            //check different criteria for different edges
+        }
+        return false;
     }
+
+    private boolean isNotEdge(int space) {
+        if (isHorizontalBorder(space) && isVerticalBorder(space)) {
+            return true;
+        }
+        return false;
+    }
+    private boolean isHorizontalBorder(int space) {
+        if (space >= 0xF0000000 && space <= 0xF) {return true;}
+        return false;
+    }
+    private boolean isVerticalBorder(int space) {
+        if (((space +4) % 8 == 0) && space % 8==5) {return true;}
+        return false;
+    }
+
     private boolean checkMove(Piece pieceType, int dest) {
         if (checkOccupied(whitePos, dest) || checkOccupied(blackPos, dest) || checkOccupied(blackKingPos, dest) || checkOccupied(whiteKingPos, dest)) {
-            //if there are no jumps
+            //TODO if there are no jumps
                 return true;
             //}
         }
         else if (checkJump(pieceType, dest)) {
             return true;
         }
-        //check if jump is legal
         return false;
     }
     private boolean checkOccupied(int bucket, int dest) {
