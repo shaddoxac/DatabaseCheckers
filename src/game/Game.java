@@ -5,8 +5,10 @@ public class Game {
     private int whitePos, blackPos, whiteKingPos, blackKingPos;
     private int whiteStartingPos=0xFFF00000;
     private int blackStartingPos=0x00000FFF;
+    private Player currentTurn;
 
     public Game() {
+        currentTurn=Player.WHITE;
         setBoard();
     }
 
@@ -38,12 +40,22 @@ public class Game {
         if (pieceType.equals(Piece.BLACKKING)) {return blackKingPos;}
         return whiteKingPos;
     }
-    private boolean checkMove(int dest) {
-        if (checkOccupied(whitePos, dest) || checkOccupied(blackPos, dest)) {
-            if (checkOccupied(blackKingPos, dest) || checkOccupied(whiteKingPos, dest)) {
+
+    private boolean checkJump(Piece pieceType, int dest) {
+        //TODO
+        //check edge piece
+            //different criteria for different edges
+    }
+    private boolean checkMove(Piece pieceType, int dest) {
+        if (checkOccupied(whitePos, dest) || checkOccupied(blackPos, dest) || checkOccupied(blackKingPos, dest) || checkOccupied(whiteKingPos, dest)) {
+            //if there are no jumps
                 return true;
-            }
+            //}
         }
+        else if (checkJump(pieceType, dest)) {
+            return true;
+        }
+        //check if jump is legal
         return false;
     }
     private boolean checkOccupied(int bucket, int dest) {
@@ -51,5 +63,9 @@ public class Game {
             return false;
         }
         return true;
+    }
+
+    private void changeTurn() {
+        currentTurn=currentTurn.change();
     }
 }
