@@ -1,5 +1,7 @@
 package game;
 
+import java.util.ArrayList;
+
 //squares go left to right, top to bottom
 public class Game {
     private int whitePos, blackPos, whiteKingPos, blackKingPos;
@@ -18,6 +20,15 @@ public class Game {
         blackPos=blackStartingPos;
         whiteKingPos=0;
         blackKingPos=0;
+    }
+
+    private ArrayList<Move> getPotentialMoves(int loc) {
+        Move[] potentialMoves=new Move[4];
+        //TODO
+    }
+
+    private Move[] isLegalMove(Move move) {
+        //TODO check 4 coordinates
     }
 
     private void changeMove(PieceType pieceType, int loc, int dest) {
@@ -41,9 +52,9 @@ public class Game {
         return whiteKingPos;
     }
 
-    private boolean checkJump(Piece piece) {
-        if (isNotEdge(piece.destination)) {
-            if (!nextSpaceOccupied(piece)) {
+    private boolean checkJump(Move move) {
+        if (isNotEdge(move.destination)) {
+            if (!nextSpaceOccupied(move)) {
 
             }
         }
@@ -54,8 +65,10 @@ public class Game {
         return false;
     }
 
-    private boolean nextSpaceOccupied(Piece piece) {
-        //TODO
+    private boolean nextSpaceOccupied(Move move) {
+        if (move.location> move.destination) {
+
+        }
         return false;
     }
 
@@ -74,13 +87,13 @@ public class Game {
         return false;
     }
 
-    private boolean checkMove(Piece piece) {
-        if (checkOccupied(whitePos, piece.destination) || checkOccupied(blackPos, piece.destination) || checkOccupied(blackKingPos, piece.destination) || checkOccupied(whiteKingPos, piece.destination)) {
+    private boolean checkMove(Move move) {
+        if (checkOccupied(whitePos, move.destination) || checkOccupied(blackPos, move.destination) || checkOccupied(blackKingPos, move.destination) || checkOccupied(whiteKingPos, move.destination)) {
             //TODO if there are no jumps
                 return true;
             //}
         }
-        else if (checkJump(piece)) {
+        else if (checkJump(move)) {
             return true;
         }
         return false;
