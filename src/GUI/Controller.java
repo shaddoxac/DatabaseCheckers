@@ -58,7 +58,7 @@ public class Controller {
     }
     
     private void setUpBoard() {
-    	String boardStyle = boardStyleBox.getValue();
+        String boardStyle = boardStyleBox.getValue();
     	switch (boardStyle) {
     	case "Style 1":
     		Image boardImage = new Image(this.getClass().getResourceAsStream("Game_Board.png"));

@@ -3,27 +3,21 @@ package game;
 import java.util.ArrayList;
 
 public class Move {
-    public int location, destination;
-    public ArrayList<Integer> sequentialJumps=new ArrayList();//TODO
-    public PieceType type;
-    public boolean down, up;
+    public Piece piece;
+    public int destination;
+    public ArrayList<Integer> sequentialJumps=new ArrayList<Integer>();//TODO
 
-    public Move(PieceType type, int loc) {
-        this.type=type;
-        location=loc;
-        setMovementOptions();
-    }
 
     public Move(PieceType type, int loc, int dest) {
-        this.type=type;
-        location=loc;
+        piece=new Piece(type,loc);
         destination=dest;
-        setMovementOptions();
     }
 
-    private void setMovementOptions() {
-        boolean[] movementOptions=type.getMovementOptions();
-        up=movementOptions[0];
-        down=movementOptions[1];
+
+    public PieceType getType() {
+        return piece.type;
+    }
+    public int getLocation() {
+        return piece.location;
     }
 }

@@ -26,32 +26,31 @@ public class Game {
 
 
 
-    private ArrayList<Move> getPotentialMoves(Move move) {
-        Move potentialMove=new Move(move.type,move.location);
-        return getValidMoves(potentialMove);
+    private ArrayList<Move> getPotentialMoves(Piece piece) {
+        return getValidMoves(piece);
     }
 
-    private ArrayList<Move> getValidMoves(Move move) {
+    private ArrayList<Move> getValidMoves(Piece piece) {
         ArrayList<Move> moveLocations=new ArrayList<Move>();
         Move tempMove;
-        if (move.down) {
-            tempMove=checkDestination(move, -5);
+        if (piece.down) {
+            tempMove=checkDestination(piece, -5);
             if (tempMove!=null) {moveLocations.add(tempMove);}
-            tempMove=checkDestination(move, -4);
+            tempMove=checkDestination(piece, -4);
             if (tempMove!=null) {moveLocations.add(tempMove);}
         }
-        if (move.up) {
-            tempMove=checkDestination(move, 5);
+        if (piece.up) {
+            tempMove=checkDestination(piece, 5);
             if (tempMove!=null) {moveLocations.add(tempMove);}
-            tempMove=checkDestination(move, 4);
+            tempMove=checkDestination(piece, 4);
             if (tempMove!=null) {moveLocations.add(tempMove);}
         }
         return moveLocations;
     }
 
-    private Move checkDestination(Move move, int offset) {
-        int tempDestination=move.location-offset;
-        Move tempMove=new Move(move.type, move.location, tempDestination);
+    private Move checkDestination(Piece piece, int offset) {
+        int tempDestination=piece.location-offset;
+        Move tempMove=new Move(piece.type, piece.location, tempDestination);
         if (checkMove(tempMove)) {return tempMove;}
         return null;
     }
@@ -88,12 +87,12 @@ public class Game {
 
     private boolean nextSpaceOccupied(Move move) {
         int newDest=getJumpDestination(move);
-        return spaceNotOccupied(new Move(move.type, move.location, newDest));
+        return spaceNotOccupied(new Move(move.getType(), move.getLocation(), newDest));
     }
 
     private int getJumpDestination(Move move) {
-        if (move.location > move.destination) {
-            if (move.location-5==move.destination) {
+        if (move.getLocation() > move.destination) {
+            if (move.getLocation()-5==move.destination) {
                 return move.destination-4;
             }
             else {
@@ -101,7 +100,7 @@ public class Game {
             }
         }
         else {
-            if (move.location+5==move.destination) {
+            if (move.getLocation()+5==move.destination) {
                 return move.destination+4;
             }
             else {
