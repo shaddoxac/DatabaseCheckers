@@ -6,6 +6,7 @@ import java.util.ArrayList;
 public class Game {
     private Player currentTurn;
     private Board board;
+    private boolean hasJumps;
 
     private int upperBound=0xFFF00000;
 
@@ -25,7 +26,30 @@ public class Game {
     }
 
 
+    private void analyzeBoard() {
+        hasJumps=false;
+        if (isWhiteTurn()) {
+            analyzeGroup(board.whitePos,PieceType.WHITE);
+            analyzeGroup(board.whiteKingPos,PieceType.WHITEKING);
+        }
+        else {
+            analyzeGroup(board.blackPos, PieceType.BLACK);
+            analyzeGroup(board.blackKingPos, PieceType.BLACKKING);
+        }
+    }
 
+    private void analyzeGroup(int bitBoard, PieceType type) {
+        int i=1;
+        int ex;
+        while (i<board.whitePos) {
+            System.out.println("i="+i);
+            ex=i&board.whitePos;
+            if (ex!=0) {
+                getPotentialMoves(new Piece(PieceType.WHITE,i));
+            }
+            i=i>>1;
+        }
+    }
     private ArrayList<Move> getPotentialMoves(Piece piece) {
         return getValidMoves(piece);
     }
@@ -49,7 +73,7 @@ public class Game {
     }
 
     private Move checkDestination(Piece piece, int offset) {
-        int tempDestination=piece.location-offset;
+        int tempDestination=piece.location << offset;
         Move tempMove=new Move(piece.type, piece.location, tempDestination);
         if (checkMove(tempMove)) {return tempMove;}
         return null;
@@ -113,18 +137,16 @@ public class Game {
         return isHorizontalBorder(space) && isVerticalBorder(space);
     }
     private boolean isHorizontalBorder(int space) {
-        return space >= 0xF0000000 && space <= 0xF;
+        return space >= 0xF0000000 || space <= 0xF;
     }
     private boolean isVerticalBorder(int space) {
-        return ((space + 4) % 8 == 0) && space % 8 == 5;
+        return (space & 0x181800)!=0;
     }
 
     private boolean checkMove(Move move) {
         if (inBounds(move.destination)) {
-            if (spaceNotOccupied(move)) {
-                //TODO if there are no jumps
+            if (spaceNotOccupied(move) && !hasJumps) {
                 return true;
-                //}
             }
             else if (checkJump(move)) {
                 return true;
@@ -143,5 +165,9 @@ public class Game {
 
     private boolean isNotOccupied(int bucket, int dest) {
         return (bucket & dest) == 0;
+    }
+
+    private boolean isWhiteTurn() {
+        return currentTurn.equals(Player.WHITE);
     }
 }
