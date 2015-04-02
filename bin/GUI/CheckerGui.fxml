@@ -11,7 +11,7 @@
    <children>
       <BorderPane prefHeight="512.0" prefWidth="800.0">
          <left>
-            <ImageView fitHeight="512.0" fitWidth="512.0" BorderPane.alignment="CENTER">
+            <ImageView fx:id="board" fitHeight="512.0" fitWidth="512.0" BorderPane.alignment="CENTER">
                <image>
                   <Image url="@../../img/Wooden%20Board/Game_Board.png" />
                </image>
@@ -26,7 +26,18 @@
                         <Font name="Avenir Next Condensed Heavy" size="45.0" />
                      </font>
                   </Text>
+                  <Button fx:id="newGame" mnemonicParsing="false" prefHeight="67.0" prefWidth="159.0" text="New Game">
+                     <font>
+                        <Font name="Courier" size="22.0" />
+                     </font>
+                  </Button>
                   <HBox prefHeight="15.0" prefWidth="200.0" />
+                  <TextField fx:id="turnIndicator" alignment="TOP_CENTER" editable="false" text="Your turn">
+                     <font>
+                        <Font name="System Bold" size="17.0" />
+                     </font>
+                  </TextField>
+                  <HBox prefHeight="30.0" prefWidth="200.0" />
                   <HBox alignment="TOP_CENTER" prefHeight="15.0" prefWidth="200.0">
                      <children>
                         <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Total Moves: ">
@@ -37,12 +48,6 @@
                         <TextField fx:id="numMoves" editable="false" />
                      </children>
                   </HBox>
-                  <HBox prefHeight="30.0" prefWidth="200.0" />
-                  <Button fx:id="newGame" mnemonicParsing="false" prefHeight="67.0" prefWidth="159.0" text="New Game">
-                     <font>
-                        <Font name="Courier" size="22.0" />
-                     </font>
-                  </Button>
                   <HBox prefHeight="29.0" prefWidth="200.0" />
                   <HBox alignment="TOP_CENTER" prefHeight="32.0" prefWidth="200.0">
                      <children>
@@ -51,7 +56,7 @@
                               <Font size="18.0" />
                            </font>
                         </Text>
-                        <ChoiceBox fx:id="difficulty" prefWidth="150.0" />
+                        <ChoiceBox fx:id="difficultyBox" prefWidth="150.0" />
                      </children>
                   </HBox>
                   <HBox prefHeight="29.0" prefWidth="200.0" />
@@ -62,13 +67,13 @@
                               <Font size="18.0" />
                            </font>
                         </Text>
-                        <ChoiceBox fx:id="boardStyle" prefWidth="150.0" />
+                        <ChoiceBox fx:id="boardStyleBox" prefWidth="150.0" />
                      </children>
                   </HBox>
                   <HBox prefHeight="29.0" prefWidth="200.0" />
-                  <ImageView fitHeight="98.0" fitWidth="241.0" pickOnBounds="true" preserveRatio="true" />
-                  <HBox prefHeight="29.0" prefWidth="200.0" />
-                  <ImageView fitHeight="98.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" />
+                  <ImageView fitHeight="69.0" fitWidth="241.0" pickOnBounds="true" preserveRatio="true" />
+                  <HBox prefHeight="12.0" prefWidth="288.0" />
+                  <ImageView fitHeight="69.0" fitWidth="241.0" pickOnBounds="true" preserveRatio="true" />
                </children>
             </VBox>
          </center>
