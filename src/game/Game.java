@@ -6,8 +6,8 @@ import java.util.ArrayList;
 public class Game {
     private Player currentTurn;
     private Board board;
-    private boolean hasJumps;
 
+    public boolean hasJumps;
     public boolean gameOver;
     public Player winner;
     public ArrayList<Move> currentMoves=new ArrayList<Move>();
@@ -32,7 +32,7 @@ public class Game {
     }
 
 
-    private void analyzeBoard() {
+    public void analyzeBoard() {
         hasJumps=false;
         if (isWhiteTurn()) {
             analyzeGroup(board.whitePos,PieceType.WHITE);
