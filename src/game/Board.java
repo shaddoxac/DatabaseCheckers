@@ -2,12 +2,14 @@ package game;
 
 //squares go left to right, top to bottom
 public class Board {
-    int white, black, whiteKing, blackKing;
+    int whitePos, blackPos, whiteKingPos, blackKingPos;
+    private int whiteStartingPos=0xFFF00000;
+    private int blackStartingPos=0x00000FFF;
 
     public Board() {
-        white=0xFFF00000;
-        black=0x00000FFF;
-        whiteKing=0;
-        blackKing=0;
+        whitePos =0xFFF00000;
+        blackPos =0x00000FFF;
+        whiteKingPos =0;
+        blackKingPos =0;
     }
 }

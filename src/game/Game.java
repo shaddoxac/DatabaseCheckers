@@ -4,34 +4,59 @@ import java.util.ArrayList;
 
 //squares go left to right, top to bottom
 public class Game {
-    private int whitePos, blackPos, whiteKingPos, blackKingPos;
-    private int whiteStartingPos=0xFFF00000;
-    private int blackStartingPos=0x00000FFF;
     private Player currentTurn;
+    private Board board;
+
+    private int upperBound=0xFFF00000;
 
     public Game() {
+        currentTurn=Player.BLACK;
+        board=new Board();
+    }
+
+    public Game(Board board) {
         currentTurn=Player.WHITE;
-        setBoard();
+        this.board=board;
     }
 
 
-    private void setBoard() {
-        whitePos=whiteStartingPos;
-        blackPos=blackStartingPos;
-        whiteKingPos=0;
-        blackKingPos=0;
+    public void changeTurn() {
+        currentTurn=currentTurn.change();
     }
 
-    private ArrayList<Move> getPotentialMoves(int loc) {
-        Move[] potentialMoves=new Move[4];
-        //TODO
+
+
+    private ArrayList<Move> getPotentialMoves(Move move) {
+        Move potentialMove=new Move(move.type,move.location);
+        return getValidMoves(potentialMove);
     }
 
-    private Move[] isLegalMove(Move move) {
-        //TODO check 4 coordinates
+    private ArrayList<Move> getValidMoves(Move move) {
+        ArrayList<Move> moveLocations=new ArrayList<Move>();
+        Move tempMove;
+        if (move.down) {
+            tempMove=checkDestination(move, -5);
+            if (tempMove!=null) {moveLocations.add(tempMove);}
+            tempMove=checkDestination(move, -4);
+            if (tempMove!=null) {moveLocations.add(tempMove);}
+        }
+        if (move.up) {
+            tempMove=checkDestination(move, 5);
+            if (tempMove!=null) {moveLocations.add(tempMove);}
+            tempMove=checkDestination(move, 4);
+            if (tempMove!=null) {moveLocations.add(tempMove);}
+        }
+        return moveLocations;
     }
 
-    private void changeMove(PieceType pieceType, int loc, int dest) {
+    private Move checkDestination(Move move, int offset) {
+        int tempDestination=move.location-offset;
+        Move tempMove=new Move(move.type, move.location, tempDestination);
+        if (checkMove(tempMove)) {return tempMove;}
+        return null;
+    }
+
+    private void commitMove(PieceType pieceType, int loc, int dest) {
         int bitBoard=getBitBoard(pieceType);
         bitBoard=bitBoard & ~loc;
         bitBoard=bitBoard | dest;
@@ -39,73 +64,85 @@ public class Game {
     }
 
     private void setBitBoard(int bitBoard, PieceType pieceType) {
-        if (pieceType.equals(PieceType.BLACK)) {blackPos=bitBoard;}
-        else if (pieceType.equals(PieceType.WHITE)) {whitePos=bitBoard;}
-        else if (pieceType.equals(PieceType.BLACKKING)) {blackKingPos=bitBoard;}
-        else {whiteKingPos=bitBoard;}
+        if (pieceType.equals(PieceType.BLACK)) {board.blackPos=bitBoard;}
+        else if (pieceType.equals(PieceType.WHITE)) {board.whitePos=bitBoard;}
+        else if (pieceType.equals(PieceType.BLACKKING)) {board.blackKingPos=bitBoard;}
+        else {board.whiteKingPos=bitBoard;}
     }
 
     private int getBitBoard(PieceType pieceType) {
-        if (pieceType.equals(PieceType.BLACK)) {return blackPos;}
-        if (pieceType.equals(PieceType.WHITE)) {return whitePos;}
-        if (pieceType.equals(PieceType.BLACKKING)) {return blackKingPos;}
-        return whiteKingPos;
+        if (pieceType.equals(PieceType.BLACK)) {return board.blackPos;}
+        if (pieceType.equals(PieceType.WHITE)) {return board.whitePos;}
+        if (pieceType.equals(PieceType.BLACKKING)) {return board.blackKingPos;}
+        return board.whiteKingPos;
     }
 
     private boolean checkJump(Move move) {
         if (isNotEdge(move.destination)) {
             if (!nextSpaceOccupied(move)) {
-
+                return true;
             }
-        }
-        //TODO
-        else {
-            //check different criteria for different edges
         }
         return false;
     }
 
     private boolean nextSpaceOccupied(Move move) {
-        if (move.location> move.destination) {
+        int newDest=getJumpDestination(move);
+        return spaceNotOccupied(new Move(move.type, move.location, newDest));
+    }
 
+    private int getJumpDestination(Move move) {
+        if (move.location > move.destination) {
+            if (move.location-5==move.destination) {
+                return move.destination-4;
+            }
+            else {
+                return move.destination-3;
+            }
         }
-        return false;
+        else {
+            if (move.location+5==move.destination) {
+                return move.destination+4;
+            }
+            else {
+                return move.destination+3;
+            }
+        }
     }
 
     private boolean isNotEdge(int space) {
-        if (isHorizontalBorder(space) && isVerticalBorder(space)) {
-            return true;
-        }
-        return false;
+        return isHorizontalBorder(space) && isVerticalBorder(space);
     }
     private boolean isHorizontalBorder(int space) {
-        if (space >= 0xF0000000 && space <= 0xF) {return true;}
-        return false;
+        return space >= 0xF0000000 && space <= 0xF;
     }
     private boolean isVerticalBorder(int space) {
-        if (((space +4) % 8 == 0) && space % 8==5) {return true;}
-        return false;
+        return ((space + 4) % 8 == 0) && space % 8 == 5;
     }
 
     private boolean checkMove(Move move) {
-        if (checkOccupied(whitePos, move.destination) || checkOccupied(blackPos, move.destination) || checkOccupied(blackKingPos, move.destination) || checkOccupied(whiteKingPos, move.destination)) {
-            //TODO if there are no jumps
+        if (inBounds(move.destination)) {
+            if (spaceNotOccupied(move)) {
+                //TODO if there are no jumps
                 return true;
-            //}
-        }
-        else if (checkJump(move)) {
-            return true;
+                //}
+            }
+            else if (checkJump(move)) {
+                return true;
+            }
         }
         return false;
     }
-    private boolean checkOccupied(int bucket, int dest) {
-        if ((bucket & dest)!=0) {
-            return false;
-        }
-        return true;
+
+    private boolean inBounds(int dest) {
+        return !(dest < 0 || dest > upperBound);
     }
 
-    private void changeTurn() {
-        currentTurn=currentTurn.change();
+    private boolean spaceNotOccupied(Move move) {
+        return isNotOccupied(board.whitePos, move.destination) || isNotOccupied(board.blackPos, move.destination) || isNotOccupied(board.blackKingPos, move.destination) || isNotOccupied(board.whiteKingPos, move.destination);
+    }
+
+    private boolean isNotOccupied(int bucket, int dest) {
+        return (bucket & dest) == 0;
     }
 }

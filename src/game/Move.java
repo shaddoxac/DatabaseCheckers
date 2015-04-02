@@ -1,10 +1,18 @@
 package game;
 
+import java.util.ArrayList;
+
 public class Move {
     public int location, destination;
+    public ArrayList<Integer> sequentialJumps=new ArrayList();//TODO
     public PieceType type;
     public boolean down, up;
-    public int NEValue, NWValue, SEValue, SWValue;
+
+    public Move(PieceType type, int loc) {
+        this.type=type;
+        location=loc;
+        setMovementOptions();
+    }
 
     public Move(PieceType type, int loc, int dest) {
         this.type=type;
