@@ -66,4 +66,35 @@ public class Controller {
     		break;
     	}
     }
+
+    private void exampleAddButton() {/*
+        Card tempCard=deck.getCard(row*width+column);
+        cardGrid[row][column]=tempCard;
+        Image image=getImageFromCard(tempCard);
+        ImageView imgView = new ImageView(image);
+        double wide = imageGrid.getMinWidth() / width;
+        double height = imageGrid.getMinHeight() / width;
+        imgView.setFitHeight(height);
+        imgView.setFitWidth(wide);
+
+
+        final Button item = new Button();
+        item.setGraphic(imgView);
+        item.setMinSize(wide, height);
+        item.setMaxSize(wide, height);
+        item.setOnAction((e) -> {
+            selected = new Point2D(row, column);
+        });
+        item.setOnMouseClicked((MouseEvent e) ->{
+            if (e.getClickCount() >= 2){
+                if (isEditable()) {
+                    Node graphic = item.getGraphic();
+                    boolean isVisible = !graphic.isVisible();
+                    graphic.setVisible(isVisible);
+                }
+            }
+        });
+
+        imageGrid.add(item, column, row);
+    */}
 }
