@@ -7,23 +7,28 @@ public class Game {
     private Player currentTurn;
     private Board board;
     private boolean hasJumps;
-    private ArrayList<Move> currentMoves=new ArrayList<Move>();
+
+    public boolean gameOver;
+    public Player winner;
+    public ArrayList<Move> currentMoves=new ArrayList<Move>();
 
     private int upperBound=0xFFF00000;
 
     public Game() {
         currentTurn=Player.BLACK;
         board=new Board();
+        gameOver=false;
     }
 
     public Game(Board board) {
         currentTurn=Player.WHITE;
+        gameOver=true;
         this.board=board;
     }
 
 
     public void changeTurn() {
-        currentTurn=currentTurn.change();
+        currentTurn=currentTurn.other();
     }
 
 
@@ -37,14 +42,15 @@ public class Game {
             analyzeGroup(board.blackPos, PieceType.BLACK);
             analyzeGroup(board.blackKingPos, PieceType.BLACKKING);
         }
-        if (currentMoves.size()==0) {gameOver();}
+        if (currentMoves.size()==0) {gameOver(currentTurn.other());}
         else if (hasJumps) {
             eraseNonJumpMoves();
         }
     }
 
-    private void gameOver() {
-        //TODO
+    private void gameOver(Player winner) {
+        gameOver=true;
+        this.winner=winner;
     }
 
     private void eraseNonJumpMoves() {
