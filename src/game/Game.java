@@ -2,7 +2,7 @@ package game;
 
 import java.util.ArrayList;
 
-//squares go left to right, top to bottom
+
 public class Game {
     private Player currentTurn;
     private Board board;
@@ -38,17 +38,32 @@ public class Game {
             analyzeGroup(board.blackKingPos, PieceType.BLACKKING);
         }
         if (currentMoves.size()==0) {gameOver();}
-        else if ()
+        else if (hasJumps) {
+            eraseNonJumpMoves();
+        }
+    }
+
+    private void gameOver() {
+        //TODO
+    }
+
+    private void eraseNonJumpMoves() {
+        for (int idx=0; idx<currentMoves.size(); idx++) {
+            if (!currentMoves.get(idx).isJump) {
+                currentMoves.remove(idx);
+                idx--;
+            }
+        }
     }
 
     private void analyzeGroup(int bitBoard, PieceType type) {
         int idx=1;
         int comparator;
-        while (idx<board.whitePos) {
+        while (idx<bitBoard) {
             System.out.println("idx="+idx);
-            comparator=idx&board.whitePos;
+            comparator=idx & bitBoard;
             if (comparator!=0) {
-                getValidMoves(new Piece(PieceType.WHITE,idx));
+                getValidMoves(new Piece(type,idx));
             }
             idx=idx>>1;
         }
@@ -126,6 +141,19 @@ public class Game {
         }
     }
 
+    private void checkMove(Move move) {
+        if (inBounds(move.destination)) {
+            if (spaceNotOccupied(move)) {
+                currentMoves.add(move);
+            }
+            else if (checkJump(move)) {
+                move.isJump=true;
+                currentMoves.add(move);
+            }
+        }
+    }
+
+
     private boolean isNotEdge(int space) {
         return isHorizontalBorder(space) && isVerticalBorder(space);
     }
@@ -134,17 +162,6 @@ public class Game {
     }
     private boolean isVerticalBorder(int space) {
         return (space & 0x181800)!=0;
-    }
-
-    private void checkMove(Move move) {
-        if (inBounds(move.destination)) {
-            if (spaceNotOccupied(move)) {
-                currentMoves.add(move);
-            }
-            else if (checkJump(move)) {
-                currentMoves.add(move);
-            }
-        }
     }
 
     private boolean inBounds(int dest) {
