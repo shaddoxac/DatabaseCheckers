@@ -7,6 +7,7 @@ public class Game {
     private Player currentTurn;
     private Board board;
     private boolean hasJumps;
+    private ArrayList<Move> currentMoves=new ArrayList<Move>();
 
     private int upperBound=0xFFF00000;
 
@@ -36,47 +37,38 @@ public class Game {
             analyzeGroup(board.blackPos, PieceType.BLACK);
             analyzeGroup(board.blackKingPos, PieceType.BLACKKING);
         }
+        if (currentMoves.size()==0) {gameOver();}
+        else if ()
     }
 
     private void analyzeGroup(int bitBoard, PieceType type) {
-        int i=1;
-        int ex;
-        while (i<board.whitePos) {
-            System.out.println("i="+i);
-            ex=i&board.whitePos;
-            if (ex!=0) {
-                getPotentialMoves(new Piece(PieceType.WHITE,i));
+        int idx=1;
+        int comparator;
+        while (idx<board.whitePos) {
+            System.out.println("idx="+idx);
+            comparator=idx&board.whitePos;
+            if (comparator!=0) {
+                getValidMoves(new Piece(PieceType.WHITE,idx));
             }
-            i=i>>1;
+            idx=idx>>1;
         }
     }
-    private ArrayList<Move> getPotentialMoves(Piece piece) {
-        return getValidMoves(piece);
-    }
 
-    private ArrayList<Move> getValidMoves(Piece piece) {
-        ArrayList<Move> moveLocations=new ArrayList<Move>();
-        Move tempMove;
+    private void getValidMoves(Piece piece) {
         if (piece.down) {
-            tempMove=checkDestination(piece, -5);
-            if (tempMove!=null) {moveLocations.add(tempMove);}
-            tempMove=checkDestination(piece, -4);
-            if (tempMove!=null) {moveLocations.add(tempMove);}
+            checkDestination(piece, -5);
+            checkDestination(piece, -4);
         }
         if (piece.up) {
-            tempMove=checkDestination(piece, 5);
-            if (tempMove!=null) {moveLocations.add(tempMove);}
-            tempMove=checkDestination(piece, 4);
-            if (tempMove!=null) {moveLocations.add(tempMove);}
+            checkDestination(piece, 5);
+            checkDestination(piece, 4);
         }
-        return moveLocations;
     }
 
-    private Move checkDestination(Piece piece, int offset) {
+    private void checkDestination(Piece piece, int offset) {
         int tempDestination=piece.location << offset;
         Move tempMove=new Move(piece.type, piece.location, tempDestination);
-        if (checkMove(tempMove)) {return tempMove;}
-        return null;
+        checkMove(tempMove);
     }
 
     private void commitMove(PieceType pieceType, int loc, int dest) {
@@ -103,6 +95,7 @@ public class Game {
     private boolean checkJump(Move move) {
         if (isNotEdge(move.destination)) {
             if (!nextSpaceOccupied(move)) {
+                hasJumps=true;
                 return true;
             }
         }
@@ -143,16 +136,15 @@ public class Game {
         return (space & 0x181800)!=0;
     }
 
-    private boolean checkMove(Move move) {
+    private void checkMove(Move move) {
         if (inBounds(move.destination)) {
-            if (spaceNotOccupied(move) && !hasJumps) {
-                return true;
+            if (spaceNotOccupied(move)) {
+                currentMoves.add(move);
             }
             else if (checkJump(move)) {
-                return true;
+                currentMoves.add(move);
             }
         }
-        return false;
     }
 
     private boolean inBounds(int dest) {
