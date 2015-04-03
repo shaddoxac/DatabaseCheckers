@@ -1,15 +1,7 @@
 package GUI;
 
+import game.Board;
 import game.Game;
-import game.PieceType;
-
-import java.awt.Point;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.util.ArrayList;
-
-import javax.imageio.ImageIO;
-
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
@@ -22,6 +14,9 @@ import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
+
+import java.awt.*;
+import java.util.ArrayList;
 
 public class Controller {
 	
@@ -40,10 +35,6 @@ public class Controller {
 	//Each clickable (black) tile on the board.  Proceeds from top left to bottom right.
 	@FXML Button b1; @FXML Button b2; @FXML Button b3; @FXML Button b4; @FXML Button b5; @FXML Button b6; @FXML Button b7; @FXML Button b8; @FXML Button b9; @FXML Button b10; @FXML Button b11; @FXML Button b12; @FXML Button b13; @FXML Button b14; @FXML Button b15; @FXML Button b16; @FXML Button b17; @FXML Button b18; @FXML Button b19; @FXML Button b20; @FXML Button b21; @FXML Button b22; @FXML Button b23; @FXML Button b24; @FXML Button b25; @FXML Button b26; @FXML Button b27; @FXML Button b28; @FXML Button b29; @FXML Button b30; @FXML Button b31; @FXML Button b32;
 	
-	Button selectedButton;
-	
-	ImageView selectionBox;
-	
 	@FXML
 	Button newGame;
 	
@@ -59,32 +50,32 @@ public class Controller {
 	@FXML
 	ChoiceBox<String> boardStyleBox;
 	
-	
-	
-	
-	ArrayList<Point> legalPositions;
-	Image boardSprite, whiteSprite, blackSprite, whiteKingSprite, blackKingSprite;
-	
-	
-	Game game;
-	
+
+	private ArrayList<Point> legalPositions;
+	private Image boardSprite, whiteSprite, blackSprite, whiteKingSprite, blackKingSprite;
+	private Game game;
+    private Board board;
+    private int turnCount=0;
+    private Button selectedButton;
+    private ImageView selectionBox;
 	
 	@FXML
 	private void initialize() {
-		//createLegalPositions();
+        game=new Game();
+        board=game.board;
         turnIndicator.setBackground(new Background(new BackgroundFill(Color.CHOCOLATE, CornerRadii.EMPTY, Insets.EMPTY)));
         turnIndicator.setStyle("-fx-text-inner-color: black;");
         setUpBoxes();
-        //changeBoard();
-        
-        Image image = new Image("/img/Wooden Board/Selection_Highlight.png");
-		selectionBox = new ImageView(image);
-		selectionBox.setVisible(false);
-		canvas.getChildren().add(selectionBox);
-        
+        createSelectionBox();
         setUpButtons();
-        
-       	}
+    }
+
+    @FXML
+    private void newGame() {
+        selectionBox.setVisible(false);
+        game=new Game();
+        setCheckerLocations();
+    }
 
 	private void switchTurns() {
 		String currentTurn = turnIndicator.getText();
@@ -95,7 +86,33 @@ public class Controller {
 		turnIndicator.setStyle("-fx-text-inner-color: " + newColor + ";");
 		game.changeTurn();
 	}
-	
+
+    private void setCheckerLocations() {
+        setLocations(board.whitePos, whiteSprite);
+        setLocations(board.blackPos, blackSprite);
+        setLocations(board.whiteKingPos, whiteKingSprite);
+        setLocations(board.blackKingPos, blackKingSprite);
+    }
+
+    private void setLocations(int type, Image image) {
+        int tempBoard=board.whitePos;
+        for (int counter=1; counter<33; counter++) {//TODO may not be these numbers, depends on how squares named
+            if ((tempBoard & 1)!=0) {
+                addChecker(counter, image);
+            }
+        }
+    }
+
+    private void addChecker(int location, Image image) {
+
+    }
+
+    private Object getButtonName(int num) throws NoSuchFieldException {
+        StringBuilder sb=new StringBuilder();
+        sb.append("b");
+        sb.append(num);
+        return getClass().getDeclaredField(sb.toString());
+    }
 	
 	private void highlightSelected(Button b) {
 		selectedButton = (b.equals(selectedButton)) ? null : b;
@@ -106,18 +123,13 @@ public class Controller {
 		}
 		else {selectionBox.setVisible(false);;}
 	}
-	
-	private void createLegalPositions() {
-		int rowNum = 1;
-		for (int y=32; y<512; y+=64){
-			for (int x=32; x<512; x+=128) {
-				if (rowNum % 2 == 1) {legalPositions.add(new Point(x+64, y));}
-				else {legalPositions.add(new Point(x,y));}
-			}
-			rowNum++;
-		}
-	}
-	
+
+    private void createSelectionBox() {
+        Image selectionImage = new Image("/img/Wooden Board/Selection_Highlight.png");
+        selectionBox = new ImageView(selectionImage);
+        selectionBox.setVisible(false);
+        canvas.getChildren().add(selectionBox);
+    }
     private void setUpBoxes() {
         difficultyBox.getItems().addAll("Easy", "Medium", "Hard");
         difficultyBox.setValue("Medium");
@@ -223,92 +235,4 @@ public class Controller {
           	highlightSelected(b32);
           });
     }
-    
-    /*private void drawPieces() {
-    	int blackPieces = game.getBitBoard(PieceType.BLACK);
-    	drawGroup(blackPieces);
-    	int whitePieces = game.getBitBoard(PieceType.WHITE);
-    	drawGroup(whitePieces);
-    	int blackKings = game.getBitBoard(PieceType.BLACKKING);
-    	drawGroup(blackKings);
-    	int whiteKings = game.getBitBoard(PieceType.WHITEKING);
-    	drawGroup(whiteKings);	
-    }
-    
-    private void drawGroup(int bitBoard, PieceType ) {
-        int tempNum=bitBoard;
-        int index;
-        int value;
-        while (0 < tempNum) {
-            value=tempNum & 1;
-            if (value = 1) {
-            tempNum=tempNum >> 1;
-            }
-        }
-    }
-    
-    @FXML
-    private void changeBoard() {
-    	String boardStyle = boardStyleBox.getValue();
-    	switch (boardStyle) {
-    	case "Style 1":
-
-    		File boardFile = new File("/img/Wooden Board/Game_Board.png")
-    		boardSprite = ImageIO.read(boardFile); //TODO: make this work
-    		whiteSprite = new Image();
-    		blackSprite = new Image();
-    		whiteKingSprite = new Image();
-    		blackKingSprite = new Image();
-    		break;
-    		
-    	case "Style 2":
-    		boardSprite = new Image(); 
-    		whiteSprite = new Image();
-    		blackSprite = new Image();
-    		whiteKingSprite = new Image();
-    		blackKingSprite = new Image();
-    		break;
-    		
-    	case "Style 3":
-    		boardSprite = new Image();
-    		whiteSprite = new Image();
-    		blackSprite = new Image();
-    		whiteKingSprite = new Image();
-    		blackKingSprite = new Image();
-    		break;
-    	}
-    	board.setImage(boardSprite);
-    	drawPieces();
-    }*/
-
-    private void exampleAddButton() {/*
-        Card tempCard=deck.getCard(row*width+column);
-        cardGrid[row][column]=tempCard;
-        Image image=getImageFromCard(tempCard);
-        ImageView imgView = new ImageView(image);
-        double wide = imageGrid.getMinWidth() / width;
-        double height = imageGrid.getMinHeight() / width;
-        imgView.setFitHeight(height);
-        imgView.setFitWidth(wide);
-
-
-        final Button item = new Button();
-        item.setGraphic(imgView);
-        item.setMinSize(wide, height);
-        item.setMaxSize(wide, height);
-        item.setOnAction((e) -> {
-            selected = new Point2D(row, column);
-        });
-        item.setOnMouseClicked((MouseEvent e) ->{
-            if (e.getClickCount() >= 2){
-                if (isEditable()) {
-                    Node graphic = item.getGraphic();
-                    boolean isVisible = !graphic.isVisible();
-                    graphic.setVisible(isVisible);
-                }
-            }
-        });
-
-        imageGrid.add(item, column, row);
-    */}
 }
