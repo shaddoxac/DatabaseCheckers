@@ -30,7 +30,7 @@ public class Controller {
 	Pane blackGraveyard;
 	
 	@FXML
-	ImageView board = new ImageView();
+	ImageView boardImage = new ImageView();
 	
 	//Each clickable (black) tile on the board.  Proceeds from top left to bottom right.
 	@FXML Button b1; @FXML Button b2; @FXML Button b3; @FXML Button b4; @FXML Button b5; @FXML Button b6; @FXML Button b7; @FXML Button b8; @FXML Button b9; @FXML Button b10; @FXML Button b11; @FXML Button b12; @FXML Button b13; @FXML Button b14; @FXML Button b15; @FXML Button b16; @FXML Button b17; @FXML Button b18; @FXML Button b19; @FXML Button b20; @FXML Button b21; @FXML Button b22; @FXML Button b23; @FXML Button b24; @FXML Button b25; @FXML Button b26; @FXML Button b27; @FXML Button b28; @FXML Button b29; @FXML Button b30; @FXML Button b31; @FXML Button b32;
@@ -61,19 +61,19 @@ public class Controller {
 	
 	@FXML
 	private void initialize() {
-        game=new Game();
-        board=game.board;
         turnIndicator.setBackground(new Background(new BackgroundFill(Color.CHOCOLATE, CornerRadii.EMPTY, Insets.EMPTY)));
         turnIndicator.setStyle("-fx-text-inner-color: black;");
         setUpBoxes();
         createSelectionBox();
         setUpButtons();
+        newGame();
     }
 
     @FXML
     private void newGame() {
         selectionBox.setVisible(false);
         game=new Game();
+        board=game.board;
         setCheckerLocations();
     }
 
@@ -94,24 +94,33 @@ public class Controller {
         setLocations(board.blackKingPos, blackKingSprite);
     }
 
-    private void setLocations(int type, Image image) {
+    private void setLocations(int type, ImageView image) {
         int tempBoard=board.whitePos;
-        for (int counter=1; counter<33; counter++) {//TODO may not be these numbers, depends on how squares named
+        for (int counter=1; counter<33; counter++) {
             if ((tempBoard & 1)!=0) {
                 addChecker(counter, image);
             }
         }
     }
 
-    private void addChecker(int location, Image image) {
-
+    private void addChecker(int location, ImageView image) {
+        Button button = (Button) getButtonName(location);
+        if (button!=null) {
+            button.setGraphic(image);
+            System.out.println("here");
+        }
     }
 
-    private Object getButtonName(int num) throws NoSuchFieldException {
+    private Object getButtonName(int num) {
         StringBuilder sb=new StringBuilder();
         sb.append("b");
         sb.append(num);
-        return getClass().getDeclaredField(sb.toString());
+        try {
+            return getClass().getDeclaredField(sb.toString());
+        } catch (NoSuchFieldException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 	
 	private void highlightSelected(Button b) {
@@ -121,7 +130,7 @@ public class Controller {
 			selectionBox.setLayoutY(b.getLayoutY());
 			selectionBox.setVisible(true);
 		}
-		else {selectionBox.setVisible(false);;}
+		else {selectionBox.setVisible(false);}
 	}
 
     private void createSelectionBox() {
