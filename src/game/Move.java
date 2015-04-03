@@ -6,7 +6,7 @@ public class Move {
     public Piece piece;
     public int destination;
     public boolean isJump;
-    public ArrayList<Integer> sequentialJumps=new ArrayList<Integer>();//TODO
+    public ArrayList<Piece> sequentialJumps=new ArrayList<Piece>();//TODO
 
 
     public Move(PieceType type, int loc, int dest) {
@@ -20,5 +20,9 @@ public class Move {
     }
     public int getLocation() {
         return piece.location;
+    }
+    public void addJump(PieceType jumpedType, int loc) {
+        Piece jumpedPiece=new Piece(jumpedType,loc);
+        sequentialJumps.add(jumpedPiece);
     }
 }

@@ -27,10 +27,19 @@ public class Game {
     }
 
 
+    public void commitMove(Move move) {
+        int bitBoard=getBitBoard(move.getType());
+        bitBoard=bitBoard & ~move.getLocation();
+        bitBoard=bitBoard | move.destination;
+        setBitBoard(bitBoard, move.getType());
+        if (hasJumps) {
+            removePieces(move.sequentialJumps);
+        }
+    }
+
     public void changeTurn() {
         currentTurn=currentTurn.other();
     }
-
 
     public void analyzeBoard() {
         hasJumps=false;
@@ -92,11 +101,16 @@ public class Game {
         checkMove(tempMove);
     }
 
-    private void commitMove(PieceType pieceType, int loc, int dest) {
-        int bitBoard=getBitBoard(pieceType);
-        bitBoard=bitBoard & ~loc;
-        bitBoard=bitBoard | dest;
-        setBitBoard(bitBoard,pieceType);
+    private void removePieces(ArrayList<Piece> jumps) {
+        for (Piece jumped : jumps) {removePiece(jumped);}
+    }
+
+    private void removePiece(Piece piece) {
+        int changedBit= 0xFFFFFFFF & ~ piece.location;
+        if (piece.type.equals(PieceType.BLACK)) {board.blackPos=board.blackPos & changedBit;}
+        else if (piece.type.equals(PieceType.WHITE)) {board.whitePos=board.whitePos & changedBit;}
+        else if (piece.type.equals(PieceType.BLACKKING)) {board.blackKingPos=board.blackKingPos & changedBit;}
+        else {board.whiteKingPos=board.whiteKingPos & changedBit;;}
     }
 
     private void setBitBoard(int bitBoard, PieceType pieceType) {
