@@ -5,8 +5,8 @@ import java.util.ArrayList;
 
 public class Game {
     private Player currentTurn;
-    private Board board;
 
+    public Board board;
     public boolean hasJumps;
     public boolean gameOver;
     public Player winner;
