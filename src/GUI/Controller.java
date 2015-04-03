@@ -39,7 +39,7 @@ public class Controller {
 	Button newGame;
 	
 	@FXML
-	TextField numMoves;
+	Label numMoves;
 	
 	@FXML
 	TextField turnIndicator;
@@ -52,7 +52,7 @@ public class Controller {
 	
 
 	private ArrayList<Point> legalPositions;
-	private Image boardSprite, whiteSprite, blackSprite, whiteKingSprite, blackKingSprite;
+	private ImageView boardSprite, whiteSprite, blackSprite, whiteKingSprite, blackKingSprite;
 	private Game game;
     private Board board;
     private int turnCount=0;
@@ -75,6 +75,15 @@ public class Controller {
         game=new Game();
         board=game.board;
         setCheckerLocations();
+    }
+
+    private void commitTurn() {
+
+        //game.commitMove(move);
+    }
+
+    private void onAction(Button b) {
+        setHighlight(b);
     }
 
 	private void switchTurns() {
@@ -111,19 +120,8 @@ public class Controller {
         }
     }
 
-    private Object getButtonName(int num) {
-        StringBuilder sb=new StringBuilder();
-        sb.append("b");
-        sb.append(num);
-        try {
-            return getClass().getDeclaredField(sb.toString());
-        } catch (NoSuchFieldException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
 	
-	private void highlightSelected(Button b) {
+	private void setHighlight(Button b) {
 		selectedButton = (b.equals(selectedButton)) ? null : b;
 		if (selectedButton != null) {
 			selectionBox.setLayoutX(b.getLayoutX());
@@ -139,6 +137,7 @@ public class Controller {
         selectionBox.setVisible(false);
         canvas.getChildren().add(selectionBox);
     }
+
     private void setUpBoxes() {
         difficultyBox.getItems().addAll("Easy", "Medium", "Hard");
         difficultyBox.setValue("Medium");
@@ -148,100 +147,112 @@ public class Controller {
     
     private void setUpButtons() {
     	 b1.setOnAction((event) ->{
-         	highlightSelected(b1);
+         	onAction(b1);
          });
     	 b2.setOnAction((event) ->{
-         	highlightSelected(b2);
+         	onAction(b2);
          }); 
     	 b3.setOnAction((event) ->{
-         	highlightSelected(b3);
+         	onAction(b3);
          });
     	 b4.setOnAction((event) ->{
-          	highlightSelected(b4);
+          	onAction(b4);
           });
     	 b5.setOnAction((event) ->{
-          	highlightSelected(b5);
+          	onAction(b5);
           });
     	 b6.setOnAction((event) ->{
-          	highlightSelected(b6);
+          	onAction(b6);
           });
     	 b7.setOnAction((event) ->{
-          	highlightSelected(b7);
+          	onAction(b7);
           });
     	 b8.setOnAction((event) ->{
-          	highlightSelected(b8);
+          	onAction(b8);
           });
     	 b9.setOnAction((event) ->{
-          	highlightSelected(b9);
+          	onAction(b9);
           });
     	 b10.setOnAction((event) ->{
-          	highlightSelected(b10);
+          	onAction(b10);
           });
     	 b11.setOnAction((event) ->{
-          	highlightSelected(b11);
+          	onAction(b11);
           });
     	 b12.setOnAction((event) ->{
-          	highlightSelected(b12);
+          	onAction(b12);
           });
     	 b13.setOnAction((event) ->{
-          	highlightSelected(b13);
+          	onAction(b13);
           });
     	 b14.setOnAction((event) ->{
-          	highlightSelected(b14);
+          	onAction(b14);
           });
     	 b15.setOnAction((event) ->{
-          	highlightSelected(b15);
+          	onAction(b15);
           });
     	 b16.setOnAction((event) ->{
-          	highlightSelected(b16);
+          	onAction(b16);
           });
     	 b17.setOnAction((event) ->{
-          	highlightSelected(b17);
+          	onAction(b17);
           });
     	 b18.setOnAction((event) ->{
-          	highlightSelected(b18);
+          	onAction(b18);
           });
     	 b19.setOnAction((event) ->{
-          	highlightSelected(b19);
+          	onAction(b19);
           });
     	 b20.setOnAction((event) ->{
-          	highlightSelected(b20);
+          	onAction(b20);
           });
     	 b21.setOnAction((event) ->{
-          	highlightSelected(b21);
+          	onAction(b21);
           });
     	 b22.setOnAction((event) ->{
-          	highlightSelected(b22);
+          	onAction(b22);
           });
     	 b23.setOnAction((event) ->{
-          	highlightSelected(b23);
+          	onAction(b23);
           });
     	 b24.setOnAction((event) ->{
-          	highlightSelected(b24);
+          	onAction(b24);
           });
     	 b25.setOnAction((event) ->{
-          	highlightSelected(b25);
+          	onAction(b25);
           });
     	 b26.setOnAction((event) ->{
-          	highlightSelected(b26);
+          	onAction(b26);
           });
     	 b27.setOnAction((event) ->{
-          	highlightSelected(b27);
+          	onAction(b27);
           });
     	 b28.setOnAction((event) ->{
-          	highlightSelected(b28);
+          	onAction(b28);
           });
     	 b29.setOnAction((event) ->{
-          	highlightSelected(b29);
+          	onAction(b29);
           });
     	 b30.setOnAction((event) ->{
-          	highlightSelected(b30);
+          	onAction(b30);
           });
     	 b31.setOnAction((event) ->{
-          	highlightSelected(b31);
+          	onAction(b31);
           });
     	 b32.setOnAction((event) ->{
-          	highlightSelected(b32);
+          	onAction(b32);
           });
+    }
+
+    private Object getButtonName(int num) {
+        StringBuilder sb=new StringBuilder();
+        sb.append("b");
+        sb.append(num);
+        try {
+            return getClass().getDeclaredField(sb.toString());
+        } catch (NoSuchFieldException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }
