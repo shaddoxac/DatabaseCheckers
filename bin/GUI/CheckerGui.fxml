@@ -10,15 +10,8 @@
 <AnchorPane prefHeight="512.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="GUI.Controller">
    <children>
       <BorderPane prefHeight="512.0" prefWidth="800.0">
-         <left>
-            <ImageView fx:id="board" fitHeight="512.0" fitWidth="512.0" BorderPane.alignment="CENTER">
-               <image>
-                  <Image url="@../../img/Wooden%20Board/Game_Board.png" />
-               </image>
-            </ImageView>
-         </left>
          <center>
-            <VBox alignment="TOP_CENTER" prefHeight="600.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+            <VBox alignment="TOP_CENTER" prefHeight="512.0" prefWidth="200.0" BorderPane.alignment="CENTER">
                <children>
                   <HBox prefHeight="15.0" prefWidth="200.0" />
                   <Text strokeType="OUTSIDE" strokeWidth="0.0" text="CHECKERS">
@@ -71,12 +64,280 @@
                      </children>
                   </HBox>
                   <HBox prefHeight="29.0" prefWidth="200.0" />
-                  <ImageView fitHeight="69.0" fitWidth="241.0" pickOnBounds="true" preserveRatio="true" />
+                  <Pane fx:id="blackGraveyard" prefHeight="69.0" prefWidth="200.0" />
                   <HBox prefHeight="12.0" prefWidth="288.0" />
-                  <ImageView fitHeight="69.0" fitWidth="241.0" pickOnBounds="true" preserveRatio="true" />
+                  <Pane fx:id="whiteGraveyard" prefHeight="69.0" prefWidth="200.0" />
+                  <HBox prefHeight="12.0" prefWidth="288.0" />
                </children>
             </VBox>
          </center>
+         <left>
+            <Pane fx:id="canvas" prefHeight="512.0" prefWidth="512.0" BorderPane.alignment="CENTER">
+               <children>
+                  <ImageView fx:id="board" fitHeight="512.0" fitWidth="512.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../img/Wooden%20Board/Game_Board2.png" />
+                     </image>
+                  </ImageView>
+                  <Button fx:id="b1" layoutX="64.0" maxHeight="64.0" maxWidth="64.0" minHeight="64.0" minWidth="64.0" mnemonicParsing="false">
+                     <graphic>
+                        <ImageView>
+                           <image>
+                              <Image url="@../img/Wooden%20Board/black_tile.png" />
+                           </image>
+                        </ImageView>
+                     </graphic></Button>
+                  <Button fx:id="b5" layoutY="64.0" maxHeight="64.0" maxWidth="64.0" minHeight="64.0" minWidth="64.0" mnemonicParsing="false">
+                     <graphic>
+                        <ImageView>
+                           <image>
+                              <Image url="@../img/Wooden%20Board/black_tile.png" />
+                           </image>
+                        </ImageView>
+                     </graphic></Button>
+                  <Button fx:id="b6" layoutX="128.0" layoutY="64.0" maxHeight="64.0" maxWidth="64.0" minHeight="64.0" minWidth="64.0" mnemonicParsing="false">
+                     <graphic>
+                        <ImageView>
+                           <image>
+                              <Image url="@../img/Wooden%20Board/black_tile.png" />
+                           </image>
+                        </ImageView>
+                     </graphic></Button>
+                  <Button fx:id="b2" layoutX="192.0" maxHeight="64.0" maxWidth="64.0" minHeight="64.0" minWidth="64.0" mnemonicParsing="false">
+                     <graphic>
+                        <ImageView>
+                           <image>
+                              <Image url="@../img/Wooden%20Board/black_tile.png" />
+                           </image>
+                        </ImageView>
+                     </graphic></Button>
+                  <Button fx:id="b7" layoutX="256.0" layoutY="64.0" maxHeight="64.0" maxWidth="64.0" minHeight="64.0" minWidth="64.0" mnemonicParsing="false">
+                     <graphic>
+                        <ImageView>
+                           <image>
+                              <Image url="@../img/Wooden%20Board/black_tile.png" />
+                           </image>
+                        </ImageView>
+                     </graphic></Button>
+                  <Button fx:id="b3" layoutX="320.0" maxHeight="64.0" maxWidth="64.0" minHeight="64.0" minWidth="64.0" mnemonicParsing="false">
+                     <graphic>
+                        <ImageView>
+                           <image>
+                              <Image url="@../img/Wooden%20Board/black_tile.png" />
+                           </image>
+                        </ImageView>
+                     </graphic></Button>
+                  <Button fx:id="b8" layoutX="384.0" layoutY="64.0" maxHeight="64.0" maxWidth="64.0" minHeight="64.0" minWidth="64.0" mnemonicParsing="false">
+                     <graphic>
+                        <ImageView>
+                           <image>
+                              <Image url="@../img/Wooden%20Board/black_tile.png" />
+                           </image>
+                        </ImageView>
+                     </graphic></Button>
+                  <Button fx:id="b4" layoutX="448.0" maxHeight="64.0" maxWidth="64.0" minHeight="64.0" minWidth="64.0" mnemonicParsing="false">
+                     <graphic>
+                        <ImageView>
+                           <image>
+                              <Image url="@../img/Wooden%20Board/black_tile.png" />
+                           </image>
+                        </ImageView>
+                     </graphic></Button>
+                  <Button fx:id="b9" layoutX="64.0" layoutY="128.0" maxHeight="64.0" maxWidth="64.0" minHeight="64.0" minWidth="64.0" mnemonicParsing="false">
+                     <graphic>
+                        <ImageView>
+                           <image>
+                              <Image url="@../img/Wooden%20Board/black_tile.png" />
+                           </image>
+                        </ImageView>
+                     </graphic></Button>
+                  <Button fx:id="b14" layoutX="128.0" layoutY="192.0" maxHeight="64.0" maxWidth="64.0" minHeight="64.0" minWidth="64.0" mnemonicParsing="false">
+                     <graphic>
+                        <ImageView>
+                           <image>
+                              <Image url="@../img/Wooden%20Board/black_tile.png" />
+                           </image>
+                        </ImageView>
+                     </graphic></Button>
+                  <Button fx:id="b13" layoutY="192.0" maxHeight="64.0" maxWidth="64.0" minHeight="64.0" minWidth="64.0" mnemonicParsing="false">
+                     <graphic>
+                        <ImageView>
+                           <image>
+                              <Image url="@../img/Wooden%20Board/black_tile.png" />
+                           </image>
+                        </ImageView>
+                     </graphic></Button>
+                  <Button fx:id="b10" layoutX="192.0" layoutY="128.0" maxHeight="64.0" maxWidth="64.0" minHeight="64.0" minWidth="64.0" mnemonicParsing="false">
+                     <graphic>
+                        <ImageView>
+                           <image>
+                              <Image url="@../img/Wooden%20Board/black_tile.png" />
+                           </image>
+                        </ImageView>
+                     </graphic></Button>
+                  <Button fx:id="b15" layoutX="256.0" layoutY="192.0" maxHeight="64.0" maxWidth="64.0" minHeight="64.0" minWidth="64.0" mnemonicParsing="false">
+                     <graphic>
+                        <ImageView>
+                           <image>
+                              <Image url="@../img/Wooden%20Board/black_tile.png" />
+                           </image>
+                        </ImageView>
+                     </graphic></Button>
+                  <Button fx:id="b11" layoutX="320.0" layoutY="128.0" maxHeight="64.0" maxWidth="64.0" minHeight="64.0" minWidth="64.0" mnemonicParsing="false">
+                     <graphic>
+                        <ImageView>
+                           <image>
+                              <Image url="@../img/Wooden%20Board/black_tile.png" />
+                           </image>
+                        </ImageView>
+                     </graphic></Button>
+                  <Button fx:id="b16" layoutX="384.0" layoutY="192.0" maxHeight="64.0" maxWidth="64.0" minHeight="64.0" minWidth="64.0" mnemonicParsing="false">
+                     <graphic>
+                        <ImageView>
+                           <image>
+                              <Image url="@../img/Wooden%20Board/black_tile.png" />
+                           </image>
+                        </ImageView>
+                     </graphic></Button>
+                  <Button fx:id="b12" layoutX="448.0" layoutY="128.0" maxHeight="64.0" maxWidth="64.0" minHeight="64.0" minWidth="64.0" mnemonicParsing="false">
+                     <graphic>
+                        <ImageView>
+                           <image>
+                              <Image url="@../img/Wooden%20Board/black_tile.png" />
+                           </image>
+                        </ImageView>
+                     </graphic></Button>
+                  <Button fx:id="b17" layoutX="64.0" layoutY="256.0" maxHeight="64.0" maxWidth="64.0" minHeight="64.0" minWidth="64.0" mnemonicParsing="false">
+                     <graphic>
+                        <ImageView>
+                           <image>
+                              <Image url="@../img/Wooden%20Board/black_tile.png" />
+                           </image>
+                        </ImageView>
+                     </graphic></Button>
+                  <Button fx:id="b21" layoutY="320.0" maxHeight="64.0" maxWidth="64.0" minHeight="64.0" minWidth="64.0" mnemonicParsing="false">
+                     <graphic>
+                        <ImageView>
+                           <image>
+                              <Image url="@../img/Wooden%20Board/black_tile.png" />
+                           </image>
+                        </ImageView>
+                     </graphic></Button>
+                  <Button fx:id="b22" layoutX="128.0" layoutY="320.0" maxHeight="64.0" maxWidth="64.0" minHeight="64.0" minWidth="64.0" mnemonicParsing="false">
+                     <graphic>
+                        <ImageView>
+                           <image>
+                              <Image url="@../img/Wooden%20Board/black_tile.png" />
+                           </image>
+                        </ImageView>
+                     </graphic></Button>
+                  <Button fx:id="b18" layoutX="192.0" layoutY="256.0" maxHeight="64.0" maxWidth="64.0" minHeight="64.0" minWidth="64.0" mnemonicParsing="false">
+                     <graphic>
+                        <ImageView>
+                           <image>
+                              <Image url="@../img/Wooden%20Board/black_tile.png" />
+                           </image>
+                        </ImageView>
+                     </graphic></Button>
+                  <Button fx:id="b23" layoutX="256.0" layoutY="320.0" maxHeight="64.0" maxWidth="64.0" minHeight="64.0" minWidth="64.0" mnemonicParsing="false">
+                     <graphic>
+                        <ImageView>
+                           <image>
+                              <Image url="@../img/Wooden%20Board/black_tile.png" />
+                           </image>
+                        </ImageView>
+                     </graphic></Button>
+                  <Button fx:id="b19" layoutX="320.0" layoutY="256.0" maxHeight="64.0" maxWidth="64.0" minHeight="64.0" minWidth="64.0" mnemonicParsing="false">
+                     <graphic>
+                        <ImageView>
+                           <image>
+                              <Image url="@../img/Wooden%20Board/black_tile.png" />
+                           </image>
+                        </ImageView>
+                     </graphic></Button>
+                  <Button fx:id="b24" layoutX="384.0" layoutY="320.0" maxHeight="64.0" maxWidth="64.0" minHeight="64.0" minWidth="64.0" mnemonicParsing="false">
+                     <graphic>
+                        <ImageView>
+                           <image>
+                              <Image url="@../img/Wooden%20Board/black_tile.png" />
+                           </image>
+                        </ImageView>
+                     </graphic></Button>
+                  <Button fx:id="b20" layoutX="448.0" layoutY="256.0" maxHeight="64.0" maxWidth="64.0" minHeight="64.0" minWidth="64.0" mnemonicParsing="false">
+                     <graphic>
+                        <ImageView>
+                           <image>
+                              <Image url="@../img/Wooden%20Board/black_tile.png" />
+                           </image>
+                        </ImageView>
+                     </graphic></Button>
+                  <Button fx:id="b29" layoutY="448.0" maxHeight="64.0" maxWidth="64.0" minHeight="64.0" minWidth="64.0" mnemonicParsing="false">
+                     <graphic>
+                        <ImageView>
+                           <image>
+                              <Image url="@../img/Wooden%20Board/black_tile.png" />
+                           </image>
+                        </ImageView>
+                     </graphic></Button>
+                  <Button fx:id="b25" layoutX="64.0" layoutY="384.0" maxHeight="64.0" maxWidth="64.0" minHeight="64.0" minWidth="64.0" mnemonicParsing="false">
+                     <graphic>
+                        <ImageView>
+                           <image>
+                              <Image url="@../img/Wooden%20Board/black_tile.png" />
+                           </image>
+                        </ImageView>
+                     </graphic></Button>
+                  <Button fx:id="b30" layoutX="128.0" layoutY="448.0" maxHeight="64.0" maxWidth="64.0" minHeight="64.0" minWidth="64.0" mnemonicParsing="false">
+                     <graphic>
+                        <ImageView>
+                           <image>
+                              <Image url="@../img/Wooden%20Board/black_tile.png" />
+                           </image>
+                        </ImageView>
+                     </graphic></Button>
+                  <Button fx:id="b26" layoutX="192.0" layoutY="384.0" maxHeight="64.0" maxWidth="64.0" minHeight="64.0" minWidth="64.0" mnemonicParsing="false">
+                     <graphic>
+                        <ImageView>
+                           <image>
+                              <Image url="@../img/Wooden%20Board/black_tile.png" />
+                           </image>
+                        </ImageView>
+                     </graphic></Button>
+                  <Button fx:id="b31" layoutX="256.0" layoutY="448.0" maxHeight="64.0" maxWidth="64.0" minHeight="64.0" minWidth="64.0" mnemonicParsing="false">
+                     <graphic>
+                        <ImageView>
+                           <image>
+                              <Image url="@../img/Wooden%20Board/black_tile.png" />
+                           </image>
+                        </ImageView>
+                     </graphic></Button>
+                  <Button fx:id="b27" layoutX="320.0" layoutY="384.0" maxHeight="64.0" maxWidth="64.0" minHeight="64.0" minWidth="64.0" mnemonicParsing="false">
+                     <graphic>
+                        <ImageView>
+                           <image>
+                              <Image url="@../img/Wooden%20Board/black_tile.png" />
+                           </image>
+                        </ImageView>
+                     </graphic></Button>
+                  <Button fx:id="b32" layoutX="384.0" layoutY="448.0" maxHeight="64.0" maxWidth="64.0" minHeight="64.0" minWidth="64.0" mnemonicParsing="false">
+                     <graphic>
+                        <ImageView>
+                           <image>
+                              <Image url="@../img/Wooden%20Board/black_tile.png" />
+                           </image>
+                        </ImageView>
+                     </graphic></Button>
+                  <Button fx:id="b28" layoutX="448.0" layoutY="384.0" maxHeight="64.0" maxWidth="64.0" minHeight="64.0" minWidth="64.0" mnemonicParsing="false">
+                     <graphic>
+                        <ImageView>
+                           <image>
+                              <Image url="@../img/Wooden%20Board/black_tile.png" />
+                           </image>
+                        </ImageView>
+                     </graphic></Button>
+               </children>
+            </Pane>
+         </left>
       </BorderPane>
    </children>
 </AnchorPane>
