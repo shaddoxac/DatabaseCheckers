@@ -84,6 +84,7 @@ public class Controller {
 
     private void onAction(Button b) {
         setHighlight(b);
+
     }
 
 	private void switchTurns() {
