@@ -2,6 +2,16 @@ package GUI;
 
 import game.Board;
 import game.Game;
+import game.PieceType;
+import game.Player;
+
+import java.awt.Point;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.util.ArrayList;
+
+import javax.imageio.ImageIO;
+
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
@@ -35,6 +45,11 @@ public class Controller {
 	//Each clickable (black) tile on the board.  Proceeds from top left to bottom right.
 	@FXML Button b1; @FXML Button b2; @FXML Button b3; @FXML Button b4; @FXML Button b5; @FXML Button b6; @FXML Button b7; @FXML Button b8; @FXML Button b9; @FXML Button b10; @FXML Button b11; @FXML Button b12; @FXML Button b13; @FXML Button b14; @FXML Button b15; @FXML Button b16; @FXML Button b17; @FXML Button b18; @FXML Button b19; @FXML Button b20; @FXML Button b21; @FXML Button b22; @FXML Button b23; @FXML Button b24; @FXML Button b25; @FXML Button b26; @FXML Button b27; @FXML Button b28; @FXML Button b29; @FXML Button b30; @FXML Button b31; @FXML Button b32;
 	
+
+	ArrayList<Button> tiles;
+	
+	Button selectedButton;
+		
 	@FXML
 	Button newGame;
 	
@@ -50,32 +65,46 @@ public class Controller {
 	@FXML
 	ChoiceBox<String> boardStyleBox;
 	
-
-	private ArrayList<Point> legalPositions;
-	private Image boardSprite, whiteSprite, blackSprite, whiteKingSprite, blackKingSprite;
 	private Game game;
     private Board board;
     private int turnCount=0;
-    private Button selectedButton;
-    private ImageView selectionBox;
 	
+	ArrayList<Point> legalPositions;
+	ImageView whiteSprite, blackSprite, whiteKingSprite, blackKingSprite, selectionBox, moveBox;
+
 	@FXML
 	private void initialize() {
         turnIndicator.setBackground(new Background(new BackgroundFill(Color.CHOCOLATE, CornerRadii.EMPTY, Insets.EMPTY)));
         turnIndicator.setStyle("-fx-text-inner-color: black;");
         setUpBoxes();
-        createSelectionBox();
+        //changeBoard();
+        
+        loadSprites();
+		selectionBox.setVisible(false);
+		canvas.getChildren().add(selectionBox);
+		moveBox.setVisible(false);
+		canvas.getChildren().add(moveBox);
+        
         setUpButtons();
         newGame();
     }
-
-    @FXML
-    private void newGame() {
-        selectionBox.setVisible(false);
-        game=new Game();
-        board=game.board;
-        setCheckerLocations();
-    }
+	
+	 @FXML
+	    private void newGame() {
+	        selectionBox.setVisible(false);
+	        game=new Game();
+	        board=game.board;
+	        setCheckerLocations();
+	    }
+	
+	private void loadSprites() {
+		whiteSprite = new ImageView(new Image("/img/Wooden Board/white_occupied_tile.png"));
+		blackSprite = new ImageView(new Image("/img/Wooden Board/black_occupied_tile.png"));
+		whiteKingSprite = new ImageView(new Image("/img/Wooden Board/whiteKing_tile.png"));
+		blackKingSprite = new ImageView(new Image("/img/Wooden Board/blackKing_tile.png"));
+		selectionBox = new ImageView(new Image("/img/Wooden Board/Selection_Highlight.png"));
+		moveBox = new ImageView(new Image("/img/Wooden Board/Move_Highlight.png"));
+	}
 
 	private void switchTurns() {
 		String currentTurn = turnIndicator.getText();
@@ -133,12 +162,7 @@ public class Controller {
 		else {selectionBox.setVisible(false);}
 	}
 
-    private void createSelectionBox() {
-        Image selectionImage = new Image("/img/Wooden Board/Selection_Highlight.png");
-        selectionBox = new ImageView(selectionImage);
-        selectionBox.setVisible(false);
-        canvas.getChildren().add(selectionBox);
-    }
+	
     private void setUpBoxes() {
         difficultyBox.getItems().addAll("Easy", "Medium", "Hard");
         difficultyBox.setValue("Medium");
@@ -147,8 +171,12 @@ public class Controller {
     }
     
     private void setUpButtons() {
+    	 for (int i = 1; i<=32; i++) {
+    		 Button b = (Button) getButtonName(i);
+    		 tiles.add(b);
+    	 }
     	 b1.setOnAction((event) ->{
-         	highlightSelected(b1);
+    		highlightSelected(b1);
          });
     	 b2.setOnAction((event) ->{
          	highlightSelected(b2);
