@@ -2,57 +2,94 @@ package game;
 
 import java.util.ArrayList;
 
-//squares go left to right, top to bottom
+
 public class Game {
     private Player currentTurn;
     private Board board;
+
+    public boolean hasJumps;
+    public boolean gameOver;
+    public Player winner;
+    public ArrayList<Move> currentMoves=new ArrayList<Move>();
 
     private int upperBound=0xFFF00000;
 
     public Game() {
         currentTurn=Player.BLACK;
         board=new Board();
+        gameOver=false;
     }
 
     public Game(Board board) {
         currentTurn=Player.WHITE;
+        gameOver=true;
         this.board=board;
     }
 
 
     public void changeTurn() {
-        currentTurn=currentTurn.change();
+        currentTurn=currentTurn.other();
     }
 
 
-
-    private ArrayList<Move> getPotentialMoves(Piece piece) {
-        return getValidMoves(piece);
+    public void analyzeBoard() {
+        hasJumps=false;
+        if (isWhiteTurn()) {
+            analyzeGroup(board.whitePos,PieceType.WHITE);
+            analyzeGroup(board.whiteKingPos,PieceType.WHITEKING);
+        }
+        else {
+            analyzeGroup(board.blackPos, PieceType.BLACK);
+            analyzeGroup(board.blackKingPos, PieceType.BLACKKING);
+        }
+        if (currentMoves.size()==0) {gameOver(currentTurn.other());}
+        else if (hasJumps) {
+            eraseNonJumpMoves();
+        }
     }
 
-    private ArrayList<Move> getValidMoves(Piece piece) {
-        ArrayList<Move> moveLocations=new ArrayList<Move>();
-        Move tempMove;
+    private void gameOver(Player winner) {
+        gameOver=true;
+        this.winner=winner;
+    }
+
+    private void eraseNonJumpMoves() {
+        for (int idx=0; idx<currentMoves.size(); idx++) {
+            if (!currentMoves.get(idx).isJump) {
+                currentMoves.remove(idx);
+                idx--;
+            }
+        }
+    }
+
+    private void analyzeGroup(int bitBoard, PieceType type) {
+        int idx=1;
+        int comparator;
+        while (idx<bitBoard) {
+            System.out.println("idx="+idx);
+            comparator=idx & bitBoard;
+            if (comparator!=0) {
+                getValidMoves(new Piece(type,idx));
+            }
+            idx=idx>>1;
+        }
+    }
+
+    private void getValidMoves(Piece piece) {
         if (piece.down) {
-            tempMove=checkDestination(piece, -5);
-            if (tempMove!=null) {moveLocations.add(tempMove);}
-            tempMove=checkDestination(piece, -4);
-            if (tempMove!=null) {moveLocations.add(tempMove);}
+            checkDestination(piece, -5);
+            checkDestination(piece, -4);
         }
         if (piece.up) {
-            tempMove=checkDestination(piece, 5);
-            if (tempMove!=null) {moveLocations.add(tempMove);}
-            tempMove=checkDestination(piece, 4);
-            if (tempMove!=null) {moveLocations.add(tempMove);}
+            checkDestination(piece, 5);
+            checkDestination(piece, 4);
         }
-        return moveLocations;
     }
 
-    private Move checkDestination(Piece piece, int offset) {
-        int tempDestination=piece.location-offset;
+    private void checkDestination(Piece piece, int offset) {
+        int tempDestination=piece.location << offset;
         Move tempMove=new Move(piece.type, piece.location, tempDestination);
-        if (checkMove(tempMove)) {return tempMove;}
-        return null;
+        checkMove(tempMove);
     }
 
     private void commitMove(PieceType pieceType, int loc, int dest) {
@@ -79,6 +116,7 @@ public class Game {
     private boolean checkJump(Move move) {
         if (isNotEdge(move.destination)) {
             if (!nextSpaceOccupied(move)) {
+                hasJumps=true;
                 return true;
             }
         }
@@ -109,28 +147,27 @@ public class Game {
         }
     }
 
+    private void checkMove(Move move) {
+        if (inBounds(move.destination)) {
+            if (spaceNotOccupied(move)) {
+                currentMoves.add(move);
+            }
+            else if (checkJump(move)) {
+                move.isJump=true;
+                currentMoves.add(move);
+            }
+        }
+    }
+
+
     private boolean isNotEdge(int space) {
         return isHorizontalBorder(space) && isVerticalBorder(space);
     }
     private boolean isHorizontalBorder(int space) {
-        return space >= 0xF0000000 && space <= 0xF;
+        return space >= 0xF0000000 || space <= 0xF;
     }
     private boolean isVerticalBorder(int space) {
-        return ((space + 4) % 8 == 0) && space % 8 == 5;
-    }
-
-    private boolean checkMove(Move move) {
-        if (inBounds(move.destination)) {
-            if (spaceNotOccupied(move)) {
-                //TODO if there are no jumps
-                return true;
-                //}
-            }
-            else if (checkJump(move)) {
-                return true;
-            }
-        }
-        return false;
+        return (space & 0x181800)!=0;
     }
 
     private boolean inBounds(int dest) {
@@ -143,5 +180,9 @@ public class Game {
 
     private boolean isNotOccupied(int bucket, int dest) {
         return (bucket & dest) == 0;
+    }
+
+    private boolean isWhiteTurn() {
+        return currentTurn.equals(Player.WHITE);
     }
 }
