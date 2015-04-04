@@ -139,11 +139,6 @@ public class Controller {
     	moveBox = new Image("/img/Wooden Board/move_tile.png");
     	createSelectionBox();
     }
-
-    private void commitTurn() {
-
-        //game.commitMove(move);
-    }
     
     private void clearLegalMoves() {
     	if (!legalMoves.isEmpty()){
@@ -160,23 +155,16 @@ public class Controller {
             for (int idx=0; idx<game.pieceMoves.size(); idx++) {
                 if (game.pieceMoves.get(idx).getDestination()==moveBitLocation) {
                     game.commitMove(game.pieceMoves.get(idx));
-                    //moveSprite(game.pieceMoves.get(idx));
                     setCheckerLocations();
+                    removeSelections();
                 }
             }
     	}
     }
-    
-    private void moveSprite(Move move) {
-        clearTile(move.getLocation());
-        movePiece(move);
 
-    }
-
-    private void clearTile(int location) {
-        int loc=game.getNumRepresentation(location);
-        Button selectedTile = buttonMap.get(loc);
-        selectedTile.setGraphic(new ImageView(emptyTile));
+    private void removeSelections() {
+        clearLegalMoves();
+        selectionBox.setVisible(false);
     }
 
     private void movePiece(Move move) {
@@ -204,10 +192,19 @@ public class Controller {
 	}
 
     private void setCheckerLocations() {
+        clearAllTiles();
         setLocations(game.board.whitePos, whiteSprite);
         setLocations(game.board.blackPos, blackSprite);
         setLocations(game.board.whiteKingPos, whiteKingSprite);
         setLocations(game.board.blackKingPos, blackKingSprite);
+    }
+
+    private void clearAllTiles() {
+        ImageView imgView;
+        for (int i=1; i<=numSquares; i++) {
+            imgView=new ImageView(emptyTile);
+            buttonMap.get(i).setGraphic(imgView);
+        }
     }
 
     private void setLocations(int type, Image image) {
