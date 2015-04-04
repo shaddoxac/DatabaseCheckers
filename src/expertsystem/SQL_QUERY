@@ -1,39 +1,14 @@
-SELECT moveCol,scoreCol
-FROM #tableName#
-WHERE (
-	'#whitePawns#' LIKE (
-		SELECT whitePawnCol
-		FROM (
-			SELECT ROWID
-			FROM #tableName#
-		)
-		WHERE (
-			'#blackPawns#' LIKE (
-				SELECT blackPawnCol
-				FROM (
-					SELECT ROWID
-					FROM #tableName#
-				)
-				WHERE (
-					'#whiteKings#' LIKE (
-						SELECT whiteKingCol
-						FROM (
-							SELECT ROWID
-							FROM #tableName#
-						)
-						WHERE (
-							'#blackKings#' LIKE (
-								SELECT blackKingCol
-								FROM (
-									SELECT ROWID
-									FROM #tableName#
-								)
-							)
+SELECT MoveDescription, Score FROM #tableName#
+WHERE '#whitePawns#' LIKE (
+		SELECT WhitePawns FROM #tableName#
+		WHERE '#blackPawns#' LIKE (
+				SELECT BlackPawns FROM #tableName#
+				WHERE '#whiteKings#' LIKE (
+						SELECT WhiteKings FROM #tableName#
+						WHERE '#blackKings#' LIKE (
+								SELECT BlackKings FROM #tableName#
 						) >= #blackKingThreshold#
-					)
 				) >= #whiteKingThreshold#
-			)
 		) >= #blackPawnThreshold#
-	)
 ) >= #whitePawnThreshold#
-ORDER BY scoreCol DESC
+ORDER BY score DESC;

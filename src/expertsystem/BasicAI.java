@@ -9,7 +9,7 @@ import game.*;
 public class BasicAI extends InferenceEngine{
 	
 	public BasicAI() throws SQLException, ClassNotFoundException {
-		super("defaultTable");
+		super("basicAI");
 	}
 	
 	public BasicAI(String tableName) throws SQLException, ClassNotFoundException {

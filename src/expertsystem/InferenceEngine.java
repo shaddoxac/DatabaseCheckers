@@ -24,10 +24,6 @@ public abstract class InferenceEngine {
 	protected Connection knowBase;
 	protected String table;
 	
-	public InferenceEngine() throws SQLException, ClassNotFoundException {
-		this("defaultTable");
-	}
-	
 	public InferenceEngine(String tableName) throws SQLException, ClassNotFoundException {
 		Class.forName("org.sqlite.JDBC");
 		knowBase = DriverManager.getConnection("jdbc:sqlite:CheckersKnowledgeBase");
