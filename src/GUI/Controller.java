@@ -74,6 +74,8 @@ public class Controller {
 
     @FXML
     private void newGame() {
+    	turnCount = 0;
+    	numMoves.setText(Integer.toString(turnCount));
         emptyGraveyards();
         gameStarted=true;
         selectionBox.setVisible(false);
@@ -141,7 +143,7 @@ public class Controller {
     }
 
     private void commitTurn() {
-
+    	numMoves.setText(Integer.toString(turnCount));
         //game.commitMove(move);
     }
     
@@ -156,6 +158,7 @@ public class Controller {
     private void selectMove(Button b) {
     	if (selectedButton != null){
         	int moveLocation = numSquares+1 - locationMap.get(b);
+
         	int moveBitLocation = game.getBitRepresentation(moveLocation);
             for (int idx=0; idx<game.pieceMoves.size(); idx++) {
                 if (game.pieceMoves.get(idx).getDestination()==moveBitLocation) {
