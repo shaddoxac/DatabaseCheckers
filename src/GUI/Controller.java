@@ -1,6 +1,10 @@
 package GUI;
 
 import game.*;
+
+import game.Board;
+import game.Game;
+import game.Player;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
@@ -141,7 +145,7 @@ public class Controller {
                     showPossibleMoves(game.pieceMoves);
                     //use game.currentMoves to highlight moves of piece
                 }
-            } else {
+            } else { 
 
             }
         }
@@ -195,7 +199,11 @@ public class Controller {
 	}
 
     private void showPossibleMoves(ArrayList<Move> currentMoves) {
-
+    	for (Move move : currentMoves) {
+    		int tileNum = game.getNumRepresentation(move.getDestination());
+    		Button tileButton = buttonMap.get(tileNum);
+    		tileButton.setGraphic(moveBox);
+    	}
     }
 
     private void createSelectionBox() {
@@ -206,7 +214,7 @@ public class Controller {
     }
     
     private void createMoveBox() {
-    	Image moveImage = new Image("/img/Wooden Board/Move_Highlight.png");
+    	Image moveImage = new Image("/img/Wooden Board/move_tile.png");
     	moveBox = new ImageView(moveImage);
     	moveBox.setVisible(false);
     	canvas.getChildren().add(moveBox);
