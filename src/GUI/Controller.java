@@ -127,12 +127,8 @@ public class Controller {
 
     private void onAction(Button b) {
         if (gameStarted) {
-            int location = numSquares - locationMap.get(b)+1;
-            System.out.println(location);
+            int location = numSquares+1 - locationMap.get(b);
             location = game.getBitRepresentation(location);
-            System.out.println(location);
-            int test=game.getNumRepresentation(location);
-            System.out.println(test + "\n");
             if (game.spaceOccupied(location)) {
                 PieceType type=game.getPieceType(location);
                 if (spacePlayerOccupied(type)) {
@@ -167,9 +163,9 @@ public class Controller {
 
     private void setLocations(int type, Image image) {
         int tempBoard=type;
-        for (int counter=1; counter<33; counter++) {
+        for (int counter=1; counter<numSquares+1; counter++) {
             if ((tempBoard & 1)!=0) {
-                addChecker(33-counter, image);
+                addChecker(numSquares+1-counter, image);
             }
             tempBoard=tempBoard>>1;
         }
@@ -183,7 +179,6 @@ public class Controller {
         }
     }
 
-	
 	private void setHighlight(Button b) {
 		selectedButton = (b.equals(selectedButton)) ? null : b;
 		if (selectedButton != null) {

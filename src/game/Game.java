@@ -13,7 +13,7 @@ public class Game {
     public ArrayList<Move> currentMoves=new ArrayList<>();
     public ArrayList<Move> pieceMoves=new ArrayList<>();
 
-    private int upperBound=0xFFF00000;
+    private int lastIndex=-2147483648;
 
     public Game() {
         currentTurn=Player.BLACK;
@@ -115,15 +115,12 @@ public class Game {
     }
 
     private void analyzeGroup(int bitBoard, PieceType type) {
-        System.out.println(type.getTeam().toString());
         int idx=1;
-        int comparator;
-        while (idx < upperBound) {
-            System.out.println("idx=" + idx);
-            comparator=idx & bitBoard;
-            if (comparator!=0) {
-                System.out.println(comparator);
-                getValidMoves(new Piece(type,idx));
+        int temp;
+        while (idx!=lastIndex) {
+            temp=idx & bitBoard;
+            if (temp==idx) {
+                getValidMoves(new Piece(type, idx));
             }
             idx=idx << 1;
         }
@@ -197,6 +194,7 @@ public class Game {
 
     private void checkMove(Move move) {
         if (inBounds(move.getDestination())) {
+            System.out.println("inBounds");
             if (spaceNotOccupied(move.getDestination())) {
                 move.setDestination(getJumpDestination(move));
                 currentMoves.add(move);
@@ -222,7 +220,7 @@ public class Game {
     }
 
     private boolean inBounds(int dest) {
-        return !(dest < 0 || dest > upperBound);
+        return (dest>0 || dest==lastIndex);
     }
 
     private boolean isOccupied(int bucket, int dest) {
