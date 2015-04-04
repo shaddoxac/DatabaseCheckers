@@ -81,6 +81,7 @@ public class Controller {
         setCheckerLocations();
         numWhiteDead = 0;
     	numBlackDead = 0;
+    	deselect();
     }
     
     private void addToGraveyard(Player p) {
@@ -148,8 +149,8 @@ public class Controller {
                     game.getValidMoves(piece);
                     showPossibleMoves(game.pieceMoves);
                     //use game.currentMoves to highlight moves of piece
-                }
-            } else {selectMove(b);}
+                } 
+            }else {selectMove(b);}
         }
     }
     
@@ -165,7 +166,7 @@ public class Controller {
         	game.getValidMoves(selectedPiece);
         	if (game.pieceMoves.contains(move)){
         		moveSprite(selectedType, selectedLocation, moveLocation);
-        	}
+        	}else{deselect();}
     	}
     }
     
@@ -221,7 +222,7 @@ public class Controller {
     }
 
 	private void setSelected(Button b) {
-		selectedButton = (b.equals(selectedButton)) ? null : b;
+		selectedButton = b;
 		if (selectedButton != null) {
 			selectionBox.setLayoutX(b.getLayoutX());
 			selectionBox.setLayoutY(b.getLayoutY());
@@ -229,6 +230,12 @@ public class Controller {
             selectedChar=locationMap.get(b);
 		}
 		else {selectionBox.setVisible(false);}
+	}
+	
+	private void deselect() {
+		selectionBox.setVisible(false);
+		selectedButton = null;
+		clearLegalMoves();
 	}
 
     private void showPossibleMoves(ArrayList<Move> currentMoves) {
