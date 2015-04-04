@@ -31,8 +31,8 @@ public class BasicAI extends InferenceEngine{
 		String move;
 		int score;
 		while(results.getRow() <= lastRow) {
-			move = results.getString("moveCol");
-			score = results.getInt("scoreCol");
+			move = results.getString("MoveDescription");
+			score = results.getInt("Score");
 			
 			for(int i=0; i<legalMoves.size(); i++) {
 				if(translateDirection(legalMoves.get(i)).equals(move.substring(2, 5))) {
