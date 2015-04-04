@@ -17,6 +17,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Controller {
@@ -47,25 +48,23 @@ public class Controller {
 	
 	@FXML
 	ChoiceBox<String> difficultyBox;
-	
-	@FXML
-	ChoiceBox<String> boardStyleBox;
 
-	private ImageView boardSprite, whiteSprite, blackSprite, whiteKingSprite, blackKingSprite;
+	private ImageView boardSprite, whiteSprite, blackSprite, whiteKingSprite, blackKingSprite, selectionBox, moveBox;
 	private Game game;
     private Board board;
     private int turnCount=0;
     private Button selectedButton;
-    private ImageView selectionBox;
+
     private Field field;
     private HashMap<Integer, Button> map=new HashMap<Integer,Button>();
+
 	
 	@FXML
 	private void initialize() {
         turnIndicator.setBackground(new Background(new BackgroundFill(Color.CHOCOLATE, CornerRadii.EMPTY, Insets.EMPTY)));
         turnIndicator.setStyle("-fx-text-inner-color: black;");
         setUpBoxes();
-        createSelectionBox();
+        createSprites();
         setUpButtons();
         newGame();
 
@@ -77,6 +76,15 @@ public class Controller {
         game=new Game();
         board=game.board;
         setCheckerLocations();
+    }
+    
+    private void createSprites() {
+    	blackSprite = new ImageView(new Image("/img/Wooden Board/black_occupied_tile.png"));
+    	whiteSprite = new ImageView(new Image("/img/Wooden Board/white_occupied_tile.png"));
+    	blackKingSprite = new ImageView(new Image("/img/Wooden Board/blackKing_tile.png"));
+    	whiteKingSprite = new ImageView(new Image("/img/Wooden Board/whiteKing_tile.png"));
+    	createSelectionBox();
+    	createMoveBox();
     }
 
     private void commitTurn() {
@@ -140,12 +148,17 @@ public class Controller {
         selectionBox.setVisible(false);
         canvas.getChildren().add(selectionBox);
     }
+    
+    private void createMoveBox() {
+    	Image moveImage = new Image("/img/Wooden Board/Move_Highlight.png");
+    	moveBox = new ImageView(moveImage);
+    	moveBox.setVisible(false);
+    	canvas.getChildren().add(moveBox);
+    }
 
     private void setUpBoxes() {
         difficultyBox.getItems().addAll("Easy", "Medium", "Hard");
         difficultyBox.setValue("Medium");
-        boardStyleBox.getItems().addAll("Style 1", "Style 2", "Style 3"); //TODO: make different board styles
-        boardStyleBox.setValue("Style 1");
     }
     
     private void setUpButtons() {
