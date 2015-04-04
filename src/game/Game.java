@@ -11,6 +11,7 @@ public class Game {
     public boolean gameOver;
     public Player winner;
     public ArrayList<Move> currentMoves=new ArrayList<>();
+    public ArrayList<Move> pieceMoves=new ArrayList<>();
 
     private int upperBound=0xFFF00000;
 
@@ -57,6 +58,18 @@ public class Game {
         }
     }
 
+    public void getValidMoves(Piece piece) {
+        pieceMoves.clear();
+        if (piece.down) {
+            checkDestination(piece, -5);
+            checkDestination(piece, -4);
+        }
+        if (piece.up) {
+            checkDestination(piece, 5);
+            checkDestination(piece, 4);
+        }
+    }
+
     public boolean spaceOccupied(int dest) {
         return !spaceNotOccupied(dest);
     }
@@ -69,6 +82,12 @@ public class Game {
         return !(isNotOccupied(board.blackPos, loc) || isNotOccupied(board.blackKingPos, loc));
     }
 
+    public PieceType getPieceType(int dest) {
+        if (isOccupied(board.whitePos, dest)) {return PieceType.WHITE;}
+        if (isOccupied(board.blackPos, dest)) {return PieceType.BLACK;}
+        if (isOccupied(board.whiteKingPos, dest)) {return PieceType.WHITEKING;}
+        return PieceType.BLACKKING;
+    }
     public int getBitRepresentation(int num) {
         return 1 << (num);
     }
@@ -97,17 +116,6 @@ public class Game {
                 getValidMoves(new Piece(type,idx));
             }
             idx=idx>>1;
-        }
-    }
-
-    private void getValidMoves(Piece piece) {
-        if (piece.down) {
-            checkDestination(piece, -5);
-            checkDestination(piece, -4);
-        }
-        if (piece.up) {
-            checkDestination(piece, 5);
-            checkDestination(piece, 4);
         }
     }
 
@@ -180,11 +188,14 @@ public class Game {
     private void checkMove(Move move) {
         if (inBounds(move.getDestination())) {
             if (spaceNotOccupied(move.getDestination())) {
+                move.setDestination(getJumpDestination(move));
                 currentMoves.add(move);
+                pieceMoves.add(move);
             }
             else if (checkJump(move)) {
                 move.setJump(true);
                 currentMoves.add(move);
+                pieceMoves.add(move);
             }
         }
     }
@@ -207,6 +218,7 @@ public class Game {
     private boolean isNotOccupied(int bucket, int dest) {
         return (bucket & dest) == 0;
     }
+    private boolean isOccupied(int bucket, int dest) {return !isNotOccupied(bucket,dest);}
 
     private boolean isWhiteTurn() {
         return currentTurn.equals(Player.WHITE);

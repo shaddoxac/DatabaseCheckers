@@ -1,7 +1,6 @@
 package GUI;
 
-import game.Board;
-import game.Game;
+import game.*;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
@@ -16,6 +15,7 @@ import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Controller {
@@ -100,9 +100,12 @@ public class Controller {
             location = game.getBitRepresentation(location);
             System.out.println(location + "\n");
             if (game.spaceOccupied(location)) {
-                if (game.spacePlayerOccupied(location)) {
+                PieceType type=game.getPieceType(location);
+                if (spacePlayerOccupied(type)) {
                     setHighlight(b);
-                    game.analyzeBoard();
+                    Piece piece = new Piece(type,location);
+                    game.getValidMoves(piece);
+                    showPossibleMoves(game.pieceMoves);
                     //use game.currentMoves to highlight moves of piece
                 }
             } else {
@@ -158,6 +161,10 @@ public class Controller {
 		else {selectionBox.setVisible(false);}
 	}
 
+    private void showPossibleMoves(ArrayList<Move> currentMoves) {
+
+    }
+
     private void createSelectionBox() {
         Image selectionImage = new Image("/img/Wooden Board/Selection_Highlight.png");
         selectionBox = new ImageView(selectionImage);
@@ -175,6 +182,10 @@ public class Controller {
     private void setUpBoxes() {
         difficultyBox.getItems().addAll("Easy", "Medium", "Hard");
         difficultyBox.setValue("Medium");
+    }
+
+    private boolean spacePlayerOccupied(PieceType type) {
+        return type.equals(PieceType.BLACK) || type.equals(PieceType.BLACKKING);
     }
     
     private void setUpButtons() {

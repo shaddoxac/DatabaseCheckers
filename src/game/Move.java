@@ -30,5 +30,7 @@ public class Move {
     public ArrayList<Piece> getSequentialJumps() { return sequentialJumps;}
     public boolean isJump() {return isJump;}
 
+    public void setDestination(int dest) {destination=dest;}
     public void setJump(boolean b) {isJump=b;}
+
 }
