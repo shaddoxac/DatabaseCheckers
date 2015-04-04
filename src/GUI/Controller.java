@@ -2,6 +2,7 @@ package GUI;
 
 import game.Board;
 import game.Game;
+import game.Player;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
@@ -58,6 +59,8 @@ public class Controller {
     private int selectedChar;
     private boolean gameStarted=false;
     private final int numSquares = 32;
+    private int numWhiteDead;
+    private int numBlackDead;
 
     @FXML
 	private void initialize() {
@@ -66,8 +69,7 @@ public class Controller {
         setUpBoxes();
         createSprites();
         setUpButtons();
-        newGame();
-
+        fillGraveyards();
     }
 
     @FXML
@@ -77,7 +79,39 @@ public class Controller {
         game=new Game();
         board=game.board;
         setCheckerLocations();
+        numWhiteDead = 0;
+    	numBlackDead = 0;
+    	emptyGraveyards();
     }
+    
+    private void addToGraveyard(Player p) {
+    	if (p.equals(Player.BLACK)){
+    		ImageView dead = new ImageView(new Image("/img/Wooden Board/Peasant_Black.png"));
+    		dead.setLayoutX(numBlackDead*20);
+    		blackGraveyard.getChildren().add(dead);
+    		numBlackDead++;
+    	}else {
+    		ImageView dead = new ImageView(new Image("/img/Wooden Board/Peasant_White.png"));
+    		dead.setLayoutX(numWhiteDead*20);
+    		whiteGraveyard.getChildren().add(dead);
+    		numWhiteDead++;
+    	}
+    }
+    
+    private void fillGraveyards() {
+    	for (int i = 0; i<12; i++) {
+    		addToGraveyard(Player.BLACK);
+    		addToGraveyard(Player.WHITE);
+    	}
+    }
+    
+    private void emptyGraveyards() {
+    	whiteGraveyard.getChildren().clear();
+    	blackGraveyard.getChildren().clear();
+    	numWhiteDead = 0;
+    	numBlackDead = 0;
+    }
+
     
     private void createSprites() {
     	blackSprite = new Image("/img/Wooden Board/black_occupied_tile.png");
