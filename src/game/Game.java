@@ -30,10 +30,10 @@ public class Game {
     public void commitMove(Move move) {
         int bitBoard=getBitBoard(move.getType());
         bitBoard=bitBoard & ~move.getLocation();
-        bitBoard=bitBoard | move.destination;
+        bitBoard=bitBoard | move.getDestination();
         setBitBoard(bitBoard, move.getType());
         if (hasJumps) {
-            removePieces(move.sequentialJumps);
+            removePieces(move.getSequentialJumps());
         }
     }
 
@@ -64,7 +64,7 @@ public class Game {
 
     private void eraseNonJumpMoves() {
         for (int idx=0; idx<currentMoves.size(); idx++) {
-            if (!currentMoves.get(idx).isJump) {
+            if (!currentMoves.get(idx).isJump()) {
                 currentMoves.remove(idx);
                 idx--;
             }
@@ -128,7 +128,7 @@ public class Game {
     }
 
     private boolean checkJump(Move move) {
-        if (isNotEdge(move.destination)) {
+        if (isNotEdge(move.getDestination())) {
             if (!nextSpaceOccupied(move)) {
                 hasJumps=true;
                 return true;
@@ -142,32 +142,32 @@ public class Game {
         return spaceNotOccupied(new Move(move.getType(), move.getLocation(), newDest));
     }
 
-    private int getJumpDestination(Move move) {
-        if (move.getLocation() > move.destination) {
-            if (move.getLocation()-5==move.destination) {
-                return move.destination-4;
+    private int getJumpDestination(Move move) {//TODO fix this
+        if (move.getLocation() > move.getDestination()) {
+            if (move.getLocation()-5==move.getDestination()) {
+                return move.getDestination()-4;
             }
             else {
-                return move.destination-3;
+                return move.getDestination()-3;
             }
         }
         else {
-            if (move.getLocation()+5==move.destination) {
-                return move.destination+4;
+            if (move.getLocation()+5==move.getDestination()) {
+                return move.getDestination()+4;
             }
             else {
-                return move.destination+3;
+                return move.getDestination()+3;
             }
         }
     }
 
     private void checkMove(Move move) {
-        if (inBounds(move.destination)) {
+        if (inBounds(move.getDestination())) {
             if (spaceNotOccupied(move)) {
                 currentMoves.add(move);
             }
             else if (checkJump(move)) {
-                move.isJump=true;
+                move.setJump(true);
                 currentMoves.add(move);
             }
         }
@@ -189,7 +189,7 @@ public class Game {
     }
 
     private boolean spaceNotOccupied(Move move) {
-        return isNotOccupied(board.whitePos, move.destination) || isNotOccupied(board.blackPos, move.destination) || isNotOccupied(board.blackKingPos, move.destination) || isNotOccupied(board.whiteKingPos, move.destination);
+        return isNotOccupied(board.whitePos, move.getDestination()) || isNotOccupied(board.blackPos, move.getDestination()) || isNotOccupied(board.blackKingPos, move.getDestination()) || isNotOccupied(board.whiteKingPos, move.getDestination());
     }
 
     private boolean isNotOccupied(int bucket, int dest) {

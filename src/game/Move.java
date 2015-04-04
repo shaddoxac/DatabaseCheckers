@@ -3,10 +3,10 @@ package game;
 import java.util.ArrayList;
 
 public class Move {
-    public Piece piece;
-    public int destination;
-    public boolean isJump;
-    public ArrayList<Piece> sequentialJumps=new ArrayList<Piece>();//TODO
+    private Piece piece;
+    private int destination;
+    private boolean isJump;
+    private ArrayList<Piece> sequentialJumps=new ArrayList<Piece>();//TODO
 
 
     public Move(PieceType type, int loc, int dest) {
@@ -15,14 +15,20 @@ public class Move {
         isJump=false;
     }
 
+    public void addJump(PieceType jumpedType, int loc) {
+        Piece jumpedPiece=new Piece(jumpedType,loc);
+        sequentialJumps.add(jumpedPiece);
+    }
+
     public PieceType getType() {
         return piece.type;
     }
     public int getLocation() {
         return piece.location;
     }
-    public void addJump(PieceType jumpedType, int loc) {
-        Piece jumpedPiece=new Piece(jumpedType,loc);
-        sequentialJumps.add(jumpedPiece);
-    }
+    public int getDestination() {return destination;}
+    public ArrayList<Piece> getSequentialJumps() { return sequentialJumps;}
+    public boolean isJump() {return isJump;}
+
+    public void setJump(boolean b) {isJump=b;}
 }
