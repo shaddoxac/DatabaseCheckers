@@ -148,8 +148,6 @@ public class Controller {
     private void setUpBoxes() {
         difficultyBox.getItems().addAll("Easy", "Medium", "Hard");
         difficultyBox.setValue("Medium");
-        boardStyleBox.getItems().addAll("Style 1", "Style 2", "Style 3"); //TODO: make different board styles
-        boardStyleBox.setValue("Style 1");
     }
     
     private void setUpButtons() {
