@@ -47,13 +47,15 @@ public class Controller {
 	@FXML
 	ChoiceBox<String> difficultyBox;
 
-	private ImageView boardSprite, whiteSprite, blackSprite, whiteKingSprite, blackKingSprite, selectionBox, moveBox;
+	private Image whiteSprite, blackSprite, whiteKingSprite, blackKingSprite;
+    private ImageView selectionBox, moveBox;
 	private Game game;
     private Board board;
     private int turnCount=0;
     private Button selectedButton;
-    private HashMap<Integer,Button> buttonMap =new HashMap<Integer,Button>();
-    private HashMap<Button,Integer> locationMap=new HashMap<Button,Integer>();
+    private HashMap<Integer,Button> buttonMap =new HashMap<>();
+    private HashMap<Button,Integer> locationMap=new HashMap<>();
+    private int selectedChar;
     private final int numSquares = 32;
 	
 	@FXML
@@ -76,10 +78,10 @@ public class Controller {
     }
     
     private void createSprites() {
-    	blackSprite = new ImageView(new Image("/img/Wooden Board/black_occupied_tile.png"));
-    	whiteSprite = new ImageView(new Image("/img/Wooden Board/white_occupied_tile.png"));
-    	blackKingSprite = new ImageView(new Image("/img/Wooden Board/blackKing_tile.png"));
-    	whiteKingSprite = new ImageView(new Image("/img/Wooden Board/whiteKing_tile.png"));
+    	blackSprite = new Image("/img/Wooden Board/black_occupied_tile.png");
+    	whiteSprite = new Image("/img/Wooden Board/white_occupied_tile.png");
+    	blackKingSprite = new Image("/img/Wooden Board/blackKing_tile.png");
+    	whiteKingSprite = new Image("/img/Wooden Board/whiteKing_tile.png");
     	createSelectionBox();
     	createMoveBox();
     }
@@ -90,8 +92,15 @@ public class Controller {
     }
 
     private void onAction(Button b) {
-        setHighlight(b);
         int location=numSquares-locationMap.get(b);
+        if (game.spaceOccupied(location)) {
+            if (game.spacePlayerOccupied(location)) {
+                setHighlight(b);
+            }
+        }
+        else {
+
+        }
     }
 
 	private void switchTurns() {
@@ -111,7 +120,7 @@ public class Controller {
         setLocations(board.blackKingPos, blackKingSprite);
     }
 
-    private void setLocations(int type, ImageView image) {
+    private void setLocations(int type, Image image) {
         int tempBoard=type;
         for (int counter=1; counter<33; counter++) {
             if ((tempBoard & 1)!=0) {
@@ -121,11 +130,11 @@ public class Controller {
         }
     }
 
-    private void addChecker(int location, ImageView image) {
+    private void addChecker(int location, Image image) {
         Button button = getButton(location);
         if (button!=null) {
-            button.setGraphic(image);
-            System.out.println("here");
+            ImageView imgView=new ImageView(image);
+            button.setGraphic(imgView);
         }
     }
 
@@ -136,6 +145,7 @@ public class Controller {
 			selectionBox.setLayoutX(b.getLayoutX());
 			selectionBox.setLayoutY(b.getLayoutY());
 			selectionBox.setVisible(true);
+            selectedChar=locationMap.get(b);
 		}
 		else {selectionBox.setVisible(false);}
 	}
@@ -197,6 +207,7 @@ public class Controller {
             button.setOnAction((event) -> {
                 onAction(button);
             });
+            locationMap.put(button,idx);
         }
     }
 
