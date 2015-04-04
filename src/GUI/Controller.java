@@ -58,7 +58,10 @@ public class Controller {
     private Button selectedButton;
     private ImageView selectionBox;
     private Field field;
-    private HashMap<Integer, Button> map=new HashMap<Integer,Button>();
+    private HashMap<Integer,Button> buttonMap =new HashMap<Integer,Button>();
+    private HashMap<Button,Integer> locationMap=new HashMap<Button,Integer>();
+
+    private final int numSquares = 32;
 	
 	@FXML
 	private void initialize() {
@@ -86,7 +89,7 @@ public class Controller {
 
     private void onAction(Button b) {
         setHighlight(b);
-
+        int location=numSquares-locationMap.get(b);
     }
 
 	private void switchTurns() {
@@ -107,11 +110,12 @@ public class Controller {
     }
 
     private void setLocations(int type, ImageView image) {
-        int tempBoard=board.whitePos;
+        int tempBoard=type;
         for (int counter=1; counter<33; counter++) {
             if ((tempBoard & 1)!=0) {
-                addChecker(32-counter, image);
+                addChecker(33-counter, image);
             }
+            tempBoard=tempBoard>>1;
         }
     }
 
@@ -149,48 +153,47 @@ public class Controller {
     }
     
     private void setUpButtons() {
-        map.put(1,b1);
-        map.put(2,b2);
-        map.put(3,b3);
-        map.put(4,b4);
-        map.put(5,b5);
-        map.put(6,b6);
-        map.put(7,b7);
-        map.put(8,b8);
-        map.put(9,b9);
-        map.put(10,b10);
-        map.put(11,b11);
-        map.put(12,b12);
-        map.put(13,b13);
-        map.put(14,b14);
-        map.put(15,b15);
-        map.put(16,b16);
-        map.put(17,b17);
-        map.put(18,b18);
-        map.put(19,b19);
-        map.put(20,b20);
-        map.put(21,b21);
-        map.put(22,b22);
-        map.put(23,b23);
-        map.put(24,b24);
-        map.put(25,b25);
-        map.put(26,b26);
-        map.put(27,b27);
-        map.put(28,b28);
-        map.put(29,b29);
-        map.put(30,b30);
-        map.put(31,b31);
-        map.put(32,b32);
-        for (int idx=1; idx<=map.size(); idx++) {
-            System.out.println(idx);
-            Button button=map.get(idx);
-            button.setOnAction((event) ->{
+        buttonMap.put(1,b1);
+        buttonMap.put(2,b2);
+        buttonMap.put(3,b3);
+        buttonMap.put(4,b4);
+        buttonMap.put(5,b5);
+        buttonMap.put(6,b6);
+        buttonMap.put(7,b7);
+        buttonMap.put(8,b8);
+        buttonMap.put(9,b9);
+        buttonMap.put(10,b10);
+        buttonMap.put(11,b11);
+        buttonMap.put(12,b12);
+        buttonMap.put(13,b13);
+        buttonMap.put(14,b14);
+        buttonMap.put(15,b15);
+        buttonMap.put(16,b16);
+        buttonMap.put(17,b17);
+        buttonMap.put(18,b18);
+        buttonMap.put(19,b19);
+        buttonMap.put(20,b20);
+        buttonMap.put(21,b21);
+        buttonMap.put(22,b22);
+        buttonMap.put(23,b23);
+        buttonMap.put(24,b24);
+        buttonMap.put(25,b25);
+        buttonMap.put(26,b26);
+        buttonMap.put(27,b27);
+        buttonMap.put(28,b28);
+        buttonMap.put(29,b29);
+        buttonMap.put(30,b30);
+        buttonMap.put(31,b31);
+        buttonMap.put(32,b32);
+        for (int idx=1; idx<= numSquares; idx++) {
+            Button button= buttonMap.get(idx);
+            button.setOnAction((event) -> {
                 onAction(button);
             });
         }
     }
 
     private Button getButton(int num) {
-        return map.get(num);
+        return buttonMap.get(num);
     }
 }
