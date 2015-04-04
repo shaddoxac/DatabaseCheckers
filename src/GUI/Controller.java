@@ -159,11 +159,17 @@ public class Controller {
             for (int idx=0; idx<game.pieceMoves.size(); idx++) {
                 if (game.pieceMoves.get(idx).getDestination()==moveBitLocation) {
                     game.commitMove(game.pieceMoves.get(idx));
+                    updateMoves();
                     setCheckerLocations();
                     removeSelections();
                 }
             }
     	}
+    }
+
+    private void updateMoves() {
+        turnCount++;
+        numMoves.setText(Integer.toString(turnCount));
     }
 
     private void removeSelections() {

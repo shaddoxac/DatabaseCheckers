@@ -30,7 +30,6 @@ public class Game {
 
     public void commitMove(Move move) {
         int bitBoard=getBitBoard(move.getType());
-        System.out.println("bitboard = "+ bitBoard);
         bitBoard=bitBoard & ~move.getLocation();
         bitBoard=bitBoard | move.getDestination();
         setBitBoard(bitBoard, move.getType());
@@ -168,7 +167,7 @@ public class Game {
     }
 
     private void setBitBoard(int bitBoard, PieceType pieceType) {
-        if (pieceType.equals(PieceType.BLACK)) {board.blackPos=bitBoard; System.out.println("blackpos = "+ board.blackPos);}
+        if (pieceType.equals(PieceType.BLACK)) {board.blackPos=bitBoard;}
         else if (pieceType.equals(PieceType.WHITE)) {board.whitePos=bitBoard;}
         else if (pieceType.equals(PieceType.BLACKKING)) {board.blackKingPos=bitBoard;}
         else {board.whiteKingPos=bitBoard;}
@@ -183,7 +182,6 @@ public class Game {
 
     private boolean checkJump(Move move) {
         if (isNotEdge(move.getDestination()) && isEnemyOccupied(move)) {//TODO move.getDestination is not correct value
-            System.out.println("in checkjump: "+getNumRepresentation(move.getDestination()));
             if (!spaceAfterJumpOccupied(move)) {
                 hasJumps=true;
                 return true;
