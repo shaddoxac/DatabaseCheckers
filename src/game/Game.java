@@ -5,12 +5,12 @@ import java.util.ArrayList;
 
 public class Game {
     private Player currentTurn;
-    private Board board;
 
+    public Board board;
     public boolean hasJumps;
     public boolean gameOver;
     public Player winner;
-    public ArrayList<Move> currentMoves=new ArrayList<Move>();
+    public ArrayList<Move> currentMoves=new ArrayList<>();
 
     private int upperBound=0xFFF00000;
 
@@ -27,10 +27,19 @@ public class Game {
     }
 
 
+    public void commitMove(Move move) {
+        int bitBoard=getBitBoard(move.getType());
+        bitBoard=bitBoard & ~move.getLocation();
+        bitBoard=bitBoard | move.getDestination();
+        setBitBoard(bitBoard, move.getType());
+        if (hasJumps) {
+            removePieces(move.getSequentialJumps());
+        }
+    }
+
     public void changeTurn() {
         currentTurn=currentTurn.other();
     }
-
 
     public void analyzeBoard() {
         hasJumps=false;
@@ -48,6 +57,22 @@ public class Game {
         }
     }
 
+    public boolean spaceOccupied(int dest) {
+        return !spaceNotOccupied(dest);
+    }
+
+    public boolean spaceNotOccupied(int dest) {
+        return isNotOccupied(board.whitePos, dest) || isNotOccupied(board.blackPos, dest) || isNotOccupied(board.blackKingPos, dest) || isNotOccupied(board.whiteKingPos, dest);
+    }
+
+    public boolean spacePlayerOccupied(int loc) {
+        return !(isNotOccupied(board.blackPos, loc) || isNotOccupied(board.blackKingPos, loc));
+    }
+
+    public int getBitRepresentation(int num) {
+        return 1 << (num-1);
+    }
+
     private void gameOver(Player winner) {
         gameOver=true;
         this.winner=winner;
@@ -55,7 +80,7 @@ public class Game {
 
     private void eraseNonJumpMoves() {
         for (int idx=0; idx<currentMoves.size(); idx++) {
-            if (!currentMoves.get(idx).isJump) {
+            if (!currentMoves.get(idx).isJump()) {
                 currentMoves.remove(idx);
                 idx--;
             }
@@ -92,11 +117,16 @@ public class Game {
         checkMove(tempMove);
     }
 
-    private void commitMove(PieceType pieceType, int loc, int dest) {
-        int bitBoard=getBitBoard(pieceType);
-        bitBoard=bitBoard & ~loc;
-        bitBoard=bitBoard | dest;
-        setBitBoard(bitBoard,pieceType);
+    private void removePieces(ArrayList<Piece> jumps) {
+        for (Piece jumped : jumps) {removePiece(jumped);}
+    }
+
+    private void removePiece(Piece piece) {
+        int changedBit= 0xFFFFFFFF & ~ piece.location;
+        if (piece.type.equals(PieceType.BLACK)) {board.blackPos=board.blackPos & changedBit;}
+        else if (piece.type.equals(PieceType.WHITE)) {board.whitePos=board.whitePos & changedBit;}
+        else if (piece.type.equals(PieceType.BLACKKING)) {board.blackKingPos=board.blackKingPos & changedBit;}
+        else {board.whiteKingPos=board.whiteKingPos & changedBit;}
     }
 
     private void setBitBoard(int bitBoard, PieceType pieceType) {
@@ -114,7 +144,7 @@ public class Game {
     }
 
     private boolean checkJump(Move move) {
-        if (isNotEdge(move.destination)) {
+        if (isNotEdge(move.getDestination())) {
             if (!nextSpaceOccupied(move)) {
                 hasJumps=true;
                 return true;
@@ -125,35 +155,35 @@ public class Game {
 
     private boolean nextSpaceOccupied(Move move) {
         int newDest=getJumpDestination(move);
-        return spaceNotOccupied(new Move(move.getType(), move.getLocation(), newDest));
+        return spaceNotOccupied(newDest);
     }
 
-    private int getJumpDestination(Move move) {
-        if (move.getLocation() > move.destination) {
-            if (move.getLocation()-5==move.destination) {
-                return move.destination-4;
+    private int getJumpDestination(Move move) {//TODO check this
+        if (move.getLocation() > move.getDestination()) {
+            if (move.getLocation()-5==move.getDestination()) {
+                return move.getDestination() >> 4;
             }
             else {
-                return move.destination-3;
+                return move.getDestination() >> 3;
             }
         }
         else {
-            if (move.getLocation()+5==move.destination) {
-                return move.destination+4;
+            if (move.getLocation()+5==move.getDestination()) {
+                return move.getDestination() << 4;
             }
             else {
-                return move.destination+3;
+                return move.getDestination() << 3;
             }
         }
     }
 
     private void checkMove(Move move) {
-        if (inBounds(move.destination)) {
-            if (spaceNotOccupied(move)) {
+        if (inBounds(move.getDestination())) {
+            if (spaceNotOccupied(move.getDestination())) {
                 currentMoves.add(move);
             }
             else if (checkJump(move)) {
-                move.isJump=true;
+                move.setJump(true);
                 currentMoves.add(move);
             }
         }
@@ -172,10 +202,6 @@ public class Game {
 
     private boolean inBounds(int dest) {
         return !(dest < 0 || dest > upperBound);
-    }
-
-    private boolean spaceNotOccupied(Move move) {
-        return isNotOccupied(board.whitePos, move.destination) || isNotOccupied(board.blackPos, move.destination) || isNotOccupied(board.blackKingPos, move.destination) || isNotOccupied(board.whiteKingPos, move.destination);
     }
 
     private boolean isNotOccupied(int bucket, int dest) {
