@@ -123,7 +123,7 @@ public class Game {
             if (comparator!=0) {
                 getValidMoves(new Piece(type,idx));
             }
-            idx=idx>>1;
+            idx=idx << 1;
         }
     }
 
@@ -138,7 +138,7 @@ public class Game {
     }
 
     private void removePiece(Piece piece) {
-        int changedBit= 0xFFFFFFFF & ~ piece.location;
+        int changedBit= ~piece.location;
         if (piece.type.equals(PieceType.BLACK)) {board.blackPos=board.blackPos & changedBit;}
         else if (piece.type.equals(PieceType.WHITE)) {board.whitePos=board.whitePos & changedBit;}
         else if (piece.type.equals(PieceType.BLACKKING)) {board.blackKingPos=board.blackKingPos & changedBit;}

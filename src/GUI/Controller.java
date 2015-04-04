@@ -131,7 +131,9 @@ public class Controller {
             int location = numSquares - locationMap.get(b);
             System.out.println(location);
             location = game.getBitRepresentation(location);
-            System.out.println(location + "\n");
+            System.out.println(location);
+            int test=game.getNumRepresentation(location);
+            System.out.println(test + "\n");
             if (game.spaceOccupied(location)) {
                 PieceType type=game.getPieceType(location);
                 if (spacePlayerOccupied(type)) {
