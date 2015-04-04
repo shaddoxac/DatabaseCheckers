@@ -141,13 +141,14 @@ public class Controller {
     	moveBox = new Image("/img/Wooden Board/move_tile.png");
     	createSelectionBox();
     }
-    
+
     private void clearLegalMoves() {
     	if (!legalMoves.isEmpty()){
     		for (Button move : legalMoves) {
         		move.setGraphic(new ImageView(emptyTile));
         	}
     	}
+        legalMoves.clear();
     }
     
     private void selectMove(Button b) {

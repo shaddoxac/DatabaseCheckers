@@ -85,9 +85,7 @@ public class Game {
                     checkDestination(piece, 3);
                 }
             }
-            if (!isRightBorder(piece.location)) {
-                checkDestination(piece, 4);
-            }
+            checkDestination(piece, 4);
         }
     }
 
