@@ -86,8 +86,11 @@ public class Game {
         return !spaceOccupied(dest);
     }
 
-    public boolean spacePlayerOccupied(int loc) {
-        return !(isNotOccupied(board.blackPos, loc) && isNotOccupied(board.blackKingPos, loc));
+    public boolean spaceOccupied(Player team, int loc) {
+        if (team.equals(Player.BLACK)) {
+            return (isOccupied(board.blackPos, loc) || isOccupied(board.blackKingPos, loc));
+        }
+        return (isOccupied(board.whitePos, loc) || isOccupied(board.whiteKingPos, loc));
     }
 
     public PieceType getPieceType(int dest) {
@@ -169,7 +172,8 @@ public class Game {
     }
 
     private boolean checkJump(Move move) {
-        if (isNotEdge(move.getDestination())) {
+        if (isNotEdge(move.getDestination()) && isEnemyOccupied(move)) {//TODO move.getDestination is not correct value
+            System.out.println("in checkjump: "+getNumRepresentation(move.getDestination()));
             if (!spaceAfterJumpOccupied(move)) {
                 hasJumps=true;
                 return true;
@@ -178,6 +182,10 @@ public class Game {
         return false;
     }
 
+    private boolean isEnemyOccupied(Move move) {
+        Player otherTeam=move.getType().getTeam().other();
+        return spaceOccupied(otherTeam, move.getDestination());
+    }
     private boolean spaceAfterJumpOccupied(Move move) {
         int newDest=getJumpDestination(move);
         return spaceOccupied(newDest);
@@ -205,11 +213,11 @@ public class Game {
     private void checkMove(Move move) {
         if (inBounds(move.getDestination())) {
             if (spaceNotOccupied(move.getDestination())) {
-                System.out.println("in checkMove"+getNumRepresentation(move.getDestination()));
                 currentMoves.add(move);
                 pieceMoves.add(move);
             }
             else if (checkJump(move)) {
+                System.out.println("jump dest= "+getNumRepresentation(getJumpDestination(move)));
                 move.setDestination(getJumpDestination(move));
                 move.setJump(true);
                 currentMoves.add(move);
