@@ -48,8 +48,8 @@ public class Controller {
 	@FXML
 	ChoiceBox<String> difficultyBox;
 
-	private Image whiteSprite, blackSprite, whiteKingSprite, blackKingSprite;
-    private ImageView selectionBox, moveBox;
+	private Image emptyTile, whiteSprite, blackSprite, whiteKingSprite, blackKingSprite, moveBox;
+    private ImageView selectionBox;
 	private Game game;
     private int turnCount=0;
     private Button selectedButton;
@@ -112,12 +112,13 @@ public class Controller {
 
     
     private void createSprites() {
+    	emptyTile = new Image("/img/Wooden Board/black_tile.png");
     	blackSprite = new Image("/img/Wooden Board/black_occupied_tile.png");
     	whiteSprite = new Image("/img/Wooden Board/white_occupied_tile.png");
     	blackKingSprite = new Image("/img/Wooden Board/blackKing_tile.png");
     	whiteKingSprite = new Image("/img/Wooden Board/whiteKing_tile.png");
+    	moveBox = new Image("/img/Wooden Board/move_tile.png");
     	createSelectionBox();
-    	createMoveBox();
     }
 
     private void commitTurn() {
@@ -132,17 +133,45 @@ public class Controller {
             if (game.spaceOccupied(location)) {
                 PieceType type=game.getPieceType(location);
                 if (spacePlayerOccupied(type)) {
-                    setHighlight(b);
+                    setSelected(b);
                     Piece piece = new Piece(type,location);
                     game.getValidMoves(piece);
                     showPossibleMoves(game.pieceMoves);
                     //use game.currentMoves to highlight moves of piece
                 }
-            } else { 
-
-            }
+            } else {selectMove(b);}
         }
     }
+    
+    private void selectMove(Button b) {
+    	if (selectedButton != null){
+    		int selectedLocation = numSquares - locationMap.get(selectedButton);
+        	int selectedBitLocation = game.getBitRepresentation(selectedLocation);
+        	int moveLocation = numSquares - locationMap.get(b);
+        	int moveBitLocation = game.getBitRepresentation(moveLocation);
+        	PieceType selectedType = game.getPieceType(selectedBitLocation);
+        	Piece selectedPiece = new Piece(selectedType, selectedBitLocation);
+        	Move move = new Move(selectedType, selectedBitLocation, moveBitLocation);
+        	game.getValidMoves(selectedPiece);
+        	if (game.pieceMoves.contains(move)){
+        		moveSprite(selectedType, selectedLocation, moveLocation);
+        	}
+    	}
+    }
+    
+    private void moveSprite(PieceType type, int location, int destination) {
+		buttonMap.get(location).setGraphic(new ImageView(emptyTile));
+    	if (type.equals(PieceType.BLACK)){
+    		buttonMap.get(destination).setGraphic(new ImageView(blackSprite));
+    	}else if (type.equals(PieceType.BLACKKING)){
+    		buttonMap.get(destination).setGraphic(new ImageView(blackKingSprite));
+    	}else if (type.equals(PieceType.WHITE)){
+    		buttonMap.get(destination).setGraphic(new ImageView(whiteSprite));
+    	}else if (type.equals(PieceType.WHITEKING)){
+    		buttonMap.get(destination).setGraphic(new ImageView(whiteKingSprite));
+    	}
+    }
+    
 
 	private void switchTurns() {
 		String currentTurn = turnIndicator.getText();
@@ -179,7 +208,7 @@ public class Controller {
         }
     }
 
-	private void setHighlight(Button b) {
+	private void setSelected(Button b) {
 		selectedButton = (b.equals(selectedButton)) ? null : b;
 		if (selectedButton != null) {
 			selectionBox.setLayoutX(b.getLayoutX());
@@ -194,7 +223,8 @@ public class Controller {
     	for (Move move : currentMoves) {
     		int tileNum = (numSquares+1) - game.getNumRepresentation(move.getDestination());
     		Button tileButton = buttonMap.get(tileNum);
-    		tileButton.setGraphic(moveBox);
+    		ImageView moveTile = new ImageView(moveBox);
+    		tileButton.setGraphic(moveTile);
     	}
     }
 
@@ -203,13 +233,6 @@ public class Controller {
         selectionBox = new ImageView(selectionImage);
         selectionBox.setVisible(false);
         canvas.getChildren().add(selectionBox);
-    }
-    
-    private void createMoveBox() {
-    	Image moveImage = new Image("/img/Wooden Board/move_tile.png");
-    	moveBox = new ImageView(moveImage);
-    	moveBox.setVisible(false);
-    	canvas.getChildren().add(moveBox);
     }
 
     private void setUpBoxes() {

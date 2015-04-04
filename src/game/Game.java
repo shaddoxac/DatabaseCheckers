@@ -79,7 +79,7 @@ public class Game {
     }
 
     public boolean spacePlayerOccupied(int loc) {
-        return !(isNotOccupied(board.blackPos, loc) || isNotOccupied(board.blackKingPos, loc));
+        return !(isNotOccupied(board.blackPos, loc) && isNotOccupied(board.blackKingPos, loc));
     }
 
     public PieceType getPieceType(int dest) {
