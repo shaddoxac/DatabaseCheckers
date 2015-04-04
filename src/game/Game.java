@@ -226,8 +226,8 @@ public class Game {
         return space >= 0xF0000000 || space <= 0xF;
     }
     private boolean isVerticalBorder(int space) {return isLeftBorder(space) || isRightBorder(space);}
-    private boolean isLeftBorder(int space) {return (space & 8080808)!=0;}
-    private boolean isRightBorder(int space) {return (space & 10101010)!=0;}
+    private boolean isLeftBorder(int space) {return (space & 0x8080808)!=0;}
+    private boolean isRightBorder(int space) {return (space & 0x10101010)!=0;}
 
     private boolean inBounds(int dest) {
         return (dest>0 || dest==lastIndex);
