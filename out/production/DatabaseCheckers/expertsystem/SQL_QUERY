@@ -7,8 +7,8 @@ WHERE '#whitePawns#' LIKE (
 						SELECT WhiteKings FROM #tableName#
 						WHERE '#blackKings#' LIKE (
 								SELECT BlackKings FROM #tableName#
-						) >= #blackKingThreshold#
-				) >= #whiteKingThreshold#
-		) >= #blackPawnThreshold#
-) >= #whitePawnThreshold#
+						)
+				)
+		)
+)
 ORDER BY score DESC;

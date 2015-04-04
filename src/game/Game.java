@@ -13,7 +13,7 @@ public class Game {
     public ArrayList<Move> currentMoves=new ArrayList<>();
     public ArrayList<Move> pieceMoves=new ArrayList<>();
 
-    private int upperBound=0xFFF00000;
+    private int lastIndex=-2147483648;
 
     public Game() {
         currentTurn=Player.BLACK;
@@ -71,15 +71,15 @@ public class Game {
     }
 
     public boolean spaceOccupied(int dest) {
-        return !spaceNotOccupied(dest);
+        return isOccupied(board.whitePos, dest) || isOccupied(board.blackPos, dest) || isOccupied(board.blackKingPos, dest) || isOccupied(board.whiteKingPos, dest);
     }
 
     public boolean spaceNotOccupied(int dest) {
-        return isNotOccupied(board.whitePos, dest) || isNotOccupied(board.blackPos, dest) || isNotOccupied(board.blackKingPos, dest) || isNotOccupied(board.whiteKingPos, dest);
+        return !spaceOccupied(dest);
     }
 
     public boolean spacePlayerOccupied(int loc) {
-        return !(isNotOccupied(board.blackPos, loc) || isNotOccupied(board.blackKingPos, loc));
+        return !(isNotOccupied(board.blackPos, loc) && isNotOccupied(board.blackKingPos, loc));
     }
 
     public PieceType getPieceType(int dest) {
@@ -89,7 +89,7 @@ public class Game {
         return PieceType.BLACKKING;
     }
     public int getBitRepresentation(int num) {
-        return 1 << (num);
+        return 1 << (num-1);
     }
     public int getNumRepresentation(int bits) {//make sure this doesn't edit important information
         int counter=1;
@@ -116,19 +116,20 @@ public class Game {
 
     private void analyzeGroup(int bitBoard, PieceType type) {
         int idx=1;
-        int comparator;
-        while (idx<bitBoard) {
-            System.out.println("idx="+idx);
-            comparator=idx & bitBoard;
-            if (comparator!=0) {
-                getValidMoves(new Piece(type,idx));
+        int temp;
+        while (idx!=lastIndex) {
+            temp=idx & bitBoard;
+            if (temp==idx) {
+                getValidMoves(new Piece(type, idx));
             }
             idx=idx << 1;
         }
     }
 
     private void checkDestination(Piece piece, int offset) {
+        System.out.println(getNumRepresentation(piece.location)+"   "+offset);
         int tempDestination=piece.location << offset;
+        System.out.println(getNumRepresentation(tempDestination));
         Move tempMove=new Move(piece.type, piece.location, tempDestination);
         checkMove(tempMove);
     }
@@ -161,7 +162,7 @@ public class Game {
 
     private boolean checkJump(Move move) {
         if (isNotEdge(move.getDestination())) {
-            if (!nextSpaceOccupied(move)) {
+            if (!spaceAfterJumpOccupied(move)) {
                 hasJumps=true;
                 return true;
             }
@@ -169,9 +170,9 @@ public class Game {
         return false;
     }
 
-    private boolean nextSpaceOccupied(Move move) {
+    private boolean spaceAfterJumpOccupied(Move move) {
         int newDest=getJumpDestination(move);
-        return spaceNotOccupied(newDest);
+        return spaceOccupied(newDest);
     }
 
     private int getJumpDestination(Move move) {//TODO check this
@@ -196,11 +197,12 @@ public class Game {
     private void checkMove(Move move) {
         if (inBounds(move.getDestination())) {
             if (spaceNotOccupied(move.getDestination())) {
-                move.setDestination(getJumpDestination(move));
+                System.out.println("in checkMove"+getNumRepresentation(move.getDestination()));
                 currentMoves.add(move);
                 pieceMoves.add(move);
             }
             else if (checkJump(move)) {
+                move.setDestination(getJumpDestination(move));
                 move.setJump(true);
                 currentMoves.add(move);
                 pieceMoves.add(move);
@@ -220,13 +222,13 @@ public class Game {
     }
 
     private boolean inBounds(int dest) {
-        return !(dest < 0 || dest > upperBound);
+        return (dest>0 || dest==lastIndex);
     }
 
-    private boolean isNotOccupied(int bucket, int dest) {
-        return (bucket & dest) == 0;
+    private boolean isOccupied(int bucket, int dest) {
+        return (bucket & dest) != 0;
     }
-    private boolean isOccupied(int bucket, int dest) {return !isNotOccupied(bucket,dest);}
+    private boolean isNotOccupied(int bucket, int dest) {return !isOccupied(bucket,dest);}
 
     private boolean isWhiteTurn() {
         return currentTurn.equals(Player.WHITE);

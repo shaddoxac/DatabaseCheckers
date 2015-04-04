@@ -12,10 +12,10 @@ public enum PieceType {
 
     public boolean[] getMovementOptions() {
         boolean[] movementOptions=new boolean[2];
-        if (this.equals(BLACKKING) || this.equals(WHITEKING) || this.equals(WHITE)) {
+        if (this.equals(BLACKKING) || this.equals(WHITEKING) || this.equals(BLACK)) {
             movementOptions[0]=true;
         }
-        if (this.equals(BLACKKING) || this.equals(WHITEKING) || this.equals(BLACK)) {
+        if (this.equals(BLACKKING) || this.equals(WHITEKING) || this.equals(WHITE)) {
             movementOptions[1]=true;
         }
         return movementOptions;
