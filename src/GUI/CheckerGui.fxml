@@ -39,6 +39,7 @@
                            </font>
                         </Text>
                         <Label fx:id="numMoves" prefHeight="26.0" prefWidth="137.0" />
+                        <Label fx:id="numMoves" prefHeight="31.0" prefWidth="200.0" />
                      </children>
                   </HBox>
                   <HBox prefHeight="29.0" prefWidth="200.0" />

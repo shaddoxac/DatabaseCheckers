@@ -38,7 +38,7 @@
                               <Font size="18.0" />
                            </font>
                         </Text>
-                        <TextField fx:id="numMoves" editable="false" />
+                        <Label fx:id="numMoves" prefHeight="31.0" prefWidth="200.0" />
                      </children>
                   </HBox>
                   <HBox prefHeight="29.0" prefWidth="200.0" />
@@ -63,7 +63,7 @@
          <left>
             <Pane fx:id="canvas" prefHeight="512.0" prefWidth="512.0" BorderPane.alignment="CENTER">
                <children>
-                  <ImageView fx:id="board" fitHeight="512.0" fitWidth="512.0" pickOnBounds="true" preserveRatio="true">
+                  <ImageView fx:id="boardImage" fitHeight="512.0" fitWidth="512.0" pickOnBounds="true" preserveRatio="true">
                      <image>
                         <Image url="@../img/Wooden%20Board/Game_Board2.png" />
                      </image>
