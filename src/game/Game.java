@@ -70,7 +70,7 @@ public class Game {
     }
 
     public int getBitRepresentation(int num) {
-        return 1 << (num-1);
+        return 1 << (num);
     }
 
     private void gameOver(Player winner) {

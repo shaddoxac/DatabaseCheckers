@@ -56,9 +56,10 @@ public class Controller {
     private HashMap<Integer,Button> buttonMap =new HashMap<>();
     private HashMap<Button,Integer> locationMap=new HashMap<>();
     private int selectedChar;
+    private boolean gameStarted=false;
     private final int numSquares = 32;
-	
-	@FXML
+
+    @FXML
 	private void initialize() {
         turnIndicator.setBackground(new Background(new BackgroundFill(Color.CHOCOLATE, CornerRadii.EMPTY, Insets.EMPTY)));
         turnIndicator.setStyle("-fx-text-inner-color: black;");
@@ -71,6 +72,7 @@ public class Controller {
 
     @FXML
     private void newGame() {
+        gameStarted=true;
         selectionBox.setVisible(false);
         game=new Game();
         board=game.board;
@@ -92,15 +94,20 @@ public class Controller {
     }
 
     private void onAction(Button b) {
-        int location=numSquares-locationMap.get(b);
-        location=game.getBitRepresentation(location);
-        if (game.spaceOccupied(location)) {
-            if (game.spacePlayerOccupied(location)) {
-                setHighlight(b);
-            }
-        }
-        else {
+        if (gameStarted) {
+            int location = numSquares - locationMap.get(b);
+            System.out.println(location);
+            location = game.getBitRepresentation(location);
+            System.out.println(location + "\n");
+            if (game.spaceOccupied(location)) {
+                if (game.spacePlayerOccupied(location)) {
+                    setHighlight(b);
+                    game.analyzeBoard();
+                    //use game.currentMoves to highlight moves of piece
+                }
+            } else {
 
+            }
         }
     }
 
