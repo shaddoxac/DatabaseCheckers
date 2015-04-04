@@ -2,9 +2,6 @@ package GUI;
 
 import game.*;
 
-import game.Board;
-import game.Game;
-import game.Player;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;

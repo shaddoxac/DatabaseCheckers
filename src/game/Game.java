@@ -71,11 +71,11 @@ public class Game {
     }
 
     public boolean spaceOccupied(int dest) {
-        return !spaceNotOccupied(dest);
+        return isOccupied(board.whitePos, dest) || isOccupied(board.blackPos, dest) || isOccupied(board.blackKingPos, dest) || isOccupied(board.whiteKingPos, dest);
     }
 
     public boolean spaceNotOccupied(int dest) {
-        return isNotOccupied(board.whitePos, dest) || isNotOccupied(board.blackPos, dest) || isNotOccupied(board.blackKingPos, dest) || isNotOccupied(board.whiteKingPos, dest);
+        return !spaceOccupied(dest);
     }
 
     public boolean spacePlayerOccupied(int loc) {
@@ -115,12 +115,14 @@ public class Game {
     }
 
     private void analyzeGroup(int bitBoard, PieceType type) {
+        System.out.println(type.getTeam().toString());
         int idx=1;
         int comparator;
-        while (idx<bitBoard) {
-            System.out.println("idx="+idx);
+        while (idx < upperBound) {
+            System.out.println("idx=" + idx);
             comparator=idx & bitBoard;
             if (comparator!=0) {
+                System.out.println(comparator);
                 getValidMoves(new Piece(type,idx));
             }
             idx=idx << 1;
@@ -223,10 +225,10 @@ public class Game {
         return !(dest < 0 || dest > upperBound);
     }
 
-    private boolean isNotOccupied(int bucket, int dest) {
-        return (bucket & dest) == 0;
+    private boolean isOccupied(int bucket, int dest) {
+        return (bucket & dest) != 0;
     }
-    private boolean isOccupied(int bucket, int dest) {return !isNotOccupied(bucket,dest);}
+    private boolean isNotOccupied(int bucket, int dest) {return !isOccupied(bucket,dest);}
 
     private boolean isWhiteTurn() {
         return currentTurn.equals(Player.WHITE);
