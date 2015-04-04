@@ -99,6 +99,7 @@ public class Game {
         if (isOccupied(board.whiteKingPos, dest)) {return PieceType.WHITEKING;}
         return PieceType.BLACKKING;
     }
+
     public int getBitRepresentation(int num) {
         return 1 << (num-1);
     }

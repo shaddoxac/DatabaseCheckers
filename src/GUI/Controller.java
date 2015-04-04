@@ -82,6 +82,24 @@ public class Controller {
         numWhiteDead = 0;
     	numBlackDead = 0;
     }
+
+    private void onAction(Button b) {
+        clearLegalMoves();
+        if (gameStarted) {
+            int location = numSquares+1 - locationMap.get(b);
+            location = game.getBitRepresentation(location);
+            if (game.spaceOccupied(location)) {
+                PieceType type=game.getPieceType(location);
+                if (spacePlayerOccupied(type)) {
+                    setSelected(b);
+                    Piece piece = new Piece(type,location);
+                    game.getValidMoves(piece);
+                    showPossibleMoves(game.pieceMoves);
+                    //use game.currentMoves to highlight moves of piece
+                }
+            } else {selectMove(b);}
+        }
+    }
     
     private void addToGraveyard(Player p) {
     	if (p.equals(Player.BLACK)){
@@ -133,24 +151,6 @@ public class Controller {
         		move.setGraphic(new ImageView(emptyTile));
         	}
     	}
-    }
-
-    private void onAction(Button b) {
-    	clearLegalMoves();
-        if (gameStarted) {
-            int location = numSquares+1 - locationMap.get(b);
-            location = game.getBitRepresentation(location);
-            if (game.spaceOccupied(location)) {
-                PieceType type=game.getPieceType(location);
-                if (spacePlayerOccupied(type)) {
-                    setSelected(b);
-                    Piece piece = new Piece(type,location);
-                    game.getValidMoves(piece);
-                    showPossibleMoves(game.pieceMoves);
-                    //use game.currentMoves to highlight moves of piece
-                }
-            } else {selectMove(b);}
-        }
     }
     
     private void selectMove(Button b) {
