@@ -192,7 +192,7 @@ public class Controller {
 
     private void showPossibleMoves(ArrayList<Move> currentMoves) {
     	for (Move move : currentMoves) {
-    		int tileNum = game.getNumRepresentation(move.getDestination());
+    		int tileNum = (numSquares+1) - game.getNumRepresentation(move.getDestination());
     		Button tileButton = buttonMap.get(tileNum);
     		tileButton.setGraphic(moveBox);
     	}

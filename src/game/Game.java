@@ -127,7 +127,9 @@ public class Game {
     }
 
     private void checkDestination(Piece piece, int offset) {
+        System.out.println(getNumRepresentation(piece.location)+"   "+offset);
         int tempDestination=piece.location << offset;
+        System.out.println(getNumRepresentation(tempDestination));
         Move tempMove=new Move(piece.type, piece.location, tempDestination);
         checkMove(tempMove);
     }
@@ -160,7 +162,7 @@ public class Game {
 
     private boolean checkJump(Move move) {
         if (isNotEdge(move.getDestination())) {
-            if (!nextSpaceOccupied(move)) {
+            if (!spaceAfterJumpOccupied(move)) {
                 hasJumps=true;
                 return true;
             }
@@ -168,9 +170,9 @@ public class Game {
         return false;
     }
 
-    private boolean nextSpaceOccupied(Move move) {
+    private boolean spaceAfterJumpOccupied(Move move) {
         int newDest=getJumpDestination(move);
-        return spaceNotOccupied(newDest);
+        return spaceOccupied(newDest);
     }
 
     private int getJumpDestination(Move move) {//TODO check this
@@ -194,13 +196,13 @@ public class Game {
 
     private void checkMove(Move move) {
         if (inBounds(move.getDestination())) {
-            System.out.println("inBounds");
             if (spaceNotOccupied(move.getDestination())) {
-                move.setDestination(getJumpDestination(move));
+                System.out.println("in checkMove"+getNumRepresentation(move.getDestination()));
                 currentMoves.add(move);
                 pieceMoves.add(move);
             }
             else if (checkJump(move)) {
+                move.setDestination(getJumpDestination(move));
                 move.setJump(true);
                 currentMoves.add(move);
                 pieceMoves.add(move);
