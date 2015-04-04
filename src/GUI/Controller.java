@@ -93,6 +93,7 @@ public class Controller {
 
     private void onAction(Button b) {
         int location=numSquares-locationMap.get(b);
+        location=game.getBitRepresentation(location);
         if (game.spaceOccupied(location)) {
             if (game.spacePlayerOccupied(location)) {
                 setHighlight(b);

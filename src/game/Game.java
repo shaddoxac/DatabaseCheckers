@@ -60,12 +60,17 @@ public class Game {
     public boolean spaceOccupied(int dest) {
         return !spaceNotOccupied(dest);
     }
+
     public boolean spaceNotOccupied(int dest) {
         return isNotOccupied(board.whitePos, dest) || isNotOccupied(board.blackPos, dest) || isNotOccupied(board.blackKingPos, dest) || isNotOccupied(board.whiteKingPos, dest);
     }
 
     public boolean spacePlayerOccupied(int loc) {
         return !(isNotOccupied(board.blackPos, loc) || isNotOccupied(board.blackKingPos, loc));
+    }
+
+    public int getBitRepresentation(int num) {
+        return 1 << (num-1);
     }
 
     private void gameOver(Player winner) {
