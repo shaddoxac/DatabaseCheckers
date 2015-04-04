@@ -61,12 +61,20 @@ public class Game {
     public void getValidMoves(Piece piece) {
         pieceMoves.clear();
         if (piece.down) {
-            checkDestination(piece, -5);
-            checkDestination(piece, -4);
+            if (!isRightBorder(piece.location)) {
+                checkDestination(piece, -5);
+            }
+            if (!isLeftBorder(piece.location)) {
+                checkDestination(piece, -4);
+            }
         }
         if (piece.up) {
-            checkDestination(piece, 5);
-            checkDestination(piece, 4);
+            if (!isLeftBorder(piece.location)) {
+                checkDestination(piece, 5);
+            }
+            if (!isRightBorder(piece.location)) {
+                checkDestination(piece, 4);
+            }
         }
     }
 
@@ -217,9 +225,9 @@ public class Game {
     private boolean isHorizontalBorder(int space) {
         return space >= 0xF0000000 || space <= 0xF;
     }
-    private boolean isVerticalBorder(int space) {
-        return (space & 0x181800)!=0;
-    }
+    private boolean isVerticalBorder(int space) {return isLeftBorder(space) || isRightBorder(space);}
+    private boolean isLeftBorder(int space) {return (space & 8080808)!=0;}
+    private boolean isRightBorder(int space) {return (space & 10101010)!=0;}
 
     private boolean inBounds(int dest) {
         return (dest>0 || dest==lastIndex);
