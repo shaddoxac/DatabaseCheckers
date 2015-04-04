@@ -16,7 +16,6 @@ import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 
-import java.lang.reflect.Field;
 import java.util.HashMap;
 
 public class Controller {
@@ -53,8 +52,6 @@ public class Controller {
     private Board board;
     private int turnCount=0;
     private Button selectedButton;
-
-    private Field field;
     private HashMap<Integer,Button> buttonMap =new HashMap<Integer,Button>();
     private HashMap<Button,Integer> locationMap=new HashMap<Button,Integer>();
     private final int numSquares = 32;
