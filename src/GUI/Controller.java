@@ -50,7 +50,6 @@ public class Controller {
 	private Image whiteSprite, blackSprite, whiteKingSprite, blackKingSprite;
     private ImageView selectionBox, moveBox;
 	private Game game;
-    private Board board;
     private int turnCount=0;
     private Button selectedButton;
     private HashMap<Integer,Button> buttonMap =new HashMap<>();
@@ -73,14 +72,13 @@ public class Controller {
 
     @FXML
     private void newGame() {
+        emptyGraveyards();
         gameStarted=true;
         selectionBox.setVisible(false);
         game=new Game();
-        board=game.board;
         setCheckerLocations();
         numWhiteDead = 0;
     	numBlackDead = 0;
-    	emptyGraveyards();
     }
     
     private void addToGraveyard(Player p) {
@@ -160,10 +158,10 @@ public class Controller {
 	}
 
     private void setCheckerLocations() {
-        setLocations(board.whitePos, whiteSprite);
-        setLocations(board.blackPos, blackSprite);
-        setLocations(board.whiteKingPos, whiteKingSprite);
-        setLocations(board.blackKingPos, blackKingSprite);
+        setLocations(game.board.whitePos, whiteSprite);
+        setLocations(game.board.blackPos, blackSprite);
+        setLocations(game.board.whiteKingPos, whiteKingSprite);
+        setLocations(game.board.blackKingPos, blackKingSprite);
     }
 
     private void setLocations(int type, Image image) {
