@@ -38,7 +38,7 @@
                               <Font size="18.0" />
                            </font>
                         </Text>
-                        <Label fx:id="numMoves" prefHeight="31.0" prefWidth="90.0" />
+                        <TextField fx:id="numMoves" editable="false" />
                      </children>
                   </HBox>
                   <HBox prefHeight="29.0" prefWidth="200.0" />
@@ -52,18 +52,7 @@
                         <ChoiceBox fx:id="difficultyBox" prefWidth="150.0" />
                      </children>
                   </HBox>
-                  <HBox prefHeight="29.0" prefWidth="200.0" />
-                  <HBox alignment="TOP_CENTER" prefHeight="32.0" prefWidth="200.0">
-                     <children>
-                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Board Style: ">
-                           <font>
-                              <Font size="18.0" />
-                           </font>
-                        </Text>
-                        <ChoiceBox fx:id="boardStyleBox" prefWidth="150.0" />
-                     </children>
-                  </HBox>
-                  <HBox prefHeight="29.0" prefWidth="200.0" />
+                  <HBox alignment="TOP_CENTER" prefHeight="32.0" prefWidth="200.0" />
                   <Pane fx:id="blackGraveyard" prefHeight="69.0" prefWidth="200.0" />
                   <HBox prefHeight="12.0" prefWidth="288.0" />
                   <Pane fx:id="whiteGraveyard" prefHeight="69.0" prefWidth="200.0" />
@@ -74,7 +63,7 @@
          <left>
             <Pane fx:id="canvas" prefHeight="512.0" prefWidth="512.0" BorderPane.alignment="CENTER">
                <children>
-                  <ImageView fx:id="boardImage" fitHeight="512.0" fitWidth="512.0" pickOnBounds="true" preserveRatio="true">
+                  <ImageView fx:id="board" fitHeight="512.0" fitWidth="512.0" pickOnBounds="true" preserveRatio="true">
                      <image>
                         <Image url="@../img/Wooden%20Board/Game_Board2.png" />
                      </image>
