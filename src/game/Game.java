@@ -30,6 +30,7 @@ public class Game {
 
     public void commitMove(Move move) {
         int bitBoard=getBitBoard(move.getType());
+        System.out.println("bitboard = "+ bitBoard);
         bitBoard=bitBoard & ~move.getLocation();
         bitBoard=bitBoard | move.getDestination();
         setBitBoard(bitBoard, move.getType());
@@ -61,16 +62,28 @@ public class Game {
     public void getValidMoves(Piece piece) {
         pieceMoves.clear();
         if (piece.down) {
-            if (!isRightBorder(piece.location)) {
-                checkDestination(piece, -5);
+            if (inOddRow(piece.location)) {
+                if (!isRightBorder(piece.location)) {
+                    checkDestination(piece, -5);
+                }
             }
-            if (!isLeftBorder(piece.location)) {
-                checkDestination(piece, -4);
+            else {
+                if (!isLeftBorder(piece.location)) {
+                    checkDestination(piece, -3);
+                }
             }
+            checkDestination(piece, -4);
         }
         if (piece.up) {
-            if (!isLeftBorder(piece.location)) {
-                checkDestination(piece, 5);
+            if (inOddRow(piece.location)) {
+                if (!isLeftBorder(piece.location)) {
+                    checkDestination(piece, 5);
+                }
+            }
+            else {
+                if (!isRightBorder(piece.location)) {
+                    checkDestination(piece, 3);
+                }
             }
             if (!isRightBorder(piece.location)) {
                 checkDestination(piece, 4);
@@ -139,9 +152,7 @@ public class Game {
     }
 
     private void checkDestination(Piece piece, int offset) {
-        System.out.println(getNumRepresentation(piece.location)+"   "+offset);
         int tempDestination=piece.location << offset;
-        System.out.println(getNumRepresentation(tempDestination));
         Move tempMove=new Move(piece.type, piece.location, tempDestination);
         checkMove(tempMove);
     }
@@ -159,7 +170,7 @@ public class Game {
     }
 
     private void setBitBoard(int bitBoard, PieceType pieceType) {
-        if (pieceType.equals(PieceType.BLACK)) {board.blackPos=bitBoard;}
+        if (pieceType.equals(PieceType.BLACK)) {board.blackPos=bitBoard; System.out.println("blackpos = "+ board.blackPos);}
         else if (pieceType.equals(PieceType.WHITE)) {board.whitePos=bitBoard;}
         else if (pieceType.equals(PieceType.BLACKKING)) {board.blackKingPos=bitBoard;}
         else {board.whiteKingPos=bitBoard;}
@@ -218,7 +229,6 @@ public class Game {
                 pieceMoves.add(move);
             }
             else if (checkJump(move)) {
-                System.out.println("jump dest= "+getNumRepresentation(getJumpDestination(move)));
                 move.setDestination(getJumpDestination(move));
                 move.setJump(true);
                 currentMoves.add(move);
@@ -237,6 +247,10 @@ public class Game {
     private boolean isVerticalBorder(int space) {return isLeftBorder(space) || isRightBorder(space);}
     private boolean isLeftBorder(int space) {return (space & 0x8080808)!=0;}
     private boolean isRightBorder(int space) {return (space & 0x10101010)!=0;}
+
+    private boolean inOddRow(int space) {
+        return (space & 0xF0F0F0F)!=0;
+    }
 
     private boolean inBounds(int dest) {
         return (dest>0 || dest==lastIndex);

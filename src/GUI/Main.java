@@ -27,4 +27,4 @@ public class Main extends Application {
 		launch(args);
 	}
 }
-//TODO piece 8 should move 3,4 not 4,5
+//TODO num

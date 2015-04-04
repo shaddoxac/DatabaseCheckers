@@ -95,7 +95,6 @@ public class Controller {
                     Piece piece = new Piece(type,location);
                     game.getValidMoves(piece);
                     showPossibleMoves(game.pieceMoves);
-                    //use game.currentMoves to highlight moves of piece
                 }
             } else {selectMove(b);}
         }
@@ -155,33 +154,49 @@ public class Controller {
     
     private void selectMove(Button b) {
     	if (selectedButton != null){
-    		int selectedLocation = numSquares - locationMap.get(selectedButton);
+            System.out.println("not null");
+    		int selectedLocation = locationMap.get(selectedButton);
+
         	int selectedBitLocation = game.getBitRepresentation(selectedLocation);
-        	int moveLocation = numSquares - locationMap.get(b);
+        	int moveLocation = numSquares+1 - locationMap.get(b);
         	int moveBitLocation = game.getBitRepresentation(moveLocation);
-        	PieceType selectedType = game.getPieceType(selectedBitLocation);
-        	Piece selectedPiece = new Piece(selectedType, selectedBitLocation);
-        	Move move = new Move(selectedType, selectedBitLocation, moveBitLocation);
-        	game.getValidMoves(selectedPiece);
-        	if (game.pieceMoves.contains(move)){
-        		moveSprite(selectedType, selectedLocation, moveLocation);
-        	}
+            System.out.println(moveBitLocation);
+
+            for (int idx=0; idx<game.pieceMoves.size(); idx++) {
+                System.out.println(game.pieceMoves.get(idx).getDestination());
+                if (game.pieceMoves.get(idx).getDestination()==moveBitLocation) {
+                    System.out.println("here");
+                    game.commitMove(game.pieceMoves.get(idx));
+                    //moveSprite(game.pieceMoves.get(idx));
+                    setCheckerLocations();
+                }
+            }
     	}
     }
     
-    private void moveSprite(PieceType type, int location, int destination) {
-		Button selectedTile = buttonMap.get(location);
-		selectedTile.setGraphic(new ImageView(emptyTile));
-		Button newTile = buttonMap.get(destination);
-    	if (type.equals(PieceType.BLACK)){
-    		newTile.setGraphic(new ImageView(blackSprite));
-    	}else if (type.equals(PieceType.BLACKKING)){
-    		newTile.setGraphic(new ImageView(blackKingSprite));
-    	}else if (type.equals(PieceType.WHITE)){
-    		newTile.setGraphic(new ImageView(whiteSprite));
-    	}else if (type.equals(PieceType.WHITEKING)){
-    		newTile.setGraphic(new ImageView(whiteKingSprite));
-    	}
+    private void moveSprite(Move move) {
+        clearTile(move.getLocation());
+        movePiece(move);
+
+    }
+
+    private void clearTile(int location) {
+        int loc=game.getNumRepresentation(location);
+        Button selectedTile = buttonMap.get(loc);
+        selectedTile.setGraphic(new ImageView(emptyTile));
+    }
+
+    private void movePiece(Move move) {
+        Button newTile = buttonMap.get(move.getDestination());
+        if (move.getType().equals(PieceType.BLACK)){
+            newTile.setGraphic(new ImageView(blackSprite));
+        }else if (move.getType().equals(PieceType.BLACKKING)){
+            newTile.setGraphic(new ImageView(blackKingSprite));
+        }else if (move.getType().equals(PieceType.WHITE)){
+            newTile.setGraphic(new ImageView(whiteSprite));
+        }else if (move.getType().equals(PieceType.WHITEKING)){
+            newTile.setGraphic(new ImageView(whiteKingSprite));
+        }
     }
     
 
