@@ -1,7 +1,6 @@
 package GUI;
 
-import game.Board;
-import game.Game;
+import game.*;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
@@ -16,6 +15,7 @@ import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Controller {
@@ -58,6 +58,8 @@ public class Controller {
     private int selectedChar;
     private boolean gameStarted=false;
     private final int numSquares = 32;
+    private int numWhiteDead;
+    private int numBlackDead;
 
     @FXML
 	private void initialize() {
@@ -66,8 +68,7 @@ public class Controller {
         setUpBoxes();
         createSprites();
         setUpButtons();
-        newGame();
-
+        fillGraveyards();
     }
 
     @FXML
@@ -77,7 +78,39 @@ public class Controller {
         game=new Game();
         board=game.board;
         setCheckerLocations();
+        numWhiteDead = 0;
+    	numBlackDead = 0;
+    	emptyGraveyards();
     }
+    
+    private void addToGraveyard(Player p) {
+    	if (p.equals(Player.BLACK)){
+    		ImageView dead = new ImageView(new Image("/img/Wooden Board/Peasant_Black.png"));
+    		dead.setLayoutX(numBlackDead*20);
+    		blackGraveyard.getChildren().add(dead);
+    		numBlackDead++;
+    	}else {
+    		ImageView dead = new ImageView(new Image("/img/Wooden Board/Peasant_White.png"));
+    		dead.setLayoutX(numWhiteDead*20);
+    		whiteGraveyard.getChildren().add(dead);
+    		numWhiteDead++;
+    	}
+    }
+    
+    private void fillGraveyards() {
+    	for (int i = 0; i<12; i++) {
+    		addToGraveyard(Player.BLACK);
+    		addToGraveyard(Player.WHITE);
+    	}
+    }
+    
+    private void emptyGraveyards() {
+    	whiteGraveyard.getChildren().clear();
+    	blackGraveyard.getChildren().clear();
+    	numWhiteDead = 0;
+    	numBlackDead = 0;
+    }
+
     
     private void createSprites() {
     	blackSprite = new Image("/img/Wooden Board/black_occupied_tile.png");
@@ -98,11 +131,16 @@ public class Controller {
             int location = numSquares - locationMap.get(b);
             System.out.println(location);
             location = game.getBitRepresentation(location);
-            System.out.println(location + "\n");
+            System.out.println(location);
+            int test=game.getNumRepresentation(location);
+            System.out.println(test + "\n");
             if (game.spaceOccupied(location)) {
-                if (game.spacePlayerOccupied(location)) {
+                PieceType type=game.getPieceType(location);
+                if (spacePlayerOccupied(type)) {
                     setHighlight(b);
-                    game.analyzeBoard();
+                    Piece piece = new Piece(type,location);
+                    game.getValidMoves(piece);
+                    showPossibleMoves(game.pieceMoves);
                     //use game.currentMoves to highlight moves of piece
                 }
             } else {
@@ -158,6 +196,10 @@ public class Controller {
 		else {selectionBox.setVisible(false);}
 	}
 
+    private void showPossibleMoves(ArrayList<Move> currentMoves) {
+
+    }
+
     private void createSelectionBox() {
         Image selectionImage = new Image("/img/Wooden Board/Selection_Highlight.png");
         selectionBox = new ImageView(selectionImage);
@@ -175,6 +217,10 @@ public class Controller {
     private void setUpBoxes() {
         difficultyBox.getItems().addAll("Easy", "Medium", "Hard");
         difficultyBox.setValue("Medium");
+    }
+
+    private boolean spacePlayerOccupied(PieceType type) {
+        return type.equals(PieceType.BLACK) || type.equals(PieceType.BLACKKING);
     }
     
     private void setUpButtons() {
