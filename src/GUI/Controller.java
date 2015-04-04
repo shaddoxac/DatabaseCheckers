@@ -60,6 +60,7 @@ public class Controller {
     private final int numSquares = 32;
     private int numWhiteDead;
     private int numBlackDead;
+    private ArrayList<Button> legalMoves = new ArrayList<Button>(); 
 
     @FXML
 	private void initialize() {
@@ -125,8 +126,17 @@ public class Controller {
 
         //game.commitMove(move);
     }
+    
+    private void clearLegalMoves() {
+    	if (!legalMoves.isEmpty()){
+    		for (Button move : legalMoves) {
+        		move.setGraphic(new ImageView(emptyTile));
+        	}
+    	}
+    }
 
     private void onAction(Button b) {
+    	clearLegalMoves();
         if (gameStarted) {
             int location = numSquares+1 - locationMap.get(b);
             location = game.getBitRepresentation(location);
@@ -160,15 +170,17 @@ public class Controller {
     }
     
     private void moveSprite(PieceType type, int location, int destination) {
-		buttonMap.get(location).setGraphic(new ImageView(emptyTile));
+		Button selectedTile = buttonMap.get(location);
+		selectedTile.setGraphic(new ImageView(emptyTile));
+		Button newTile = buttonMap.get(destination);
     	if (type.equals(PieceType.BLACK)){
-    		buttonMap.get(destination).setGraphic(new ImageView(blackSprite));
+    		newTile.setGraphic(new ImageView(blackSprite));
     	}else if (type.equals(PieceType.BLACKKING)){
-    		buttonMap.get(destination).setGraphic(new ImageView(blackKingSprite));
+    		newTile.setGraphic(new ImageView(blackKingSprite));
     	}else if (type.equals(PieceType.WHITE)){
-    		buttonMap.get(destination).setGraphic(new ImageView(whiteSprite));
+    		newTile.setGraphic(new ImageView(whiteSprite));
     	}else if (type.equals(PieceType.WHITEKING)){
-    		buttonMap.get(destination).setGraphic(new ImageView(whiteKingSprite));
+    		newTile.setGraphic(new ImageView(whiteKingSprite));
     	}
     }
     
@@ -223,6 +235,7 @@ public class Controller {
     	for (Move move : currentMoves) {
     		int tileNum = (numSquares+1) - game.getNumRepresentation(move.getDestination());
     		Button tileButton = buttonMap.get(tileNum);
+    		legalMoves.add(tileButton);
     		ImageView moveTile = new ImageView(moveBox);
     		tileButton.setGraphic(moveTile);
     	}
