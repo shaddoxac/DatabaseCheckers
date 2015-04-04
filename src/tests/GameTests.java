@@ -27,7 +27,7 @@ public class GameTests {
     @Test
     public void testConversions() {
         int num1=2;
-        int num2=0x2;
+        int num2=0x4;
         assertEquals(num1, num2);
         assertEquals(game.getBitRepresentation(num1), num2);
         assertEquals(game.getNumRepresentation(num2), num1);

@@ -126,7 +126,7 @@ public class Controller {
 
     private void onAction(Button b) {
         if (gameStarted) {
-            int location = numSquares - locationMap.get(b);
+            int location = numSquares - locationMap.get(b)+1;
             System.out.println(location);
             location = game.getBitRepresentation(location);
             System.out.println(location);

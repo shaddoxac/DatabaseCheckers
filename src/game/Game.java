@@ -89,7 +89,7 @@ public class Game {
         return PieceType.BLACKKING;
     }
     public int getBitRepresentation(int num) {
-        return 1 << (num);
+        return 1 << (num-1);
     }
     public int getNumRepresentation(int bits) {//make sure this doesn't edit important information
         int counter=1;
