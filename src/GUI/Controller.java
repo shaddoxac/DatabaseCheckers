@@ -81,6 +81,7 @@ public class Controller {
         setCheckerLocations();
         numWhiteDead = 0;
     	numBlackDead = 0;
+    	deselect();
     }
 
     private void onAction(Button b) {
@@ -154,18 +155,10 @@ public class Controller {
     
     private void selectMove(Button b) {
     	if (selectedButton != null){
-            System.out.println("not null");
-    		int selectedLocation = locationMap.get(selectedButton);
-
-        	int selectedBitLocation = game.getBitRepresentation(selectedLocation);
         	int moveLocation = numSquares+1 - locationMap.get(b);
         	int moveBitLocation = game.getBitRepresentation(moveLocation);
-            System.out.println(moveBitLocation);
-
             for (int idx=0; idx<game.pieceMoves.size(); idx++) {
-                System.out.println(game.pieceMoves.get(idx).getDestination());
                 if (game.pieceMoves.get(idx).getDestination()==moveBitLocation) {
-                    System.out.println("here");
                     game.commitMove(game.pieceMoves.get(idx));
                     //moveSprite(game.pieceMoves.get(idx));
                     setCheckerLocations();
@@ -236,7 +229,7 @@ public class Controller {
     }
 
 	private void setSelected(Button b) {
-		selectedButton = (b.equals(selectedButton)) ? null : b;
+		selectedButton = b;
 		if (selectedButton != null) {
 			selectionBox.setLayoutX(b.getLayoutX());
 			selectionBox.setLayoutY(b.getLayoutY());
@@ -244,6 +237,12 @@ public class Controller {
             selectedChar=locationMap.get(b);
 		}
 		else {selectionBox.setVisible(false);}
+	}
+	
+	private void deselect() {
+		selectionBox.setVisible(false);
+		selectedButton = null;
+		clearLegalMoves();
 	}
 
     private void showPossibleMoves(ArrayList<Move> currentMoves) {
