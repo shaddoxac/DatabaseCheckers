@@ -78,5 +78,5 @@ public abstract class InferenceEngine {
 		return query.executeQuery(queryString);
 	}
 	
-	public abstract ArrayList<Move> getMove(Board b, ArrayList<Move> legalMoves) throws SQLException;
+	public abstract Move getMove(Board b, ArrayList<Move> legalMoves) throws SQLException;
 }
