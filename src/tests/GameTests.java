@@ -49,8 +49,13 @@ public class GameTests {
         }
         else {
             getValidMoves(PieceType.BLACK, bits(12));
-            assertEquals(game.pieceMoves.size(),0);
+            assertEquals(game.pieceMoves.size(), 0);
         }
+    }
+
+    @Test
+    public void testJumps() {
+
     }
 
 
