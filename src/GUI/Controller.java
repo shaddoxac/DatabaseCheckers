@@ -1,7 +1,9 @@
 package GUI;
 
+import expertsystem.BasicAI;
+import expertsystem.InferenceEngine;
+import expertsystem.RandomAI;
 import game.*;
-
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
@@ -16,6 +18,7 @@ import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -60,7 +63,8 @@ public class Controller {
     private final int numSquares = 32;
     private int numWhiteDead;
     private int numBlackDead;
-    private ArrayList<Button> legalMoves = new ArrayList<Button>(); 
+    private ArrayList<Button> legalMoves = new ArrayList<Button>();
+    private InferenceEngine ai;
 
     @FXML
 	private void initialize() {
@@ -79,28 +83,21 @@ public class Controller {
         emptyGraveyards();
         gameStarted=true;
         selectionBox.setVisible(false);
-        game=new Game();
+        setUpAI();
+        game=new Game(ai);
         setCheckerLocations();
         numWhiteDead = 0;
     	numBlackDead = 0;
     	deselect();
     }
-
-    private void onAction(Button b) {
-        clearLegalMoves();
-        if (gameStarted) {
-            int location = numSquares+1 - locationMap.get(b);
-            location = game.getBitRepresentation(location);
-            if (game.spaceOccupied(location)) {
-                PieceType type=game.getPieceType(location);
-                if (spacePlayerOccupied(type)) {
-                    setSelected(b);
-                    Piece piece = new Piece(type,location);
-                    game.getValidMoves(piece);
-                    showPossibleMoves(game.pieceMoves);
-                }
-            } else {selectMove(b);}
-        }
+    
+    private void setUpAI()  {
+    	String difficulty = difficultyBox.getValue();
+    	if (difficulty.equals("easy")){
+    		ai=new RandomAI();
+    	}else if (difficulty.equals("medium")){
+    		ai = new BasicAI();
+    	}
     }
     
     private void addToGraveyard(Player p) {
@@ -131,6 +128,10 @@ public class Controller {
     	numBlackDead = 0;
     }
 
+    private void setUpBoxes() {
+        difficultyBox.getItems().addAll("Easy", "Medium", "Hard");
+        difficultyBox.setValue("Medium");
+    }
     
     private void createSprites() {
     	emptyTile = new Image("/img/Wooden Board/black_tile.png");
@@ -140,6 +141,13 @@ public class Controller {
     	whiteKingSprite = new Image("/img/Wooden Board/whiteKing_tile.png");
     	moveBox = new Image("/img/Wooden Board/move_tile.png");
     	createSelectionBox();
+    }
+    
+    private void createSelectionBox() {
+        Image selectionImage = new Image("/img/Wooden Board/Selection_Highlight.png");
+        selectionBox = new ImageView(selectionImage);
+        selectionBox.setVisible(false);
+        canvas.getChildren().add(selectionBox);
     }
 
     private void clearLegalMoves() {
@@ -151,90 +159,12 @@ public class Controller {
         legalMoves.clear();
     }
     
-    private void selectMove(Button b) {
-    	if (selectedButton != null){
-        	int moveLocation = numSquares+1 - locationMap.get(b);
-        	int moveBitLocation = game.getBitRepresentation(moveLocation);
-            for (int idx=0; idx<game.pieceMoves.size(); idx++) {
-                if (game.pieceMoves.get(idx).getDestination()==moveBitLocation) {
-                    game.commitMove(game.pieceMoves.get(idx));
-                    updateMoves();
-                    setCheckerLocations();
-                    deselect();
-                }
-            }deselect();
-    	}
-    }
-
-    private void updateMoves() {
+    private void updateTurnCount() {
         turnCount++;
         numMoves.setText(Integer.toString(turnCount));
     }
-
-    private void removeSelections() {
-        clearLegalMoves();
-        selectionBox.setVisible(false);
-    }
-
-    private void movePiece(Move move) {
-        Button newTile = buttonMap.get(move.getDestination());
-        if (move.getType().equals(PieceType.BLACK)){
-            newTile.setGraphic(new ImageView(blackSprite));
-        }else if (move.getType().equals(PieceType.BLACKKING)){
-            newTile.setGraphic(new ImageView(blackKingSprite));
-        }else if (move.getType().equals(PieceType.WHITE)){
-            newTile.setGraphic(new ImageView(whiteSprite));
-        }else if (move.getType().equals(PieceType.WHITEKING)){
-            newTile.setGraphic(new ImageView(whiteKingSprite));
-        }
-    }
     
-
-	private void switchTurns() {
-		String currentTurn = turnIndicator.getText();
-		boolean isPlayerTurn = currentTurn.equals("Your turn");
-		String newTurn = isPlayerTurn ? "CPU turn" : "Your turn";
-		String newColor = isPlayerTurn ? "white" : "black";
-		turnIndicator.setText(newTurn);
-		turnIndicator.setStyle("-fx-text-inner-color: " + newColor + ";");
-		game.changeTurn();
-	}
-
-    private void setCheckerLocations() {
-        clearAllTiles();
-        setLocations(game.board.whitePos, whiteSprite);
-        setLocations(game.board.blackPos, blackSprite);
-        setLocations(game.board.whiteKingPos, whiteKingSprite);
-        setLocations(game.board.blackKingPos, blackKingSprite);
-    }
-
-    private void clearAllTiles() {
-        ImageView imgView;
-        for (int i=1; i<=numSquares; i++) {
-            imgView=new ImageView(emptyTile);
-            buttonMap.get(i).setGraphic(imgView);
-        }
-    }
-
-    private void setLocations(int type, Image image) {
-        int tempBoard=type;
-        for (int counter=1; counter<numSquares+1; counter++) {
-            if ((tempBoard & 1)!=0) {
-                addChecker(numSquares+1-counter, image);
-            }
-            tempBoard=tempBoard>>1;
-        }
-    }
-
-    private void addChecker(int location, Image image) {
-        Button button = getButton(location);
-        if (button!=null) {
-            ImageView imgView=new ImageView(image);
-            button.setGraphic(imgView);
-        }
-    }
-
-	private void setSelected(Button b) {
+    private void setSelected(Button b) {
 		selectedButton = b;
 		if (selectedButton != null) {
 			selectionBox.setLayoutX(b.getLayoutX());
@@ -250,31 +180,120 @@ public class Controller {
 		selectedButton = null;
 		clearLegalMoves();
 	}
-
+	
+	private void switchTurns() throws SQLException {
+		String currentTurn = turnIndicator.getText();
+		boolean isPlayerTurn = currentTurn.equals("Your turn");
+		String newTurn = isPlayerTurn ? "CPU turn" : "Your turn";
+		String newColor = isPlayerTurn ? "white" : "black";
+		turnIndicator.setText(newTurn);
+		turnIndicator.setStyle("-fx-text-inner-color: " + newColor + ";");
+		game.changeTurn();
+		if (!game.isPlayerTurn()) {
+			requestAIMove();
+		}
+	}
+	
+	private void requestAIMove() throws SQLException {
+		game.commitAIMove();
+	}
+    
+    private void onAction(Button b) {
+        clearLegalMoves();
+        if (gameStarted && game.isPlayerTurn()) {
+            int location = numSquares+1 - locationMap.get(b);
+            location = game.getBitRepresentation(location);
+            if (game.spaceOccupied(location)) {
+                PieceType type=game.getPieceType(location);
+                if (spacePlayerOccupied(type)) {
+                    setSelected(b);
+                    Piece piece = new Piece(type,location);
+                    game.getValidMoves(piece);
+                    showPossibleMoves(game.pieceMoves);
+                }
+            } else {selectMove(b);}
+        }
+    }
+    
+    private boolean spacePlayerOccupied(PieceType type) {
+        return type.equals(PieceType.BLACK) || type.equals(PieceType.BLACKKING);
+    }
+    
     private void showPossibleMoves(ArrayList<Move> currentMoves) {
     	for (Move move : currentMoves) {
     		int tileNum = (numSquares+1) - game.getNumRepresentation(move.getDestination());
-    		Button tileButton = buttonMap.get(tileNum);
+    		Button tileButton = getButton(tileNum);
     		legalMoves.add(tileButton);
     		ImageView moveTile = new ImageView(moveBox);
     		tileButton.setGraphic(moveTile);
     	}
     }
-
-    private void createSelectionBox() {
-        Image selectionImage = new Image("/img/Wooden Board/Selection_Highlight.png");
-        selectionBox = new ImageView(selectionImage);
-        selectionBox.setVisible(false);
-        canvas.getChildren().add(selectionBox);
+    
+    private void selectMove(Button b) {
+    	if (selectedButton != null){
+        	int moveLocation = numSquares+1 - locationMap.get(b);
+        	int moveBitLocation = game.getBitRepresentation(moveLocation);
+            for (int idx=0; idx<game.pieceMoves.size(); idx++) {
+                if (game.pieceMoves.get(idx).getDestination()==moveBitLocation) {
+                    game.commitMove(game.pieceMoves.get(idx));
+                    updateTurnCount();
+                    setCheckerLocations();
+                    deselect();
+                    switchTurns();
+                }
+            }deselect();
+    	}
+    }
+    
+    private void setCheckerLocations() {
+        clearAllTiles();
+        setLocations(game.board.whitePos, whiteSprite);
+        setLocations(game.board.blackPos, blackSprite);
+        setLocations(game.board.whiteKingPos, whiteKingSprite);
+        setLocations(game.board.blackKingPos, blackKingSprite);
     }
 
-    private void setUpBoxes() {
-        difficultyBox.getItems().addAll("Easy", "Medium", "Hard");
-        difficultyBox.setValue("Medium");
+    private void clearAllTiles() {
+        ImageView imgView;
+        for (int i=1; i<=numSquares; i++) {
+            imgView=new ImageView(emptyTile);
+            getButton(i).setGraphic(imgView);
+        }
     }
 
-    private boolean spacePlayerOccupied(PieceType type) {
-        return type.equals(PieceType.BLACK) || type.equals(PieceType.BLACKKING);
+    private void setLocations(int type, Image checker) {
+        int tempBoard=type;
+        for (int counter=1; counter<numSquares+1; counter++) {
+            if ((tempBoard & 1)!=0) {
+                addChecker(numSquares+1-counter, checker);
+            }
+            tempBoard=tempBoard>>1;
+        }
+    }
+    
+    private void addChecker(int location, Image checker) {
+        Button button = getButton(location);
+        if (button!=null) {
+            ImageView imgView=new ImageView(checker);
+            button.setGraphic(imgView);
+        }
+    }
+    
+    private void movePiece(Move move) {
+        Button newTile = getButton(move.getDestination());
+        if (move.getType().equals(PieceType.BLACK)){
+            newTile.setGraphic(new ImageView(blackSprite));
+        }else if (move.getType().equals(PieceType.BLACKKING)){
+            newTile.setGraphic(new ImageView(blackKingSprite));
+        }else if (move.getType().equals(PieceType.WHITE)){
+            newTile.setGraphic(new ImageView(whiteSprite));
+        }else if (move.getType().equals(PieceType.WHITEKING)){
+            newTile.setGraphic(new ImageView(whiteKingSprite));
+        }
+    }
+    
+    private Button getButton(int num) {
+        return buttonMap.get(num);
     }
     
     private void setUpButtons() {
@@ -311,15 +330,11 @@ public class Controller {
         buttonMap.put(31,b31);
         buttonMap.put(32,b32);
         for (int idx=1; idx<= numSquares; idx++) {
-            Button button= buttonMap.get(idx);
+            Button button= getButton(idx);
             button.setOnAction((event) -> {
                 onAction(button);
             });
             locationMap.put(button,idx);
         }
-    }
-
-    private Button getButton(int num) {
-        return buttonMap.get(num);
     }
 }

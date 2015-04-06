@@ -1,6 +1,9 @@
 package game;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
+
+import expertsystem.InferenceEngine;
 
 
 public class Game {
@@ -14,10 +17,13 @@ public class Game {
     public ArrayList<Move> pieceMoves=new ArrayList<>();
 
     private int lastIndex=-2147483648;
+    
+    private InferenceEngine ai;
 
-    public Game() {
+    public Game(InferenceEngine ai) {
         currentTurn=Player.BLACK;
         board=new Board();
+        this.ai=ai;
         gameOver=false;
     }
 
@@ -37,9 +43,17 @@ public class Game {
             removePieces(move.getSequentialJumps());
         }
     }
+    
+    public void commitAIMove() throws SQLException {
+    	commitMove(ai.getMove(board, currentMoves));
+    }
 
     public void changeTurn() {
         currentTurn=currentTurn.other();
+    }
+    
+    public boolean isPlayerTurn() {
+    	return currentTurn == Player.BLACK;
     }
 
     public void analyzeBoard() {
