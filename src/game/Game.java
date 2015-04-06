@@ -1,6 +1,9 @@
 package game;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
+
+import expertsystem.InferenceEngine;
 
 
 public class Game {
@@ -14,10 +17,13 @@ public class Game {
     public ArrayList<Move> pieceMoves=new ArrayList<>();
 
     private int lastIndex=-2147483648;
+    
+    private InferenceEngine ai;
 
-    public Game() {
+    public Game(InferenceEngine ai) {
         currentTurn=Player.BLACK;
         board=new Board();
+        this.ai=ai;
         gameOver=false;
     }
 
@@ -37,9 +43,17 @@ public class Game {
             removePieces(move.getSequentialJumps());
         }
     }
+    
+    public void commitAIMove() throws SQLException {
+    	commitMove(ai.getMove(board, currentMoves));
+    }
 
     public void changeTurn() {
         currentTurn=currentTurn.other();
+    }
+    
+    public boolean isPlayerTurn() {
+    	return currentTurn == Player.BLACK;
     }
 
     public void analyzeBoard() {
@@ -61,11 +75,29 @@ public class Game {
     public void getValidMoves(Piece piece) {
         pieceMoves.clear();
         if (piece.down) {
-            checkDestination(piece, -5);
+            if (inOddRow(piece.location)) {
+                if (!isRightBorder(piece.location)) {
+                    checkDestination(piece, -5);
+                }
+            }
+            else {
+                if (!isLeftBorder(piece.location)) {
+                    checkDestination(piece, -3);
+                }
+            }
             checkDestination(piece, -4);
         }
         if (piece.up) {
-            checkDestination(piece, 5);
+            if (inOddRow(piece.location)) {
+                if (!isLeftBorder(piece.location)) {
+                    checkDestination(piece, 5);
+                }
+            }
+            else {
+                if (!isRightBorder(piece.location)) {
+                    checkDestination(piece, 3);
+                }
+            }
             checkDestination(piece, 4);
         }
     }
@@ -78,8 +110,11 @@ public class Game {
         return !spaceOccupied(dest);
     }
 
-    public boolean spacePlayerOccupied(int loc) {
-        return !(isNotOccupied(board.blackPos, loc) && isNotOccupied(board.blackKingPos, loc));
+    public boolean spaceOccupied(Player team, int loc) {
+        if (team.equals(Player.BLACK)) {
+            return (isOccupied(board.blackPos, loc) || isOccupied(board.blackKingPos, loc));
+        }
+        return (isOccupied(board.whitePos, loc) || isOccupied(board.whiteKingPos, loc));
     }
 
     public PieceType getPieceType(int dest) {
@@ -88,6 +123,7 @@ public class Game {
         if (isOccupied(board.whiteKingPos, dest)) {return PieceType.WHITEKING;}
         return PieceType.BLACKKING;
     }
+
     public int getBitRepresentation(int num) {
         return 1 << (num-1);
     }
@@ -127,9 +163,7 @@ public class Game {
     }
 
     private void checkDestination(Piece piece, int offset) {
-        System.out.println(getNumRepresentation(piece.location)+"   "+offset);
         int tempDestination=piece.location << offset;
-        System.out.println(getNumRepresentation(tempDestination));
         Move tempMove=new Move(piece.type, piece.location, tempDestination);
         checkMove(tempMove);
     }
@@ -161,7 +195,7 @@ public class Game {
     }
 
     private boolean checkJump(Move move) {
-        if (isNotEdge(move.getDestination())) {
+        if (isNotEdge(move.getDestination()) && isEnemyOccupied(move)) {//TODO move.getDestination is not correct value
             if (!spaceAfterJumpOccupied(move)) {
                 hasJumps=true;
                 return true;
@@ -170,6 +204,10 @@ public class Game {
         return false;
     }
 
+    private boolean isEnemyOccupied(Move move) {
+        Player otherTeam=move.getType().getTeam().other();
+        return spaceOccupied(otherTeam, move.getDestination());
+    }
     private boolean spaceAfterJumpOccupied(Move move) {
         int newDest=getJumpDestination(move);
         return spaceOccupied(newDest);
@@ -197,7 +235,6 @@ public class Game {
     private void checkMove(Move move) {
         if (inBounds(move.getDestination())) {
             if (spaceNotOccupied(move.getDestination())) {
-                System.out.println("in checkMove"+getNumRepresentation(move.getDestination()));
                 currentMoves.add(move);
                 pieceMoves.add(move);
             }
@@ -217,8 +254,12 @@ public class Game {
     private boolean isHorizontalBorder(int space) {
         return space >= 0xF0000000 || space <= 0xF;
     }
-    private boolean isVerticalBorder(int space) {
-        return (space & 0x181800)!=0;
+    private boolean isVerticalBorder(int space) {return isLeftBorder(space) || isRightBorder(space);}
+    private boolean isLeftBorder(int space) {return (space & 0x8080808)!=0;}
+    private boolean isRightBorder(int space) {return (space & 0x10101010)!=0;}
+
+    private boolean inOddRow(int space) {
+        return (space & 0xF0F0F0F)!=0;
     }
 
     private boolean inBounds(int dest) {
