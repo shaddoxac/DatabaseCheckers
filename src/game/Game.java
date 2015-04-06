@@ -8,7 +8,7 @@ import java.util.ArrayList;
 
 public class Game {
     private Player currentTurn;
-
+    private InferenceEngine ai;
     public Board board;
     public boolean hasJumps;
     public boolean gameOver;
@@ -17,27 +17,19 @@ public class Game {
     public ArrayList<Move> pieceMoves=new ArrayList<>();
 
     private int lastIndex=-2147483648;
-    
-    private InferenceEngine ai;
 
     public Game() {
-            currentTurn=Player.BLACK;
-            board=new Board();
-            gameOver=false;
+        currentTurn=Player.BLACK;
+        board=new Board();
+        gameOver=false;
     }
+
     public Game(InferenceEngine ai) {
         currentTurn=Player.BLACK;
         board=new Board();
         this.ai=ai;
         gameOver=false;
     }
-
-    public Game(Board board) {
-        currentTurn=Player.WHITE;
-        gameOver=true;
-        this.board=board;
-    }
-
 
     public void commitMove(Move move) {
         int bitBoard=getBitBoard(move.getType());
@@ -49,9 +41,8 @@ public class Game {
         }
     }
     
-    public void commitAIMove() {
-        try {commitMove(ai.getMove(board, currentMoves));}
-        catch (SQLException e) { e.printStackTrace();}
+    public void commitAIMove() throws SQLException {
+    	commitMove(ai.getMove(board, currentMoves));
     }
 
     public void changeTurn() {
@@ -131,7 +122,6 @@ public class Game {
     }
 
     public int getBitRepresentation(int num) {
-        if (num==lastIndex) {
         return 1 << (num-1);
     }
     public int getNumRepresentation(int bits) {//make sure this doesn't edit important information
