@@ -25,28 +25,47 @@ public class KnowledgeDesigner {
 		jout.println("b - black pawn");
 		jout.println("B - BLACK KING");
 		jout.println("o - empty square");
-		jout.println("Space - unused square");
+		jout.println("    Optional:");
+		jout.println("x - unused square");
 		jout.println("<====================>\n");
 		
 		boolean done = false;
 		while(!done) {
 			String input = "";
-			for(int a=0; a<4; a++) {
-				jout.print(" ");
-				for(int b=0; b<4; b++) {
-					input +=jin.next();
-				}
-				jout.println();
-				for(int b=0; b<4; b++) {
-					input += jin.next();
-				}
-				jout.println();
+			for(int a=1; a<=8; a++) {
+				jout.print("ROW " + a + ":\t");
+				input += jin.nextLine();
 			}
+			input = input.replaceAll("x", "");
 			
-			String whitePawns = "",
-					blackPawns = "",
-					whiteKings = "",
-					blackKings = "";
+			int firstSignificantVal = input.length(),
+					lastSignificantVal = input.lastIndexOf('w');
+			
+			if(input.indexOf('w') != -1 && input.indexOf('w') < firstSignificantVal)
+				firstSignificantVal = input.indexOf('W');
+			if(input.indexOf('W') != -1 && input.indexOf('W') < firstSignificantVal)
+				firstSignificantVal = input.indexOf('W');
+			if(input.indexOf('b') != -1 && input.indexOf('b') < firstSignificantVal)
+				firstSignificantVal = input.indexOf('b');
+			if(input.indexOf('B') != -1 && input.indexOf('B') < firstSignificantVal)
+				firstSignificantVal = input.indexOf('B');
+			
+			if(input.lastIndexOf('W') > lastSignificantVal)
+				lastSignificantVal = input.lastIndexOf('W');
+			if(input.lastIndexOf('b') > lastSignificantVal)
+				lastSignificantVal = input.lastIndexOf('b');
+			if(input.lastIndexOf('B') < firstSignificantVal)
+				lastSignificantVal = input.lastIndexOf('B');
+			
+			jout.println(firstSignificantVal + ", " + lastSignificantVal);
+			jout.println(input);
+			input = input.substring(firstSignificantVal, lastSignificantVal+1);
+			jout.println(input);
+			
+			String whitePawns = "%",
+					blackPawns = "%",
+					whiteKings = "%",
+					blackKings = "%";
 			
 			for(int i=0; i<input.length(); i++) {
 				switch(input.charAt(i)) {
@@ -82,6 +101,11 @@ public class KnowledgeDesigner {
 					break;
 				}
 			}
+			
+			whitePawns += "%";
+			blackPawns += "%";
+			whiteKings += "%";
+			blackKings += "%";
 			
 			jout.print("\nMOVE?\tof form ##>[N/S][E/W]\t");
 			String move = jin.next().toUpperCase();
