@@ -154,16 +154,15 @@ public class Controller {
     private void selectMove(Button b) {
     	if (selectedButton != null){
         	int moveLocation = numSquares+1 - locationMap.get(b);
-
         	int moveBitLocation = game.getBitRepresentation(moveLocation);
             for (int idx=0; idx<game.pieceMoves.size(); idx++) {
                 if (game.pieceMoves.get(idx).getDestination()==moveBitLocation) {
                     game.commitMove(game.pieceMoves.get(idx));
                     updateMoves();
                     setCheckerLocations();
-                    removeSelections();
+                    deselect();
                 }
-            }
+            }deselect();
     	}
     }
 
