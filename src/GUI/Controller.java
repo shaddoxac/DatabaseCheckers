@@ -91,9 +91,9 @@ public class Controller {
     private void setUpAI()  {
     	String difficulty = difficultyBox.getValue();
         try {
-            if (difficulty.equals("easy")) {
+            if (difficulty.equals("Easy")) {
                 ai = new RandomAI();
-            } else if (difficulty.equals("medium")) {
+            } else if (difficulty.equals("Medium")) {
                 ai = new BasicAI();
             }
         }
@@ -189,18 +189,22 @@ public class Controller {
 		turnIndicator.setText(newTurn);
 		turnIndicator.setStyle("-fx-text-inner-color: " + newColor + ";");
 		game.changeTurn();
-		if (!game.isPlayerTurn()) {
+		if (game.isWhiteTurn()) {
 			requestAIMove();
 		}
 	}
 	
 	private void requestAIMove() {
 		game.commitAIMove();
+		updateTurnCount();
+        setCheckerLocations();
+        deselect();
+		switchTurns();
 	}
     
     private void onAction(Button b) {
         clearLegalMoves();
-        if (gameStarted && game.isPlayerTurn()) {
+        if (gameStarted && !game.isWhiteTurn()) {
             int location = numSquares+1 - locationMap.get(b);
             location = game.getBitRepresentation(location);
             if (game.spaceOccupied(location)) {
@@ -239,7 +243,7 @@ public class Controller {
                     updateTurnCount();
                     setCheckerLocations();
                     deselect();
-                    switchTurns();
+					switchTurns();
                 }
             }deselect();
     	}

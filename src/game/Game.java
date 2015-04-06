@@ -50,16 +50,16 @@ public class Game {
     }
     
     public void commitAIMove() {
+    	for (Move m: currentMoves) {
+        	System.out.println(m.getLocation() + "\n");
+    	}System.out.println(board.whitePos + "\n");
         try {commitMove(ai.getMove(board, currentMoves));}
         catch (SQLException e) { e.printStackTrace();}
     }
 
     public void changeTurn() {
         currentTurn=currentTurn.other();
-    }
-    
-    public boolean isPlayerTurn() {
-    	return currentTurn == Player.BLACK;
+        analyzeBoard();
     }
 
     public void analyzeBoard() {
@@ -131,7 +131,6 @@ public class Game {
     }
 
     public int getBitRepresentation(int num) {
-        if (num==lastIndex) {
         return 1 << (num-1);
     }
     public int getNumRepresentation(int bits) {//make sure this doesn't edit important information
@@ -278,7 +277,7 @@ public class Game {
     }
     private boolean isNotOccupied(int bucket, int dest) {return !isOccupied(bucket,dest);}
 
-    private boolean isWhiteTurn() {
+    public boolean isWhiteTurn() {
         return currentTurn.equals(Player.WHITE);
     }
 }
