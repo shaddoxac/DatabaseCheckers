@@ -41,18 +41,30 @@ public class Game {
         }
     }
     
-    public void commitAIMove() throws SQLException {
-    	commitMove(ai.getMove(board, currentMoves));
+    public void commitAIMove() {
+    	for (Move m: currentMoves) {
+        	System.out.println(m.getLocation() + "\n");
+    	}System.out.println(board.whitePos + "\n");
+        try {commitMove(ai.getMove(board, currentMoves));}
+        catch (SQLException e) { e.printStackTrace();}
+    }
+    
+    public boolean isPlayerTurn() {
+    	return currentTurn.equals(Player.BLACK);
     }
 
     public void changeTurn() {
         System.out.println(currentTurn);
         currentTurn=currentTurn.other();
+<<<<<<< HEAD
         System.out.println(currentTurn);
     }
     
     public boolean isPlayerTurn() {
     	return currentTurn == Player.BLACK;
+=======
+        analyzeBoard();
+>>>>>>> origin/master
     }
 
     public void analyzeBoard() {

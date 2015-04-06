@@ -91,9 +91,9 @@ public class Controller {
     private void setUpAI()  {
     	String difficulty = difficultyBox.getValue();
         try {
-            if (difficulty.equals("easy")) {
+            if (difficulty.equals("Easy")) {
                 ai = new RandomAI();
-            } else if (difficulty.equals("medium")) {
+            } else if (difficulty.equals("Medium")) {
                 ai = new BasicAI();
             }
         }
@@ -195,9 +195,12 @@ public class Controller {
 	}
 	
 	private void requestAIMove() {
-        try {game.commitAIMove();}
-        catch (SQLException e) {e.printStackTrace();}
-    }
+		game.commitAIMove();
+		updateTurnCount();
+        setCheckerLocations();
+        deselect();
+		switchTurns();
+	}
     
     private void onAction(Button b) {
         clearLegalMoves();
@@ -240,7 +243,7 @@ public class Controller {
                     updateTurnCount();
                     setCheckerLocations();
                     deselect();
-                    switchTurns();
+					switchTurns();
                 }
             }deselect();
     	}
