@@ -195,8 +195,9 @@ public class Controller {
 	}
 	
 	private void requestAIMove() {
-		game.commitAIMove();
-	}
+        try {game.commitAIMove();}
+        catch (SQLException e) {e.printStackTrace();}
+    }
     
     private void onAction(Button b) {
         clearLegalMoves();
