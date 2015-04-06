@@ -47,7 +47,10 @@ public class Game {
     	}System.out.println(board.whitePos + "\n");
         try {commitMove(ai.getMove(board, currentMoves));}
         catch (SQLException e) { e.printStackTrace();}
-
+    }
+    
+    public boolean isPlayerTurn() {
+    	return currentTurn.equals(Player.BLACK);
     }
 
     public void changeTurn() {
@@ -57,13 +60,13 @@ public class Game {
 
     public void analyzeBoard() {
         hasJumps=false;
-        if (isWhiteTurn()) {
-            analyzeGroup(board.whitePos,PieceType.WHITE);
-            analyzeGroup(board.whiteKingPos,PieceType.WHITEKING);
-        }
-        else {
+        if (isPlayerTurn()) {
             analyzeGroup(board.blackPos, PieceType.BLACK);
             analyzeGroup(board.blackKingPos, PieceType.BLACKKING);
+        }
+        else {
+            analyzeGroup(board.whitePos,PieceType.WHITE);
+            analyzeGroup(board.whiteKingPos,PieceType.WHITEKING);
         }
         if (currentMoves.size()==0) {gameOver(currentTurn.other());}
         else if (hasJumps) {
@@ -269,8 +272,4 @@ public class Game {
         return (bucket & dest) != 0;
     }
     private boolean isNotOccupied(int bucket, int dest) {return !isOccupied(bucket,dest);}
-
-    public boolean isWhiteTurn() {
-        return currentTurn.equals(Player.WHITE);
-    }
 }

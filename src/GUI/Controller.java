@@ -189,7 +189,7 @@ public class Controller {
 		turnIndicator.setText(newTurn);
 		turnIndicator.setStyle("-fx-text-inner-color: " + newColor + ";");
 		game.changeTurn();
-		if (game.isWhiteTurn()) {
+		if (!game.isPlayerTurn()) {
 			requestAIMove();
 		}
 	}
@@ -204,7 +204,7 @@ public class Controller {
     
     private void onAction(Button b) {
         clearLegalMoves();
-        if (gameStarted && !game.isWhiteTurn()) {
+        if (gameStarted && game.isPlayerTurn()) {
             int location = numSquares+1 - locationMap.get(b);
             location = game.getBitRepresentation(location);
             if (game.spaceOccupied(location)) {
