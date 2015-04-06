@@ -56,15 +56,7 @@ public class Game {
     public void changeTurn() {
         System.out.println(currentTurn);
         currentTurn=currentTurn.other();
-<<<<<<< HEAD
         System.out.println(currentTurn);
-    }
-    
-    public boolean isPlayerTurn() {
-    	return currentTurn == Player.BLACK;
-=======
-        analyzeBoard();
->>>>>>> origin/master
     }
 
     public void analyzeBoard() {
