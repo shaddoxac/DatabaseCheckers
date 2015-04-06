@@ -46,7 +46,9 @@ public class Game {
     }
 
     public void changeTurn() {
+        System.out.println(currentTurn);
         currentTurn=currentTurn.other();
+        System.out.println(currentTurn);
     }
     
     public boolean isPlayerTurn() {
@@ -62,6 +64,10 @@ public class Game {
         else {
             analyzeGroup(board.whitePos,PieceType.WHITE);
             analyzeGroup(board.whiteKingPos,PieceType.WHITEKING);
+        }
+        for (int idx=0; idx< currentMoves.size(); idx++) {
+            Move move=currentMoves.get(idx);
+            System.out.println(getNumRepresentation(move.getDestination()));
         }
         if (currentMoves.size()==0) {gameOver(currentTurn.other());}
         else if (hasJumps) {
@@ -155,7 +161,7 @@ public class Game {
             if (temp==idx) {
                 getValidMoves(new Piece(type, idx));
             }
-            idx=idx << 1;
+            idx= idx << 1;
         }
     }
 
