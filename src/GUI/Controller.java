@@ -1,8 +1,6 @@
 package GUI;
 
-import expertsystem.BasicAI;
-import expertsystem.InferenceEngine;
-import expertsystem.RandomAI;
+import expertsystem.*;
 import game.*;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
@@ -58,12 +56,11 @@ public class Controller {
     private Button selectedButton;
     private HashMap<Integer,Button> buttonMap =new HashMap<>();
     private HashMap<Button,Integer> locationMap=new HashMap<>();
-    private int selectedChar;
     private boolean gameStarted=false;
     private final int numSquares = 32;
     private int numWhiteDead;
     private int numBlackDead;
-    private ArrayList<Button> legalMoves = new ArrayList<Button>();
+    private ArrayList<Button> legalMoves = new ArrayList<>();
     private InferenceEngine ai;
 
     @FXML
@@ -93,11 +90,15 @@ public class Controller {
     
     private void setUpAI()  {
     	String difficulty = difficultyBox.getValue();
-    	if (difficulty.equals("easy")){
-    		ai=new RandomAI();
-    	}else if (difficulty.equals("medium")){
-    		ai = new BasicAI();
-    	}
+        try {
+            if (difficulty.equals("easy")) {
+                ai = new RandomAI();
+            } else if (difficulty.equals("medium")) {
+                ai = new BasicAI();
+            }
+        }
+        catch (SQLException ex) {ex.printStackTrace();}
+        catch (ClassNotFoundException ex2) {ex2.printStackTrace();}
     }
     
     private void addToGraveyard(Player p) {
@@ -170,7 +171,6 @@ public class Controller {
 			selectionBox.setLayoutX(b.getLayoutX());
 			selectionBox.setLayoutY(b.getLayoutY());
 			selectionBox.setVisible(true);
-            selectedChar=locationMap.get(b);
 		}
 		else {selectionBox.setVisible(false);}
 	}
@@ -181,7 +181,7 @@ public class Controller {
 		clearLegalMoves();
 	}
 	
-	private void switchTurns() throws SQLException {
+	private void switchTurns() {
 		String currentTurn = turnIndicator.getText();
 		boolean isPlayerTurn = currentTurn.equals("Your turn");
 		String newTurn = isPlayerTurn ? "CPU turn" : "Your turn";
@@ -194,7 +194,7 @@ public class Controller {
 		}
 	}
 	
-	private void requestAIMove() throws SQLException {
+	private void requestAIMove() {
 		game.commitAIMove();
 	}
     
@@ -279,19 +279,6 @@ public class Controller {
         }
     }
     
-    private void movePiece(Move move) {
-        Button newTile = getButton(move.getDestination());
-        if (move.getType().equals(PieceType.BLACK)){
-            newTile.setGraphic(new ImageView(blackSprite));
-        }else if (move.getType().equals(PieceType.BLACKKING)){
-            newTile.setGraphic(new ImageView(blackKingSprite));
-        }else if (move.getType().equals(PieceType.WHITE)){
-            newTile.setGraphic(new ImageView(whiteSprite));
-        }else if (move.getType().equals(PieceType.WHITEKING)){
-            newTile.setGraphic(new ImageView(whiteKingSprite));
-        }
-    }
-    
     private Button getButton(int num) {
         return buttonMap.get(num);
     }
@@ -329,6 +316,10 @@ public class Controller {
         buttonMap.put(30,b30);
         buttonMap.put(31,b31);
         buttonMap.put(32,b32);
+        setButtonActions();
+    }
+
+    private void setButtonActions() {
         for (int idx=1; idx<= numSquares; idx++) {
             Button button= getButton(idx);
             button.setOnAction((event) -> {

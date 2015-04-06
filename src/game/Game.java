@@ -1,9 +1,9 @@
 package game;
 
+import expertsystem.InferenceEngine;
+
 import java.sql.SQLException;
 import java.util.ArrayList;
-
-import expertsystem.InferenceEngine;
 
 
 public class Game {
@@ -20,6 +20,11 @@ public class Game {
     
     private InferenceEngine ai;
 
+    public Game() {
+            currentTurn=Player.BLACK;
+            board=new Board();
+            gameOver=false;
+    }
     public Game(InferenceEngine ai) {
         currentTurn=Player.BLACK;
         board=new Board();
@@ -44,8 +49,9 @@ public class Game {
         }
     }
     
-    public void commitAIMove() throws SQLException {
-    	commitMove(ai.getMove(board, currentMoves));
+    public void commitAIMove() {
+        try {commitMove(ai.getMove(board, currentMoves));}
+        catch (SQLException e) { e.printStackTrace();}
     }
 
     public void changeTurn() {
@@ -125,6 +131,7 @@ public class Game {
     }
 
     public int getBitRepresentation(int num) {
+        if (num==lastIndex) {
         return 1 << (num-1);
     }
     public int getNumRepresentation(int bits) {//make sure this doesn't edit important information
