@@ -83,7 +83,6 @@ public class Game {
             }
             else {
                 if (!isRightBorder(piece.location)) {
-                    //System.out.println(getNumRepresentation(piece.location));
                     checkDestination(piece, -5);
                 }
             }
@@ -163,7 +162,6 @@ public class Game {
             }
             temp=idx & bitBoard;
             if (temp!=0) {
-                //System.out.println(getNumRepresentation(temp));
                 getValidMoves(new Piece(type, idx));
             }
             idx= idx << 1;
@@ -172,14 +170,12 @@ public class Game {
 
     private void checkDestination(Piece piece, int offset) {
         int tempDestination;
-        System.out.println(getNumRepresentation(piece.location));
         if (offset > 0) {
             tempDestination=piece.location << offset;
         }
         else {
             tempDestination=piece.location >>> -offset;
         }
-        System.out.println("tempDest= "+getNumRepresentation(tempDestination)+"\n");
         Move tempMove=new Move(piece.type, piece.location, tempDestination);
         checkMove(tempMove);
     }
@@ -229,9 +225,9 @@ public class Game {
         return spaceOccupied(newDest);
     }
 
-    private int getJumpDestination(Move move) {//TODO check this
+    private int getJumpDestination(Move move) {//TODO fix
         if (move.getLocation() > move.getDestination()) {
-            if (move.getLocation()-5==move.getDestination()) {
+            if (move.getLocation() >>> 5==move.getDestination()) {
                 return move.getDestination() >>> 4;
             }
             else {
@@ -239,7 +235,7 @@ public class Game {
             }
         }
         else {
-            if (move.getLocation()+5==move.getDestination()) {
+            if (move.getLocation() << 5==move.getDestination()) {
                 return move.getDestination() << 4;
             }
             else {
