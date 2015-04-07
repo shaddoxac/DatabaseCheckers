@@ -1,14 +1,14 @@
 package game;
 
+import expertsystem.InferenceEngine;
+
 import java.sql.SQLException;
 import java.util.ArrayList;
-
-import expertsystem.InferenceEngine;
 
 
 public class Game {
     private Player currentTurn;
-
+    private InferenceEngine ai;
     public Board board;
     public boolean hasJumps;
     public boolean gameOver;
@@ -16,9 +16,13 @@ public class Game {
     public ArrayList<Move> currentMoves=new ArrayList<>();
     public ArrayList<Move> pieceMoves=new ArrayList<>();
 
-    private int lastIndex=-2147483648;
-    
-    private InferenceEngine ai;
+    private int lastIndex=0x80000000;
+
+    public Game() {
+        currentTurn=Player.BLACK;
+        board=new Board();
+        gameOver=false;
+    }
 
     public Game(InferenceEngine ai) {
         currentTurn=Player.BLACK;
@@ -27,14 +31,7 @@ public class Game {
         gameOver=false;
     }
 
-    public Game(Board board) {
-        currentTurn=Player.WHITE;
-        gameOver=true;
-        this.board=board;
-    }
-
-
-    public void commitMove(Move move) {
+    public Move commitMove(Move move) {
         int bitBoard=getBitBoard(move.getType());
         bitBoard=bitBoard & ~move.getLocation();
         bitBoard=bitBoard | move.getDestination();
@@ -42,29 +39,33 @@ public class Game {
         if (hasJumps) {
             removePieces(move.getSequentialJumps());
         }
+        return move;
     }
     
-    public void commitAIMove() throws SQLException {
-    	commitMove(ai.getMove(board, currentMoves));
+    public Move commitAIMove() {
+        try {return commitMove(ai.getMove(board, currentMoves));}
+        catch (SQLException e) {return null;}
+    }
+    
+    public boolean isPlayerTurn() {
+    	return currentTurn.equals(Player.BLACK);
     }
 
     public void changeTurn() {
         currentTurn=currentTurn.other();
-    }
-    
-    public boolean isPlayerTurn() {
-    	return currentTurn == Player.BLACK;
+        analyzeBoard();
     }
 
     public void analyzeBoard() {
         hasJumps=false;
-        if (isWhiteTurn()) {
-            analyzeGroup(board.whitePos,PieceType.WHITE);
-            analyzeGroup(board.whiteKingPos,PieceType.WHITEKING);
-        }
-        else {
+        currentMoves.clear();
+        if (isPlayerTurn()) {
             analyzeGroup(board.blackPos, PieceType.BLACK);
             analyzeGroup(board.blackKingPos, PieceType.BLACKKING);
+        }
+        else {
+            analyzeGroup(board.whitePos,PieceType.WHITE);
+            analyzeGroup(board.whiteKingPos,PieceType.WHITEKING);
         }
         if (currentMoves.size()==0) {gameOver(currentTurn.other());}
         else if (hasJumps) {
@@ -76,13 +77,13 @@ public class Game {
         pieceMoves.clear();
         if (piece.down) {
             if (inOddRow(piece.location)) {
-                if (!isRightBorder(piece.location)) {
-                    checkDestination(piece, -5);
+                if (!isLeftBorder(piece.location)) {
+                    checkDestination(piece, -3);
                 }
             }
             else {
-                if (!isLeftBorder(piece.location)) {
-                    checkDestination(piece, -3);
+                if (!isRightBorder(piece.location)) {
+                    checkDestination(piece, -5);
                 }
             }
             checkDestination(piece, -4);
@@ -103,14 +104,14 @@ public class Game {
     }
 
     public boolean spaceOccupied(int dest) {
-        return isOccupied(board.whitePos, dest) || isOccupied(board.blackPos, dest) || isOccupied(board.blackKingPos, dest) || isOccupied(board.whiteKingPos, dest);
+        return spaceOccupiedByTeam(Player.WHITE,dest) || spaceOccupiedByTeam(Player.BLACK,dest);
     }
 
     public boolean spaceNotOccupied(int dest) {
         return !spaceOccupied(dest);
     }
 
-    public boolean spaceOccupied(Player team, int loc) {
+    public boolean spaceOccupiedByTeam(Player team, int loc) {
         if (team.equals(Player.BLACK)) {
             return (isOccupied(board.blackPos, loc) || isOccupied(board.blackKingPos, loc));
         }
@@ -128,6 +129,7 @@ public class Game {
         return 1 << (num-1);
     }
     public int getNumRepresentation(int bits) {//make sure this doesn't edit important information
+        if (bits==lastIndex) {return 32;}
         int counter=1;
         while (bits>1) {
             bits=bits >> 1;
@@ -151,19 +153,29 @@ public class Game {
     }
 
     private void analyzeGroup(int bitBoard, PieceType type) {
+        boolean cond=true;
         int idx=1;
         int temp;
-        while (idx!=lastIndex) {
+        while (cond) {
+            if (idx==lastIndex) {
+                cond=false;
+            }
             temp=idx & bitBoard;
-            if (temp==idx) {
+            if (temp!=0) {
                 getValidMoves(new Piece(type, idx));
             }
-            idx=idx << 1;
+            idx= idx << 1;
         }
     }
 
     private void checkDestination(Piece piece, int offset) {
-        int tempDestination=piece.location << offset;
+        int tempDestination;
+        if (offset > 0) {
+            tempDestination=piece.location << offset;
+        }
+        else {
+            tempDestination=piece.location >>> -offset;
+        }
         Move tempMove=new Move(piece.type, piece.location, tempDestination);
         checkMove(tempMove);
     }
@@ -206,24 +218,24 @@ public class Game {
 
     private boolean isEnemyOccupied(Move move) {
         Player otherTeam=move.getType().getTeam().other();
-        return spaceOccupied(otherTeam, move.getDestination());
+        return spaceOccupiedByTeam(otherTeam, move.getDestination());
     }
     private boolean spaceAfterJumpOccupied(Move move) {
         int newDest=getJumpDestination(move);
         return spaceOccupied(newDest);
     }
 
-    private int getJumpDestination(Move move) {//TODO check this
+    private int getJumpDestination(Move move) {//TODO fix
         if (move.getLocation() > move.getDestination()) {
-            if (move.getLocation()-5==move.getDestination()) {
-                return move.getDestination() >> 4;
+            if (move.getLocation() >>> 5==move.getDestination()) {
+                return move.getDestination() >>> 4;
             }
             else {
-                return move.getDestination() >> 3;
+                return move.getDestination() >>> 3;
             }
         }
         else {
-            if (move.getLocation()+5==move.getDestination()) {
+            if (move.getLocation() << 5==move.getDestination()) {
                 return move.getDestination() << 4;
             }
             else {
@@ -270,8 +282,4 @@ public class Game {
         return (bucket & dest) != 0;
     }
     private boolean isNotOccupied(int bucket, int dest) {return !isOccupied(bucket,dest);}
-
-    private boolean isWhiteTurn() {
-        return currentTurn.equals(Player.WHITE);
-    }
 }
