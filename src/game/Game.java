@@ -83,6 +83,7 @@ public class Game {
             }
             else {
                 if (!isRightBorder(piece.location)) {
+                    //System.out.println(getNumRepresentation(piece.location));
                     checkDestination(piece, -5);
                 }
             }
@@ -104,14 +105,14 @@ public class Game {
     }
 
     public boolean spaceOccupied(int dest) {
-        return isOccupied(board.whitePos, dest) || isOccupied(board.blackPos, dest) || isOccupied(board.blackKingPos, dest) || isOccupied(board.whiteKingPos, dest);
+        return spaceOccupiedByTeam(Player.WHITE,dest) || spaceOccupiedByTeam(Player.BLACK,dest);
     }
 
     public boolean spaceNotOccupied(int dest) {
         return !spaceOccupied(dest);
     }
 
-    public boolean spaceOccupied(Player team, int loc) {
+    public boolean spaceOccupiedByTeam(Player team, int loc) {
         if (team.equals(Player.BLACK)) {
             return (isOccupied(board.blackPos, loc) || isOccupied(board.blackKingPos, loc));
         }
@@ -157,12 +158,13 @@ public class Game {
         int idx=1;
         int temp;
         while (cond) {
-            temp=idx & bitBoard;
-            if (temp==idx) {
-                getValidMoves(new Piece(type, idx));
-            }
             if (idx==lastIndex) {
                 cond=false;
+            }
+            temp=idx & bitBoard;
+            if (temp!=0) {
+                //System.out.println(getNumRepresentation(temp));
+                getValidMoves(new Piece(type, idx));
             }
             idx= idx << 1;
         }
@@ -170,13 +172,14 @@ public class Game {
 
     private void checkDestination(Piece piece, int offset) {
         int tempDestination;
+        System.out.println(getNumRepresentation(piece.location));
         if (offset > 0) {
             tempDestination=piece.location << offset;
         }
         else {
-            tempDestination=piece.location >> -offset;
+            tempDestination=piece.location >>> -offset;
         }
-
+        System.out.println("tempDest= "+getNumRepresentation(tempDestination)+"\n");
         Move tempMove=new Move(piece.type, piece.location, tempDestination);
         checkMove(tempMove);
     }
@@ -219,7 +222,7 @@ public class Game {
 
     private boolean isEnemyOccupied(Move move) {
         Player otherTeam=move.getType().getTeam().other();
-        return spaceOccupied(otherTeam, move.getDestination());
+        return spaceOccupiedByTeam(otherTeam, move.getDestination());
     }
     private boolean spaceAfterJumpOccupied(Move move) {
         int newDest=getJumpDestination(move);
@@ -229,10 +232,10 @@ public class Game {
     private int getJumpDestination(Move move) {//TODO check this
         if (move.getLocation() > move.getDestination()) {
             if (move.getLocation()-5==move.getDestination()) {
-                return move.getDestination() >> 4;
+                return move.getDestination() >>> 4;
             }
             else {
-                return move.getDestination() >> 3;
+                return move.getDestination() >>> 3;
             }
         }
         else {
