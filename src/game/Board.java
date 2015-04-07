@@ -32,7 +32,7 @@ public class Board {
         while (0 < tempNum) {
             value=tempNum & 1;
             sb.append(value);
-            tempNum=tempNum >> 1;
+            tempNum=tempNum >>> 1;
         }
         sb.reverse();
         return sb.toString();
