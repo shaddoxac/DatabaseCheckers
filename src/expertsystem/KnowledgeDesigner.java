@@ -25,13 +25,14 @@ public class KnowledgeDesigner {
 		jout.println("b - black pawn");
 		jout.println("B - BLACK KING");
 		jout.println("o - empty square");
-		jout.println("    Optional:");
+		jout.println("\n    Optional:");
 		jout.println("x - unused square");
 		jout.println("<====================>\n");
 		
 		boolean done = false;
 		while(!done) {
 			String input = "";
+			jin.nextLine(); //Scanner magic, to make the scanner work properly.
 			for(int a=1; a<=8; a++) {
 				jout.print("ROW " + a + ":\t");
 				input += jin.nextLine();
@@ -39,28 +40,31 @@ public class KnowledgeDesigner {
 			input = input.replaceAll("x", "");
 			
 			int firstSignificantVal = input.length(),
-					lastSignificantVal = input.lastIndexOf('w');
+					lastSignificantVal = -1;
 			
 			if(input.indexOf('w') != -1 && input.indexOf('w') < firstSignificantVal)
-				firstSignificantVal = input.indexOf('W');
+				firstSignificantVal = input.indexOf('w');
 			if(input.indexOf('W') != -1 && input.indexOf('W') < firstSignificantVal)
 				firstSignificantVal = input.indexOf('W');
 			if(input.indexOf('b') != -1 && input.indexOf('b') < firstSignificantVal)
 				firstSignificantVal = input.indexOf('b');
 			if(input.indexOf('B') != -1 && input.indexOf('B') < firstSignificantVal)
 				firstSignificantVal = input.indexOf('B');
+			if(firstSignificantVal == input.length())
+				firstSignificantVal = 0;
 			
+			if(input.lastIndexOf('w') > lastSignificantVal)
+				lastSignificantVal = input.lastIndexOf('w');
 			if(input.lastIndexOf('W') > lastSignificantVal)
 				lastSignificantVal = input.lastIndexOf('W');
 			if(input.lastIndexOf('b') > lastSignificantVal)
 				lastSignificantVal = input.lastIndexOf('b');
 			if(input.lastIndexOf('B') < firstSignificantVal)
 				lastSignificantVal = input.lastIndexOf('B');
+			if(lastSignificantVal == -1)
+				lastSignificantVal = input.length()-1;
 			
-			jout.println(firstSignificantVal + ", " + lastSignificantVal);
-			jout.println(input);
 			input = input.substring(firstSignificantVal, lastSignificantVal+1);
-			jout.println(input);
 			
 			String whitePawns = "%",
 					blackPawns = "%",
@@ -113,7 +117,7 @@ public class KnowledgeDesigner {
 			int score = jin.nextInt();
 			
 			String insert = "INSERT INTO " + table + " VALUES ( \'" + whitePawns + "\', \'" + blackPawns + "\', \'" + whiteKings + "\', \'" + blackKings + "\', \'" + move + "\', " + score + " );";
-			stmt.execute(insert);
+			//stmt.execute(insert);
 			
 			jout.print("\nCONTINUE?\t[Y/N]\t");
 			if(jin.next().toUpperCase().charAt(0) == 'N') {
