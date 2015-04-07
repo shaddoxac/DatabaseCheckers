@@ -196,12 +196,17 @@ public class Controller {
 	}
 	
 	private void requestAIMove() {
-		game.commitAIMove();
+		Move move=game.commitAIMove();
 		updateTurnCount();
         setCheckerLocations();
         deselect();
 		switchTurns();
+        showComputerMove(move);
 	}
+
+    private void showComputerMove(Move move) {
+
+    }
     
     private void onAction(Button b) {
         clearLegalMoves();

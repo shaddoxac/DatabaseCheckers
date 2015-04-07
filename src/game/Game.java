@@ -31,7 +31,7 @@ public class Game {
         gameOver=false;
     }
 
-    public void commitMove(Move move) {
+    public Move commitMove(Move move) {
         int bitBoard=getBitBoard(move.getType());
         bitBoard=bitBoard & ~move.getLocation();
         bitBoard=bitBoard | move.getDestination();
@@ -39,11 +39,12 @@ public class Game {
         if (hasJumps) {
             removePieces(move.getSequentialJumps());
         }
+        return move;
     }
     
-    public void commitAIMove() {
-        try {commitMove(ai.getMove(board, currentMoves));}
-        catch (SQLException e) { e.printStackTrace();}
+    public Move commitAIMove() {
+        try {return commitMove(ai.getMove(board, currentMoves));}
+        catch (SQLException e) {return null;}
     }
     
     public boolean isPlayerTurn() {
@@ -76,13 +77,13 @@ public class Game {
         pieceMoves.clear();
         if (piece.down) {
             if (inOddRow(piece.location)) {
-                if (!isRightBorder(piece.location)) {
-                    checkDestination(piece, -5);
+                if (!isLeftBorder(piece.location)) {
+                    checkDestination(piece, -3);
                 }
             }
             else {
-                if (!isLeftBorder(piece.location)) {
-                    checkDestination(piece, -3);
+                if (!isRightBorder(piece.location)) {
+                    checkDestination(piece, -5);
                 }
             }
             checkDestination(piece, -4);
