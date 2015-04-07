@@ -39,12 +39,26 @@ public class Game {
         if (hasJumps) {
             removePieces(move.getSequentialJumps());
         }
+        makeKings();
         return move;
     }
     
     public Move commitAIMove() {
         try {return commitMove(ai.getMove(board, currentMoves));}
         catch (SQLException e) {return null;}
+    }
+    
+    private void makeKings() {
+    	int blackPawns = board.blackPos;
+    	int whitePawns = board.whitePos;
+    	int blackKingRow = 0xF0000000;
+    	int whiteKingRow = 0xF;
+    	int newBlackKings = blackPawns & blackKingRow;
+    	int newWhiteKings = whitePawns & whiteKingRow;
+    	board.blackKingPos = board.blackKingPos | newBlackKings;
+    	board.whiteKingPos = board.whiteKingPos | newWhiteKings;
+    	board.blackPos = blackPawns & (blackPawns ^ board.blackKingPos);
+    	board.whitePos = whitePawns & (whitePawns ^ board.whiteKingPos);
     }
     
     public boolean isPlayerTurn() {

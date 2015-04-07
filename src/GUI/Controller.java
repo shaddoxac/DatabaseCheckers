@@ -50,7 +50,7 @@ public class Controller {
 	ChoiceBox<String> difficultyBox;
 
 	private Image emptyTile, whiteSprite, blackSprite, whiteKingSprite, blackKingSprite, moveBox;
-    private ImageView selectionBox;
+    private ImageView selectionBox, cpuBox1, cpuBox2;
 	private Game game;
     private int turnCount=0;
     private Button selectedButton;
@@ -83,9 +83,11 @@ public class Controller {
         setUpAI();
         game=new Game(ai);
         setCheckerLocations();
+        setPlayerTurn();
         numWhiteDead = 0;
     	numBlackDead = 0;
     	deselect();
+    	hideComputerMove();
     }
     
     private void setUpAI()  {
@@ -142,6 +144,7 @@ public class Controller {
     	blackKingSprite = new Image("/img/Wooden Board/blackKing_tile.png");
     	whiteKingSprite = new Image("/img/Wooden Board/whiteKing_tile.png");
     	moveBox = new Image("/img/Wooden Board/move_tile.png");
+    	createCPUBoxes();
     	createSelectionBox();
     }
     
@@ -150,6 +153,17 @@ public class Controller {
         selectionBox = new ImageView(selectionImage);
         selectionBox.setVisible(false);
         canvas.getChildren().add(selectionBox);
+    }
+    
+    private void createCPUBoxes() {
+    	Image img1 = new Image("/img/Wooden Board/CPU_Highlight.png");
+    	Image img2 = new Image("/img/Wooden Board/CPU_Highlight.png");
+    	cpuBox1 = new ImageView(img1);
+    	cpuBox2 = new ImageView(img2);
+    	cpuBox1.setVisible(false);
+    	cpuBox2.setVisible(false);
+    	canvas.getChildren().add(cpuBox1);
+    	canvas.getChildren().add(cpuBox2);
     }
 
     private void clearLegalMoves() {
@@ -176,10 +190,12 @@ public class Controller {
 		else {selectionBox.setVisible(false);}
 	}
 	
+    @FXML
 	private void deselect() {
 		selectionBox.setVisible(false);
 		selectedButton = null;
 		clearLegalMoves();
+		showComputerMove();
 	}
 	
 	private void switchTurns() {
@@ -191,8 +207,14 @@ public class Controller {
 		turnIndicator.setStyle("-fx-text-inner-color: " + newColor + ";");
 		game.changeTurn();
 		if (!game.isPlayerTurn()) {
+			hideComputerMove();
 			requestAIMove();
 		}
+	}
+	
+	private void setPlayerTurn() {
+		turnIndicator.setText("Your turn");
+		turnIndicator.setStyle("-fx-text-inner-color: black;");
 	}
 	
 	private void requestAIMove() {
@@ -201,11 +223,34 @@ public class Controller {
         setCheckerLocations();
         deselect();
 		switchTurns();
-        showComputerMove(move);
+        highlightComputerMove(move);
 	}
 
-    private void showComputerMove(Move move) {
-
+    private void highlightComputerMove(Move move) {
+    	int startLocation = numSquares+1 - game.getNumRepresentation(move.getLocation());
+    	Button startTile = getButton(startLocation);
+    	int endLocation = numSquares+1 - game.getNumRepresentation(move.getDestination());
+    	Button endTile = getButton(endLocation);
+    	cpuBox1.setLayoutX(startTile.getLayoutX());
+    	cpuBox1.setLayoutY(startTile.getLayoutY());
+    	cpuBox2.setLayoutX(endTile.getLayoutX());
+    	cpuBox2.setLayoutY(endTile.getLayoutY());
+    	cpuBox1.setVisible(true);
+    	cpuBox2.setVisible(true);
+    }
+    
+    private void showComputerMove() {
+    	cpuBox1.setVisible(true);
+    	cpuBox2.setVisible(true);
+    }
+    
+    private void hideComputerMove() {
+    	cpuBox1.setVisible(false);
+    	cpuBox2.setVisible(false);
+    }
+    
+    private void makeKing() {
+    	
     }
     
     private void onAction(Button b) {
@@ -236,6 +281,7 @@ public class Controller {
     		legalMoves.add(tileButton);
     		ImageView moveTile = new ImageView(moveBox);
     		tileButton.setGraphic(moveTile);
+    		hideComputerMove();
     	}
     }
     
