@@ -93,7 +93,8 @@ public class Controller {
         try {
             if (difficulty.equals("Easy")) {
                 ai = new RandomAI();
-            } else if (difficulty.equals("Medium")) {
+            }
+            else {
                 ai = new BasicAI();
             }
         }

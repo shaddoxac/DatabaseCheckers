@@ -16,7 +16,7 @@ public class Game {
     public ArrayList<Move> currentMoves=new ArrayList<>();
     public ArrayList<Move> pieceMoves=new ArrayList<>();
 
-    private int lastIndex=-2147483648;
+    private int lastIndex=0x80000000;
 
     public Game() {
         currentTurn=Player.BLACK;
@@ -42,9 +42,6 @@ public class Game {
     }
     
     public void commitAIMove() {
-    	for (Move m: currentMoves) {
-        	System.out.println(m.getLocation() + "\n");
-    	}System.out.println(board.whitePos + "\n");
         try {commitMove(ai.getMove(board, currentMoves));}
         catch (SQLException e) { e.printStackTrace();}
     }
@@ -54,13 +51,13 @@ public class Game {
     }
 
     public void changeTurn() {
-        System.out.println(currentTurn);
         currentTurn=currentTurn.other();
-        System.out.println(currentTurn);
+        analyzeBoard();
     }
 
     public void analyzeBoard() {
         hasJumps=false;
+        currentMoves.clear();
         if (isPlayerTurn()) {
             analyzeGroup(board.blackPos, PieceType.BLACK);
             analyzeGroup(board.blackKingPos, PieceType.BLACKKING);
@@ -68,10 +65,6 @@ public class Game {
         else {
             analyzeGroup(board.whitePos,PieceType.WHITE);
             analyzeGroup(board.whiteKingPos,PieceType.WHITEKING);
-        }
-        for (int idx=0; idx< currentMoves.size(); idx++) {
-            Move move=currentMoves.get(idx);
-            System.out.println(getNumRepresentation(move.getDestination()));
         }
         if (currentMoves.size()==0) {gameOver(currentTurn.other());}
         else if (hasJumps) {
@@ -135,6 +128,7 @@ public class Game {
         return 1 << (num-1);
     }
     public int getNumRepresentation(int bits) {//make sure this doesn't edit important information
+        if (bits==lastIndex) {return 32;}
         int counter=1;
         while (bits>1) {
             bits=bits >> 1;
@@ -158,19 +152,30 @@ public class Game {
     }
 
     private void analyzeGroup(int bitBoard, PieceType type) {
+        boolean cond=true;
         int idx=1;
         int temp;
-        while (idx!=lastIndex) {
+        while (cond) {
             temp=idx & bitBoard;
             if (temp==idx) {
                 getValidMoves(new Piece(type, idx));
+            }
+            if (idx==lastIndex) {
+                cond=false;
             }
             idx= idx << 1;
         }
     }
 
     private void checkDestination(Piece piece, int offset) {
-        int tempDestination=piece.location << offset;
+        int tempDestination;
+        if (offset > 0) {
+            tempDestination=piece.location << offset;
+        }
+        else {
+            tempDestination=piece.location >> -offset;
+        }
+
         Move tempMove=new Move(piece.type, piece.location, tempDestination);
         checkMove(tempMove);
     }
