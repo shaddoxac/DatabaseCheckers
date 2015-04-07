@@ -1,10 +1,11 @@
 package expertsystem;
 
-import java.sql.*;
-import java.util.ArrayList;
-import java.util.Scanner;
+import game.Board;
+import game.Move;
 
-import game.*;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
 
 public class BasicAI extends InferenceEngine{
 	
@@ -67,13 +68,13 @@ public class BasicAI extends InferenceEngine{
 			} else {
 				return ">SE";
 			}
-		} else if(location > destination && destination == location/closeMod) {
+		} else if((location > destination) && (destination == location/closeMod)) {
 			return ">SW";
-		} else if(location > destination && destination == location/farMod) {
+		} else if((location > destination) && (destination == location/farMod)) {
 			return ">SE";
-		} else if(location < destination && location == destination/closeMod) {
+		} else if((location < destination) && (location == destination/closeMod)) {
 			return ">NE";
-		} else if(location < destination && location == destination/farMod) {
+		} else if((location < destination && location == destination/farMod)) {
 			return ">NW";
 		}
 		
