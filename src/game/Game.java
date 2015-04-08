@@ -35,11 +35,14 @@ public class Game {
         int bitBoard=getBitBoard(move.getType());
         bitBoard=bitBoard & ~move.getLocation();
         bitBoard=bitBoard | move.getDestination();
+        System.out.println(getNumRepresentation(move.getDestination()));
         setBitBoard(bitBoard, move.getType());
         if (hasJumps) {
             removePieces(move.getSequentialJumps());
         }
-        makeKings();
+        if (isHorizontalBorder(move.getDestination())) {
+            makeKings();
+        }
         return move;
     }
     
@@ -143,7 +146,7 @@ public class Game {
     public int getBitRepresentation(int num) {
         return 1 << (num-1);
     }
-    public int getNumRepresentation(int bits) {//make sure this doesn't edit important information
+    public int getNumRepresentation(int bits) {
         if (bits==lastIndex) {return 32;}
         int counter=1;
         while (bits>1) {
@@ -189,14 +192,14 @@ public class Game {
             tempDestination=piece.location << offset;
         }
         else {
-            tempDestination=piece.location >>> -offset;
+            tempDestination=piece.location >>> (-1*offset);
         }
         Move tempMove=new Move(piece.type, piece.location, tempDestination);
         checkMove(tempMove);
     }
 
     private void removePieces(ArrayList<Piece> jumps) {
-        for (Piece jumped : jumps) {removePiece(jumped);}
+        for (Piece jumped : jumps) {System.out.println("jumped loc= "+getNumRepresentation(jumped.location)); removePiece(jumped);}
     }
 
     private void removePiece(Piece piece) {
@@ -294,7 +297,6 @@ public class Game {
                 pieceMoves.add(move);
             }
             else if (checkJump(move)) {
-                move.setDestination(getJumpDestination(move));
                 move.setJump(true);
                 currentMoves.add(move);
                 pieceMoves.add(move);
@@ -308,7 +310,7 @@ public class Game {
     }
     private boolean isNotEdge(int space) {return !isEdge(space);}
     private boolean isHorizontalBorder(int space) {
-        return space >= 0xF0000000 || space <= 0xF;
+        return (space & 0xF000000F) !=0;
     }
     private boolean isVerticalBorder(int space) {return isLeftBorder(space) || isRightBorder(space);}
     private boolean isLeftBorder(int space) {return (space & 0x8080808)!=0;}

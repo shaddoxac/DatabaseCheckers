@@ -6,7 +6,7 @@ public class Move {
     private Piece piece;
     private int destination;
     private boolean isJump;
-    private ArrayList<Piece> sequentialJumps=new ArrayList<Piece>();//TODO
+    private ArrayList<Piece> sequentialJumps=new ArrayList<>();//TODO
 
 
     public Move(PieceType type, int loc, int dest) {
