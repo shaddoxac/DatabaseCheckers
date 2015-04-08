@@ -222,7 +222,7 @@ public class Game {
     }
 
     private boolean checkJump(Move move) {
-        if (isNotEdge(move.getDestination()) && isEnemyOccupied(move)) {//TODO move.getDestination is not correct value
+        if (isNotEdge(move.getDestination()) && isEnemyOccupied(move)) {
             if (!spaceAfterJumpOccupied(move)) {
                 addJump(move);
                 return true;
@@ -303,9 +303,10 @@ public class Game {
     }
 
 
-    private boolean isNotEdge(int space) {
+    private boolean isEdge(int space) {
         return isHorizontalBorder(space) && isVerticalBorder(space);
     }
+    private boolean isNotEdge(int space) {return !isEdge(space);}
     private boolean isHorizontalBorder(int space) {
         return space >= 0xF0000000 || space <= 0xF;
     }
