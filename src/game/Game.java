@@ -81,8 +81,9 @@ public class Game {
             analyzeGroup(board.whitePos,PieceType.WHITE);
             analyzeGroup(board.whiteKingPos,PieceType.WHITEKING);
         }
-        if (currentMoves.size()==0) {gameOver(currentTurn.other());}
+        if (currentMoves.size()==0) {System.out.println("gameover");gameOver(currentTurn.other());}//TODO this doesn't work
         else if (hasJumps) {
+            System.out.println("hasjumps");
             eraseNonJumpMoves();
         }
     }
@@ -223,11 +224,19 @@ public class Game {
     private boolean checkJump(Move move) {
         if (isNotEdge(move.getDestination()) && isEnemyOccupied(move)) {//TODO move.getDestination is not correct value
             if (!spaceAfterJumpOccupied(move)) {
-                hasJumps=true;
+                addJump(move);
                 return true;
             }
         }
         return false;
+    }
+
+    private void addJump(Move move) {
+        hasJumps=true;
+        move.addJump(getPieceType(move.getDestination()),move.getDestination());
+        int newDest=getJumpDestination(move);
+        System.out.println("newDest= "+newDest);
+        move.setDestination(newDest);
     }
 
     private boolean isEnemyOccupied(Move move) {
@@ -242,6 +251,8 @@ public class Game {
     private int getJumpDestination(Move move) {
         int loc=move.getLocation();
         int dest=move.getDestination();
+        System.out.println("loc= "+loc);
+        System.out.println("dest= "+dest);
         if (loc > dest) {
             if (inOddRow(dest)) {
                 if ((loc >>> 5) == dest) {

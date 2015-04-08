@@ -217,12 +217,12 @@ public class Controller {
 		turnIndicator.setStyle("-fx-text-inner-color: black;");
 	}
 	
-	private void requestAIMove() {
-		Move move=game.commitAIMove();
-		updateTurnCount();
+    private void requestAIMove() {
+        Move move = game.commitAIMove();
+        updateTurnCount();
         setCheckerLocations();
         deselect();
-		switchTurns();
+        switchTurns();
         highlightComputerMove(move);
 	}
 

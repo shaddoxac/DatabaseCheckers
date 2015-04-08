@@ -27,3 +27,7 @@ public class Main extends Application {
 		launch(args);
 	}
 }
+//TODO jumps are not being detected correctly
+//TODO fix square 9 to square 1, 1 oc, 5 oc, piece gone
+//TODO if currentMoves.size()==0, endGame instead of passing to AI
+//TODO fix jump square 17 -> 8
