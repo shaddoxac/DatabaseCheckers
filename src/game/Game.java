@@ -239,21 +239,39 @@ public class Game {
         return spaceOccupied(newDest);
     }
 
-    private int getJumpDestination(Move move) {//TODO fix
-        if (move.getLocation() > move.getDestination()) {
-            if (move.getLocation() >>> 5==move.getDestination()) {
-                return move.getDestination() >>> 4;
+    private int getJumpDestination(Move move) {
+        int loc=move.getLocation();
+        int dest=move.getDestination();
+        if (loc > dest) {
+            if (inOddRow(dest)) {
+                if ((loc >>> 5) == dest) {
+                    return dest >>> 4;
+                } else {
+                    return dest >>> 3;
+                }
             }
             else {
-                return move.getDestination() >>> 3;
+                if ((loc >>> 4) == dest) {
+                    return dest >>> 5;
+                } else {
+                    return dest >>> 4;
+                }
             }
         }
         else {
-            if (move.getLocation() << 5==move.getDestination()) {
-                return move.getDestination() << 4;
+            if (inOddRow(dest)) {
+                if ((loc << 4) == dest) {
+                    return dest << 5;
+                } else {
+                    return dest << 4;
+                }
             }
             else {
-                return move.getDestination() << 3;
+                if ((loc << 5) == dest) {
+                    return dest << 4;
+                } else {
+                    return dest << 3;
+                }
             }
         }
     }
