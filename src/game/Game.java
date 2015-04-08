@@ -81,7 +81,7 @@ public class Game {
             analyzeGroup(board.whitePos,PieceType.WHITE);
             analyzeGroup(board.whiteKingPos,PieceType.WHITEKING);
         }
-        if (currentMoves.size()==0) {System.out.println("gameover");gameOver(currentTurn.other());}//TODO this doesn't work
+        if (currentMoves.size()==0) {gameOver(currentTurn.other());}//TODO this doesn't work
         else if (hasJumps) {
             System.out.println("hasjumps");
             eraseNonJumpMoves();
@@ -235,7 +235,7 @@ public class Game {
         hasJumps=true;
         move.addJump(getPieceType(move.getDestination()),move.getDestination());
         int newDest=getJumpDestination(move);
-        System.out.println("newDest= "+newDest);
+        System.out.println("newDest= "+getNumRepresentation(newDest));
         move.setDestination(newDest);
     }
 
@@ -251,8 +251,8 @@ public class Game {
     private int getJumpDestination(Move move) {
         int loc=move.getLocation();
         int dest=move.getDestination();
-        System.out.println("loc= "+loc);
-        System.out.println("dest= "+dest);
+        System.out.println("loc= "+getNumRepresentation(loc));
+        System.out.println("dest= "+getNumRepresentation(dest));
         if (loc > dest) {
             if (inOddRow(dest)) {
                 if ((loc >>> 5) == dest) {

@@ -199,17 +199,19 @@ public class Controller {
 	}
 	
 	private void switchTurns() {
-		String currentTurn = turnIndicator.getText();
-		boolean isPlayerTurn = currentTurn.equals("Your turn");
-		String newTurn = isPlayerTurn ? "CPU turn" : "Your turn";
-		String newColor = isPlayerTurn ? "white" : "black";
-		turnIndicator.setText(newTurn);
-		turnIndicator.setStyle("-fx-text-inner-color: " + newColor + ";");
-		game.changeTurn();
-		if (!game.isPlayerTurn()) {
-			hideComputerMove();
-			requestAIMove();
-		}
+        if (!game.gameOver) {
+            String currentTurn = turnIndicator.getText();
+            boolean isPlayerTurn = currentTurn.equals("Your turn");
+            String newTurn = isPlayerTurn ? "CPU turn" : "Your turn";
+            String newColor = isPlayerTurn ? "white" : "black";
+            turnIndicator.setText(newTurn);
+            turnIndicator.setStyle("-fx-text-inner-color: " + newColor + ";");
+            game.changeTurn();
+            if (!game.isPlayerTurn()) {
+                hideComputerMove();
+                requestAIMove();
+            }
+        }
 	}
 	
 	private void setPlayerTurn() {
@@ -218,12 +220,14 @@ public class Controller {
 	}
 	
     private void requestAIMove() {
-        Move move = game.commitAIMove();
-        updateTurnCount();
-        setCheckerLocations();
-        deselect();
-        switchTurns();
-        highlightComputerMove(move);
+        if (!game.gameOver) {
+            Move move = game.commitAIMove();
+            updateTurnCount();
+            setCheckerLocations();
+            deselect();
+            switchTurns();
+            highlightComputerMove(move);
+        }
 	}
 
     private void highlightComputerMove(Move move) {
@@ -254,19 +258,23 @@ public class Controller {
     }
     
     private void onAction(Button b) {
-        clearLegalMoves();
-        if (gameStarted && game.isPlayerTurn()) {
-            int location = numSquares+1 - locationMap.get(b);
-            location = game.getBitRepresentation(location);
-            if (game.spaceOccupied(location)) {
-                PieceType type=game.getPieceType(location);
-                if (spacePlayerOccupied(type)) {
-                    setSelected(b);
-                    Piece piece = new Piece(type,location);
-                    game.getValidMoves(piece);
-                    showPossibleMoves(game.pieceMoves);
+        if (!game.gameOver) {
+            clearLegalMoves();
+            if (gameStarted && game.isPlayerTurn()) {
+                int location = numSquares + 1 - locationMap.get(b);
+                location = game.getBitRepresentation(location);
+                if (game.spaceOccupied(location)) {
+                    PieceType type = game.getPieceType(location);
+                    if (spacePlayerOccupied(type)) {
+                        setSelected(b);
+                        Piece piece = new Piece(type, location);
+                        game.getValidMoves(piece);
+                        showPossibleMoves(game.pieceMoves);
+                    }
+                } else {
+                    selectMove(b);
                 }
-            } else {selectMove(b);}
+            }
         }
     }
     
