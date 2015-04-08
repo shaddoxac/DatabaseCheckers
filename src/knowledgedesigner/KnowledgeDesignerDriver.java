@@ -13,8 +13,8 @@ public class KnowledgeDesignerDriver extends Application{
 			FXMLLoader loader = new FXMLLoader();
 			loader.setLocation(KnowledgeDesignerDriver.class.getResource("KnowledgeDesignerGUI.fxml"));
 			AnchorPane root = (AnchorPane) loader.load();
-			Scene scene = new Scene(root,800,512);
-			scene.getStylesheets().add(getClass().getResource("KDStyleSheet.css").toExternalForm());
+			Scene scene = new Scene(root,655,512);
+			//scene.getStylesheets().add(getClass().getResource("KDStyleSheet.css").toExternalForm());
 			primaryStage.setScene(scene);
 			primaryStage.show();
 		} catch(Exception e) {
