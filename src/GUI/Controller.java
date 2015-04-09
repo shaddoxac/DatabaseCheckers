@@ -58,10 +58,11 @@ public class Controller {
     private HashMap<Button,Integer> locationMap=new HashMap<>();
     private boolean gameStarted=false;
     private final int numSquares = 32;
-    private int numWhiteDead;
-    private int numBlackDead;
+    private int numWhiteDead = 0;
+    private int numBlackDead = 0;
     private ArrayList<Button> legalMoves = new ArrayList<>();
     private InferenceEngine ai;
+    private int outOfBounds = 5000;
 
     @FXML
 	private void initialize() {
@@ -84,10 +85,20 @@ public class Controller {
         game=new Game(ai);
         setCheckerLocations();
         setPlayerTurn();
-        numWhiteDead = 0;
-    	numBlackDead = 0;
+        emptyGraveyards();
     	deselect();
     	hideComputerMove();
+    }
+    
+    private void gameOver() {
+    	gameStarted = false;
+    	turnIndicator.setText(game.winner.toString() + " wins!");
+    	String color = game.winner.equals(Player.BLACK) ? "black" : "white";
+        turnIndicator.setStyle("-fx-text-inner-color: " + color + ";");
+    }
+    
+    private void checkGameOver() {
+    	if (game.gameOver) {gameOver();}
     }
     
     private void setUpAI()  {
@@ -102,6 +113,13 @@ public class Controller {
         }
         catch (SQLException ex) {ex.printStackTrace();}
         catch (ClassNotFoundException ex2) {ex2.printStackTrace();}
+    }
+    
+    private void updateGraveyards() {
+    	int newWhiteDead = game.getNumDead(Player.WHITE) - numWhiteDead;
+		int newBlackDead = game.getNumDead(Player.BLACK) - numBlackDead;
+		if (newWhiteDead != 0){addToGraveyard(Player.WHITE);}
+		if (newBlackDead != 0){addToGraveyard(Player.BLACK);}
     }
     
     private void addToGraveyard(Player p) {
@@ -160,6 +178,10 @@ public class Controller {
     	Image img2 = new Image("/img/Wooden Board/CPU_Highlight.png");
     	cpuBox1 = new ImageView(img1);
     	cpuBox2 = new ImageView(img2);
+    	cpuBox1.setLayoutX(outOfBounds);
+    	cpuBox1.setLayoutY(outOfBounds);
+    	cpuBox2.setLayoutX(outOfBounds);
+    	cpuBox2.setLayoutY(outOfBounds);
     	cpuBox1.setVisible(false);
     	cpuBox2.setVisible(false);
     	canvas.getChildren().add(cpuBox1);
@@ -192,13 +214,16 @@ public class Controller {
 	
     @FXML
 	private void deselect() {
-		selectionBox.setVisible(false);
-		selectedButton = null;
-		clearLegalMoves();
-		showComputerMove();
-	}
+    	if (gameStarted){
+			selectionBox.setVisible(false);
+			selectedButton = null;
+			clearLegalMoves();
+			showComputerMove();
+		}
+    }
 	
 	private void switchTurns() {
+		updateGraveyards();
         if (!game.gameOver) {
             String currentTurn = turnIndicator.getText();
             boolean isPlayerTurn = currentTurn.equals("Your turn");
@@ -207,6 +232,7 @@ public class Controller {
             turnIndicator.setText(newTurn);
             turnIndicator.setStyle("-fx-text-inner-color: " + newColor + ";");
             game.changeTurn();
+            checkGameOver();
             if (!game.isPlayerTurn()) {
                 hideComputerMove();
                 requestAIMove();
@@ -219,15 +245,15 @@ public class Controller {
 		turnIndicator.setStyle("-fx-text-inner-color: black;");
 	}
 	
-    private void requestAIMove() {
-        if (!game.gameOver) {
-            Move move = game.commitAIMove();
-            updateTurnCount();
-            setCheckerLocations();
-            deselect();
-            switchTurns();
-            highlightComputerMove(move);
-        }
+	private void requestAIMove() {
+		if (gameStarted) {
+        	Move move=game.commitAIMove();
+	        highlightComputerMove(move);
+			updateTurnCount();
+	        setCheckerLocations();
+	        deselect();
+			switchTurns();
+		}
 	}
 
     private void highlightComputerMove(Move move) {
@@ -237,9 +263,9 @@ public class Controller {
     	Button endTile = getButton(endLocation);
     	cpuBox1.setLayoutX(startTile.getLayoutX());
     	cpuBox1.setLayoutY(startTile.getLayoutY());
+    	cpuBox1.setVisible(true);
     	cpuBox2.setLayoutX(endTile.getLayoutX());
     	cpuBox2.setLayoutY(endTile.getLayoutY());
-    	cpuBox1.setVisible(true);
     	cpuBox2.setVisible(true);
     }
     
@@ -253,14 +279,10 @@ public class Controller {
     	cpuBox2.setVisible(false);
     }
     
-    private void makeKing() {
-    	
-    }
-    
     private void onAction(Button b) {
-        if (!game.gameOver) {
+        if (gameStarted) {
             clearLegalMoves();
-            if (gameStarted && game.isPlayerTurn()) {
+            if (!game.gameOver && game.isPlayerTurn()) {
                 int location = numSquares + 1 - locationMap.get(b);
                 location = game.getBitRepresentation(location);
                 if (game.spaceOccupied(location)) {
@@ -268,7 +290,7 @@ public class Controller {
                     if (spacePlayerOccupied(type)) {
                         setSelected(b);
                         Piece piece = new Piece(type, location);
-                        game.getValidMoves(piece);
+                        game.getMovesForPiece(piece);
                         showPossibleMoves(game.pieceMoves);
                     }
                 } else {

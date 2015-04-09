@@ -30,12 +30,11 @@ public class Game {
         this.ai=ai;
         gameOver=false;
     }
-
+    
     public Move commitMove(Move move) {
         int bitBoard=getBitBoard(move.getType());
         bitBoard=bitBoard & ~move.getLocation();
         bitBoard=bitBoard | move.getDestination();
-        System.out.println(getNumRepresentation(move.getDestination()));
         setBitBoard(bitBoard, move.getType());
         if (hasJumps) {
             removePieces(move.getSequentialJumps());
@@ -49,19 +48,6 @@ public class Game {
     public Move commitAIMove() {
         try {return commitMove(ai.getMove(board, currentMoves));}
         catch (SQLException e) {return null;}
-    }
-    
-    private void makeKings() {
-    	int blackPawns = board.blackPos;
-    	int whitePawns = board.whitePos;
-    	int blackKingRow = 0xF0000000;
-    	int whiteKingRow = 0xF;
-    	int newBlackKings = blackPawns & blackKingRow;
-    	int newWhiteKings = whitePawns & whiteKingRow;
-    	board.blackKingPos = board.blackKingPos | newBlackKings;
-    	board.whiteKingPos = board.whiteKingPos | newWhiteKings;
-    	board.blackPos = blackPawns & (blackPawns ^ board.blackKingPos);
-    	board.whitePos = whitePawns & (whitePawns ^ board.whiteKingPos);
     }
     
     public boolean isPlayerTurn() {
@@ -84,41 +70,14 @@ public class Game {
             analyzeGroup(board.whitePos,PieceType.WHITE);
             analyzeGroup(board.whiteKingPos,PieceType.WHITEKING);
         }
-        if (currentMoves.size()==0) {gameOver(currentTurn.other());}//TODO this doesn't work
+        if (currentMoves.size()==0) {gameOver(currentTurn.other());}
         else if (hasJumps) {
-            System.out.println("hasjumps");
-            eraseNonJumpMoves();
+            eraseNonJumpMoves(currentMoves);
         }
     }
-
-    public void getValidMoves(Piece piece) {
-        pieceMoves.clear();
-        if (piece.down) {
-            if (inOddRow(piece.location)) {
-                if (!isLeftBorder(piece.location)) {
-                    checkDestination(piece, -3);
-                }
-            }
-            else {
-                if (!isRightBorder(piece.location)) {
-                    checkDestination(piece, -5);
-                }
-            }
-            checkDestination(piece, -4);
-        }
-        if (piece.up) {
-            if (inOddRow(piece.location)) {
-                if (!isLeftBorder(piece.location)) {
-                    checkDestination(piece, 5);
-                }
-            }
-            else {
-                if (!isRightBorder(piece.location)) {
-                    checkDestination(piece, 3);
-                }
-            }
-            checkDestination(piece, 4);
-        }
+    public void getMovesForPiece(Piece piece) {
+        getValidMoves(piece);
+        if (hasJumps) {eraseNonJumpMoves(pieceMoves);}
     }
 
     public boolean spaceOccupied(int dest) {
@@ -155,19 +114,116 @@ public class Game {
         }
         return counter;
     }
+    
+    public int getNumDead(Player p) {
+    	int numDead;
+    	if (p.equals(Player.BLACK)) {
+    		numDead = 12 - getNumPieces(board.blackPos | board.blackKingPos);
+    	}else{
+    		numDead = 12 - getNumPieces(board.whitePos | board.whiteKingPos);
+    	}
+    	return numDead;
+    }
 
-    private void gameOver(Player winner) {
+
+    private void makeKings() {
+		int blackPawns = board.blackPos;
+		int whitePawns = board.whitePos;
+		int blackKingRow = 0xF0000000;
+		int whiteKingRow = 0xF;
+		int newBlackKings = blackPawns & blackKingRow;
+		int newWhiteKings = whitePawns & whiteKingRow;
+		board.blackKingPos = board.blackKingPos | newBlackKings;
+		board.whiteKingPos = board.whiteKingPos | newWhiteKings;
+		board.blackPos = blackPawns & (blackPawns ^ board.blackKingPos);
+		board.whitePos = whitePawns & (whitePawns ^ board.whiteKingPos);
+	}
+
+	private int getNumPieces(int bitboard) {
+		int numPieces = 0;
+		int idx = 1;
+		for (int i=0; i<32; i++) {
+			if ((idx & bitboard) != 0) {numPieces++;}
+			idx = idx << 1;
+		}
+		return numPieces;
+	}
+
+	private void gameOver(Player winner) {
         gameOver=true;
         this.winner=winner;
     }
 
-    private void eraseNonJumpMoves() {
-        for (int idx=0; idx<currentMoves.size(); idx++) {
-            if (!currentMoves.get(idx).isJump()) {
-                currentMoves.remove(idx);
+    private void eraseNonJumpMoves(ArrayList<Move> list) {
+        for (int idx=0; idx<list.size(); idx++) {
+            if (!list.get(idx).isJump()) {
+                list.remove(idx);
                 idx--;
             }
         }
+    }
+
+    private void getValidMoves(Piece piece) {
+        pieceMoves.clear();
+        if (piece.down) {
+            if (inOddRow(piece.location)) {
+                if (!isLeftBorder(piece.location)) {
+                    checkDestination(piece, -3);
+                }
+            }
+            else {
+                if (!isRightBorder(piece.location)) {
+                    checkDestination(piece, -5);
+                }
+            }
+            checkDestination(piece, -4);
+        }
+        if (piece.up) {
+            if (inOddRow(piece.location)) {
+                if (!isLeftBorder(piece.location)) {
+                    checkDestination(piece, 5);
+                }
+            }
+            else {
+                if (!isRightBorder(piece.location)) {
+                    checkDestination(piece, 3);
+                }
+            }
+            checkDestination(piece, 4);
+        }
+    }
+    private void getMultipleJumpMoves(Move move) {
+        if (move.getDown()) {
+            if (inOddRow(move.getDestination())) {
+                if (!isLeftBorder(move.getDestination())) {
+                    checkDoubleJumpDestination(move, -3);
+                }
+            }
+            else {
+                if (!isRightBorder(move.getDestination())) {
+                    checkDoubleJumpDestination(move, -5);
+                }
+            }
+            checkDoubleJumpDestination(move, -4);
+        }
+        if (move.getUp()) {
+            if (inOddRow(move.getDestination())) {
+                if (!isLeftBorder(move.getDestination())) {
+                    checkDoubleJumpDestination(move, 5);
+                }
+            }
+            else {
+                if (!isRightBorder(move.getDestination())) {
+                    checkDoubleJumpDestination(move, 3);
+                }
+            }
+            checkDoubleJumpDestination(move, 4);
+        }
+    }
+
+    private void checkDoubleJumpDestination(Move move, int offset) {
+        int tempDestination=getOffset(move.getDestination(),offset);
+        checkDoubleJump(move,tempDestination);
     }
 
     private void analyzeGroup(int bitBoard, PieceType type) {
@@ -182,20 +238,23 @@ public class Game {
             if (temp!=0) {
                 getValidMoves(new Piece(type, idx));
             }
-            idx= idx << 1;
+            idx = idx << 1;
         }
     }
 
     private void checkDestination(Piece piece, int offset) {
-        int tempDestination;
-        if (offset > 0) {
-            tempDestination=piece.location << offset;
-        }
-        else {
-            tempDestination=piece.location >>> (-1*offset);
-        }
+        int tempDestination=getOffset(piece.location,offset);
         Move tempMove=new Move(piece.type, piece.location, tempDestination);
         checkMove(tempMove);
+    }
+
+    private int getOffset(int loc, int offset) {
+        if (offset > 0) {
+            return loc << offset;
+        }
+        else {
+            return loc >>> (-1*offset);
+        }
     }
 
     private void removePieces(ArrayList<Piece> jumps) {
@@ -224,38 +283,69 @@ public class Game {
         return board.whiteKingPos;
     }
 
-    private boolean checkJump(Move move) {
-        if (isNotEdge(move.getDestination()) && isEnemyOccupied(move)) {
-            if (!spaceAfterJumpOccupied(move)) {
+    private void checkJump(Move move) {
+        if (isNotEdge(move.getDestination()) && isEnemyOccupied(move.getType(),move.getDestination())) {
+            if (!spaceAfterJumpOccupied(move.getLocation(), move.getDestination())) {
+                int oldDest=move.getDestination();
                 addJump(move);
-                return true;
+                move.setJump(true);
+                currentMoves.add(move);
+                pieceMoves.add(move);
+                Move multiJumpMove=new Move(move.getPiece(),move.getDestination());
+                multiJumpMove.addJump(getPieceType(oldDest),oldDest);
+                getMultipleJumpMoves(multiJumpMove);
             }
         }
-        return false;
+    }
+
+    private void checkDoubleJump(Move move, int newDest) {
+        System.out.println("loc = "+getNumRepresentation(move.getDestination()));
+        System.out.println("newDest = "+getNumRepresentation(newDest));
+        System.out.println("isNotEdge = "+isNotEdge(newDest));
+        System.out.println("isEnemyOccupied = "+isEnemyOccupied(move.getType(),newDest));
+        System.out.println("space after jump occupied = "+(!spaceAfterJumpOccupied(move.getDestination(),newDest)));
+        if (isNotEdge(newDest) && isEnemyOccupied(move.getType(),newDest)) {
+            if (!spaceAfterJumpOccupied(move.getDestination(),newDest)) {
+                System.out.println("is double jump");
+                addDoubleJump(move, newDest);
+                move.setJump(true);
+                currentMoves.add(move);
+                pieceMoves.add(move);
+                Move multiJumpMove=new Move(move.getPiece(),move.getDestination());
+                for (int i=0; i<move.getSequentialJumps().size(); i++) {
+                    int location=move.getSequentialJumps().get(i).location;
+                    multiJumpMove.addJump(getPieceType(location),location);
+                }
+
+                getMultipleJumpMoves(multiJumpMove);
+            }
+        }
+        System.out.println();
     }
 
     private void addJump(Move move) {
         hasJumps=true;
         move.addJump(getPieceType(move.getDestination()),move.getDestination());
-        int newDest=getJumpDestination(move);
-        System.out.println("newDest= "+getNumRepresentation(newDest));
+        int newDest=getJumpDestination(move.getLocation(),move.getDestination());
         move.setDestination(newDest);
     }
 
-    private boolean isEnemyOccupied(Move move) {
-        Player otherTeam=move.getType().getTeam().other();
-        return spaceOccupiedByTeam(otherTeam, move.getDestination());
+    private void addDoubleJump(Move move, int newDest) {
+        move.addJump(getPieceType(newDest),newDest);
+        newDest=getJumpDestination(move.getDestination(),newDest);
+        move.setDestination(newDest);
     }
-    private boolean spaceAfterJumpOccupied(Move move) {
-        int newDest=getJumpDestination(move);
+
+    private boolean isEnemyOccupied(PieceType type, int loc) {
+        Player otherTeam=type.getTeam().other();
+        return spaceOccupiedByTeam(otherTeam, loc);
+    }
+    private boolean spaceAfterJumpOccupied(int loc, int dest) {
+        int newDest=getJumpDestination(loc, dest);
         return spaceOccupied(newDest);
     }
 
-    private int getJumpDestination(Move move) {
-        int loc=move.getLocation();
-        int dest=move.getDestination();
-        System.out.println("loc= "+getNumRepresentation(loc));
-        System.out.println("dest= "+getNumRepresentation(dest));
+    private int getJumpDestination(int loc, int dest) {
         if (loc > dest) {
             if (inOddRow(dest)) {
                 if ((loc >>> 5) == dest) {
@@ -296,22 +386,15 @@ public class Game {
                 currentMoves.add(move);
                 pieceMoves.add(move);
             }
-            else if (checkJump(move)) {
-                move.setJump(true);
-                currentMoves.add(move);
-                pieceMoves.add(move);
-            }
+        	else {checkJump(move);}
         }
     }
 
 
-    private boolean isEdge(int space) {
-        return isHorizontalBorder(space) && isVerticalBorder(space);
+    private boolean isNotEdge(int space) {
+        return !isHorizontalBorder(space) && !isVerticalBorder(space);
     }
-    private boolean isNotEdge(int space) {return !isEdge(space);}
-    private boolean isHorizontalBorder(int space) {
-        return (space & 0xF000000F) !=0;
-    }
+    private boolean isHorizontalBorder(int space) {return (space & 0xF000000F) !=0;}
     private boolean isVerticalBorder(int space) {return isLeftBorder(space) || isRightBorder(space);}
     private boolean isLeftBorder(int space) {return (space & 0x8080808)!=0;}
     private boolean isRightBorder(int space) {return (space & 0x10101010)!=0;}
@@ -327,5 +410,4 @@ public class Game {
     private boolean isOccupied(int bucket, int dest) {
         return (bucket & dest) != 0;
     }
-    private boolean isNotOccupied(int bucket, int dest) {return !isOccupied(bucket,dest);}
 }
