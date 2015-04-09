@@ -194,6 +194,40 @@ public class Game {
             checkDestination(piece, 4);
         }
     }
+    private void getMultipleJumpMoves(Move move) {
+        Move temp;
+        if (move.getDown()) {
+            if (inOddRow(move.getDestination())) {
+                if (!isLeftBorder(move.getDestination())) {
+                    checkDoubleJumpDestination(move, -3);
+                }
+            }
+            else {
+                if (!isRightBorder(move.getDestination())) {
+                    checkDoubleJumpDestination(move, -5);
+                }
+            }
+            checkDoubleJumpDestination(move, -4);
+        }
+        if (move.getUp()) {
+            if (inOddRow(move.getDestination())) {
+                if (!isLeftBorder(move.getDestination())) {
+                    checkDoubleJumpDestination(move, 5);
+                }
+            }
+            else {
+                if (!isRightBorder(move.getDestination())) {
+                    checkDoubleJumpDestination(move, 3);
+                }
+            }
+            checkDoubleJumpDestination(move, 4);
+        }
+    }
+
+    private void checkDoubleJumpDestination(Move move, int offset) {
+        int tempDestination=getOffset(move.getLocation(),offset);
+        checkDoubleJump(move,tempDestination);
+    }
 
     private void analyzeGroup(int bitBoard, PieceType type) {
         boolean cond=true;
@@ -212,15 +246,18 @@ public class Game {
     }
 
     private void checkDestination(Piece piece, int offset) {
-        int tempDestination;
-        if (offset > 0) {
-            tempDestination=piece.location << offset;
-        }
-        else {
-            tempDestination=piece.location >>> (-1*offset);
-        }
+        int tempDestination=getOffset(piece.location,offset);
         Move tempMove=new Move(piece.type, piece.location, tempDestination);
         checkMove(tempMove);
+    }
+
+    private int getOffset(int loc, int offset) {
+        if (offset > 0) {
+            return loc << offset;
+        }
+        else {
+            return loc >>> (-1*offset);
+        }
     }
 
     private void removePieces(ArrayList<Piece> jumps) {
@@ -249,38 +286,54 @@ public class Game {
         return board.whiteKingPos;
     }
 
-    private boolean checkJump(Move move) {
-        if (isNotEdge(move.getDestination()) && isEnemyOccupied(move)) {
-            if (!spaceAfterJumpOccupied(move)) {
+    private void checkJump(Move move) {
+        if (isNotEdge(move.getDestination()) && isEnemyOccupied(move.getType(),move.getDestination())) {
+            if (!spaceAfterJumpOccupied(move.getLocation(), move.getDestination())) {
                 addJump(move);
-                return true;
+                move.setJump(true);
+                currentMoves.add(move);
+                pieceMoves.add(move);
+                getMultipleJumpMoves(move);
             }
         }
-        return false;
+    }
+
+    private void checkDoubleJump(Move move, int newDest) {
+        if (isNotEdge(newDest) && isEnemyOccupied(move.getType(),newDest)) {
+            if (!spaceAfterJumpOccupied(move.getDestination(),newDest)) {
+                addDoubleJump(move,newDest);
+                move.setJump(true);
+                currentMoves.add(move);//check if base jumps are mutated
+                pieceMoves.add(move);
+                getMultipleJumpMoves(move);
+            }
+        }
     }
 
     private void addJump(Move move) {
         hasJumps=true;
         move.addJump(getPieceType(move.getDestination()),move.getDestination());
-        int newDest=getJumpDestination(move);
-        System.out.println("newDest= "+getNumRepresentation(newDest));
+        int newDest=getJumpDestination(move.getLocation(),move.getDestination());
         move.setDestination(newDest);
     }
 
-    private boolean isEnemyOccupied(Move move) {
-        Player otherTeam=move.getType().getTeam().other();
-        return spaceOccupiedByTeam(otherTeam, move.getDestination());
+    private void addDoubleJump(Move move, int newDest) {
+        hasJumps=true;
+        move.addJump(getPieceType(move.getDestination()),move.getDestination());
+        newDest=getJumpDestination(move.getDestination(),newDest);
+        move.setDestination(newDest);
     }
-    private boolean spaceAfterJumpOccupied(Move move) {
-        int newDest=getJumpDestination(move);
+
+    private boolean isEnemyOccupied(PieceType type, int loc) {
+        Player otherTeam=type.getTeam().other();
+        return spaceOccupiedByTeam(otherTeam, loc);
+    }
+    private boolean spaceAfterJumpOccupied(int loc, int dest) {
+        int newDest=getJumpDestination(loc, dest);
         return spaceOccupied(newDest);
     }
 
-    private int getJumpDestination(Move move) {
-        int loc=move.getLocation();
-        int dest=move.getDestination();
-        System.out.println("loc= "+getNumRepresentation(loc));
-        System.out.println("dest= "+getNumRepresentation(dest));
+    private int getJumpDestination(int loc, int dest) {
         if (loc > dest) {
             if (inOddRow(dest)) {
                 if ((loc >>> 5) == dest) {
@@ -317,16 +370,11 @@ public class Game {
 
     private void checkMove(Move move) {
         if (inBounds(move.getDestination())) {
-        	if (checkJump(move)) {
-                move.setJump(true);
+            if (spaceNotOccupied(move.getDestination())) {
                 currentMoves.add(move);
                 pieceMoves.add(move);
             }
-        	else if (spaceNotOccupied(move.getDestination())) {
-                currentMoves.add(move);
-                pieceMoves.add(move);
-            }
-            
+        	else {checkJump(move);}
         }
     }
 
@@ -353,5 +401,4 @@ public class Game {
     private boolean isOccupied(int bucket, int dest) {
         return (bucket & dest) != 0;
     }
-    private boolean isNotOccupied(int bucket, int dest) {return !isOccupied(bucket,dest);}
 }
