@@ -36,7 +36,7 @@ public class BasicAI extends InferenceEngine{
 			score = results.getInt("Score");
 			
 			for(int i=0; i<legalMoves.size(); i++) {
-				if(translateDirection(legalMoves.get(i)).equals(move.substring(2, 5))) {
+				if(translateDirection(legalMoves.get(i)).equals(move.substring(2, 5)) && isSimilarLocation(legalMoves.get(i), move)) {
 					moveScores[i] += score;
 				}
 			}
@@ -50,6 +50,35 @@ public class BasicAI extends InferenceEngine{
 		return suggestion;
 	}
 	
+	private boolean isSimilarLocation(Move m, String suggestion) {
+		int suggestedLoc = Integer.parseInt(suggestion.substring(0, suggestion.length()-3));
+		int moveLocation = m.getLocation();
+		
+		return isSameCol(moveLocation, suggestedLoc) || isSameRow(moveLocation, suggestedLoc);
+	}
+	
+	private boolean isSameCol(int locOne, int locTwo) {
+		if(locOne != Integer.MIN_VALUE && (locOne < locTwo))
+			return isSameCol(locTwo, locOne);
+		
+		while(locOne == Integer.MIN_VALUE || locOne > locTwo) {
+			if(locOne == locTwo)
+				return true;
+			locOne = locOne >>> 8;
+		}
+		
+		return false;
+	}
+	
+	private boolean isSameRow(int locOne, int locTwo) {
+		if(locOne != Integer.MIN_VALUE && (locOne < locTwo))
+			return isSameCol(locTwo, locOne);
+		
+		if(locOne !=)
+		
+		return false;
+	}
+
 	private String translateDirection(Move m) {
 		int location = m.getLocation();
 		int destination = m.getDestination();
