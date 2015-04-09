@@ -312,10 +312,11 @@ public class Game {
                 currentMoves.add(move);
                 pieceMoves.add(move);
                 Move multiJumpMove=new Move(move.getPiece(),move.getDestination());
-                for (int i=1; i<move.getSequentialJumps().size(); i++) {
+                for (int i=0; i<move.getSequentialJumps().size(); i++) {
                     int location=move.getSequentialJumps().get(i).location;
                     multiJumpMove.addJump(getPieceType(location),location);
                 }
+
                 getMultipleJumpMoves(multiJumpMove);
             }
         }
@@ -330,7 +331,7 @@ public class Game {
     }
 
     private void addDoubleJump(Move move, int newDest) {
-        move.addJump(getPieceType(move.getDestination()),move.getDestination());
+        move.addJump(getPieceType(newDest),newDest);
         newDest=getJumpDestination(move.getDestination(),newDest);
         move.setDestination(newDest);
     }
