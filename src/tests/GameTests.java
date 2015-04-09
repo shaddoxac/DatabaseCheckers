@@ -58,13 +58,13 @@ public class GameTests {
     public void testVictory() {
         setBitBoard(0, PieceType.WHITE);
         changeTurn();
-        assertTrue(game.gameOver);
+        checkGameOver();
 
         game=new Game();
         setBitBoard(bits(5), PieceType.WHITE);
         setBitBoard(bits(1), PieceType.BLACK);
         changeTurn();
-        assertTrue(game.gameOver);
+        checkGameOver();
     }
 
     @Test
@@ -78,19 +78,60 @@ public class GameTests {
     }
 
     @Test
+    public void testMoving() {
+
+    }
+
+    @Test
     public void testJump() {
         setBitBoard(bits(1), PieceType.BLACK);
         setBitBoard(bits(6), PieceType.WHITE);
         getValidMoves(PieceType.BLACK, 1);
         game.commitMove(getRandMove(game.pieceMoves));
-        checkInSpace(Player.BLACK,10);
+        checkInSpace(Player.BLACK, 10);
+        checkNotOccupied(bits(6));
+        changeTurn();
+        checkGameOver();
+
+        //TODO test other direction
+        //TODO test can't jump teammates
+    }
+
+    @Test
+    public void testDoubleJumps() {
+        setBitBoard(bits(1), PieceType.BLACK);
+        setBitBoard(bits(6), PieceType.WHITE);
+        setBitBoard(bits(14), PieceType.WHITE);
+        getValidMoves(PieceType.BLACK, 1);
+        System.out.println(num(getLastMove(game.pieceMoves).getDestination()));
+        game.commitMove(getLastMove(game.pieceMoves));
+        checkInSpace(Player.BLACK, 17);
+        checkNotOccupied(6);
+        checkNotOccupied(14);
+        changeTurn();
+        checkGameOver();
+    }
+
+    @Test
+    public void testMakingKings() {
+
+    }
+
+    @Test
+    public void testIllegalMove() {
+
+    }
+
+    @Test
+    public void testMustJump() {
+
     }
 
 
 
-    private int bits(int space) {
-        return game.getBitRepresentation(space);
-    }
+    private int bits(int space) {return game.getBitRepresentation(space);}
+    private int num(int space) {return game.getNumRepresentation(space);}
+
     private void changeTurn() {
         game.changeTurn();
     }
@@ -102,6 +143,11 @@ public class GameTests {
 
     private Move getRandMove(ArrayList<Move> list) {
         int index=rand.nextInt(list.size());
+        return list.get(index);
+    }
+
+    private Move getLastMove(ArrayList<Move> list) {
+        int index=list.size()-1;
         return list.get(index);
     }
 
@@ -130,5 +176,9 @@ public class GameTests {
 
     private void checkInSpace(Player player, int space) {
         assertTrue(game.spaceOccupiedByTeam(player, bits(space)));
+    }
+
+    private void checkGameOver() {
+        assertTrue(game.gameOver);
     }
 }

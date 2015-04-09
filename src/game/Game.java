@@ -262,7 +262,7 @@ public class Game {
     }
 
     private void removePieces(ArrayList<Piece> jumps) {
-        for (Piece jumped : jumps) {System.out.println("jumped loc= "+getNumRepresentation(jumped.location)); removePiece(jumped);}
+        for (Piece jumped : jumps) {removePiece(jumped);}
     }
 
     private void removePiece(Piece piece) {
@@ -296,14 +296,8 @@ public class Game {
     }
 
     private void checkDoubleJump(Move move, int newDest) {
-        System.out.println("loc = "+getNumRepresentation(move.getDestination()));
-        System.out.println("newDest = "+getNumRepresentation(newDest));
-        System.out.println("isNotEdge = "+isNotEdge(newDest));
-        System.out.println("isEnemyOccupied = "+isEnemyOccupied(move.getType(),newDest));
-        System.out.println("space after jump occupied = "+(!spaceAfterJumpOccupied(move.getDestination(),newDest)));
         if (isNotEdge(newDest) && isEnemyOccupied(move.getType(),newDest)) {
             if (!spaceAfterJumpOccupied(move.getDestination(),newDest)) {
-                System.out.println("is double jump");
                 addDoubleJump(move, newDest);
                 move.setJump(true);
                 currentMoves.add(move);
@@ -317,7 +311,6 @@ public class Game {
                 getMultipleJumpMoves(multiJumpMove);
             }
         }
-        System.out.println();
     }
 
     private void addJump(Move move) {
