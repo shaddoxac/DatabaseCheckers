@@ -58,8 +58,8 @@ public class Controller {
     private HashMap<Button,Integer> locationMap=new HashMap<>();
     private boolean gameStarted=false;
     private final int numSquares = 32;
-    private int numWhiteDead;
-    private int numBlackDead;
+    private int numWhiteDead = 0;
+    private int numBlackDead = 0;
     private ArrayList<Button> legalMoves = new ArrayList<>();
     private InferenceEngine ai;
     private int outOfBounds = 5000;
@@ -85,8 +85,7 @@ public class Controller {
         game=new Game(ai);
         setCheckerLocations();
         setPlayerTurn();
-        numWhiteDead = 0;
-    	numBlackDead = 0;
+        emptyGraveyards();
     	deselect();
     	hideComputerMove();
     }
@@ -114,6 +113,15 @@ public class Controller {
         }
         catch (SQLException ex) {ex.printStackTrace();}
         catch (ClassNotFoundException ex2) {ex2.printStackTrace();}
+    }
+    
+    private void updateGraveyards() {
+    	int newWhiteDead = game.getNumDead(Player.WHITE) - numWhiteDead;
+		int newBlackDead = game.getNumDead(Player.BLACK) - numBlackDead;
+		System.out.println(newWhiteDead);
+		System.out.println(newBlackDead);
+		if (newWhiteDead != 0){addToGraveyard(Player.WHITE);}
+		if (newBlackDead != 0){addToGraveyard(Player.BLACK);}
     }
     
     private void addToGraveyard(Player p) {
@@ -217,6 +225,7 @@ public class Controller {
     }
 	
 	private void switchTurns() {
+		updateGraveyards();
         if (!game.gameOver) {
             String currentTurn = turnIndicator.getText();
             boolean isPlayerTurn = currentTurn.equals("Your turn");

@@ -30,7 +30,7 @@ public class Game {
         this.ai=ai;
         gameOver=false;
     }
-
+    
     public Move commitMove(Move move) {
         int bitBoard=getBitBoard(move.getType());
         bitBoard=bitBoard & ~move.getLocation();
@@ -49,19 +49,6 @@ public class Game {
     public Move commitAIMove() {
         try {return commitMove(ai.getMove(board, currentMoves));}
         catch (SQLException e) {return null;}
-    }
-    
-    private void makeKings() {
-    	int blackPawns = board.blackPos;
-    	int whitePawns = board.whitePos;
-    	int blackKingRow = 0xF0000000;
-    	int whiteKingRow = 0xF;
-    	int newBlackKings = blackPawns & blackKingRow;
-    	int newWhiteKings = whitePawns & whiteKingRow;
-    	board.blackKingPos = board.blackKingPos | newBlackKings;
-    	board.whiteKingPos = board.whiteKingPos | newWhiteKings;
-    	board.blackPos = blackPawns & (blackPawns ^ board.blackKingPos);
-    	board.whitePos = whitePawns & (whitePawns ^ board.whiteKingPos);
     }
     
     public boolean isPlayerTurn() {
@@ -129,9 +116,42 @@ public class Game {
         }
         return counter;
     }
+    
+    public int getNumDead(Player p) {
+    	int numDead;
+    	if (p.equals(Player.BLACK)) {
+    		numDead = 12 - getNumPieces(board.blackPos | board.blackKingPos);
+    	}else{
+    		numDead = 12 - getNumPieces(board.whitePos | board.whiteKingPos);
+    	}
+    	return numDead;
+    }
 
 
-    private void gameOver(Player winner) {
+    private void makeKings() {
+		int blackPawns = board.blackPos;
+		int whitePawns = board.whitePos;
+		int blackKingRow = 0xF0000000;
+		int whiteKingRow = 0xF;
+		int newBlackKings = blackPawns & blackKingRow;
+		int newWhiteKings = whitePawns & whiteKingRow;
+		board.blackKingPos = board.blackKingPos | newBlackKings;
+		board.whiteKingPos = board.whiteKingPos | newWhiteKings;
+		board.blackPos = blackPawns & (blackPawns ^ board.blackKingPos);
+		board.whitePos = whitePawns & (whitePawns ^ board.whiteKingPos);
+	}
+
+	private int getNumPieces(int bitboard) {
+		int numPieces = 0;
+		int idx = 1;
+		for (int i=0; i<32; i++) {
+			if ((idx & bitboard) != 0) {numPieces++;}
+			idx = idx << 1;
+		}
+		return numPieces;
+	}
+
+	private void gameOver(Player winner) {
         gameOver=true;
         this.winner=winner;
     }
@@ -187,7 +207,7 @@ public class Game {
             if (temp!=0) {
                 getValidMoves(new Piece(type, idx));
             }
-            idx= idx << 1;
+            idx = idx << 1;
         }
     }
 
