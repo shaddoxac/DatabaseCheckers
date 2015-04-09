@@ -121,7 +121,7 @@ public class KnowledgeDesignerController {
 			lastSignificantVal = board.lastIndexOf('W');
 		if(board.lastIndexOf('b') > lastSignificantVal)
 			lastSignificantVal = board.lastIndexOf('b');
-		if(board.lastIndexOf('B') < firstSignificantVal)
+		if(board.lastIndexOf('B') > firstSignificantVal)
 			lastSignificantVal = board.lastIndexOf('B');
 		if(lastSignificantVal == -1)
 			lastSignificantVal = board.length()-1;
@@ -195,13 +195,13 @@ public class KnowledgeDesignerController {
 			
 			updateStatus("SQL INSERT Successful\n");
 			
-			ObservableList<Node> grid = pieceGrid.getChildren();
+			/*ObservableList<Node> grid = pieceGrid.getChildren();
 			for(int i=31; i >= 0; i--) {
 				grid.remove(i);
 			}
 			setup();
 			
-			updateStatus("Board State reset");
+			updateStatus("Board State reset");*/
 		} catch (SQLException e) {
 			updateStatus("SQL Exception encountered\n\n");
 			updateStatus("\tStatement:\n" + insert);

@@ -34,10 +34,10 @@ public abstract class InferenceEngine {
 		Statement query = knowBase.createStatement();
 		Scanner reader = new Scanner(b.toString());
 		
-		String whitePawns = reader.next(),
-				blackPawns = reader.next(),
-				whiteKings = reader.next(),
-				blackKings = reader.next();
+		String whitePawns = b.toWhiteString(),
+				blackPawns = b.toBlackString(),
+				whiteKings = b.toWhiteKingString(),
+				blackKings = b.toBlackKingString();
 		
 		String queryString = "";
 		try {
