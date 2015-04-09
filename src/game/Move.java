@@ -25,6 +25,7 @@ public class Move {
         sequentialJumps.add(jumpedPiece);
     }
 
+    public Piece getPiece() {return piece;}
     public PieceType getType() {
         return piece.type;
     }

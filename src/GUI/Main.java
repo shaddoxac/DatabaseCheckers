@@ -27,6 +27,7 @@ public class Main extends Application {
 		launch(args);
 	}
 }
+//TODO add indicator of where piece was removed
 /* loc= 32
 dest= 27
         newDest= 31

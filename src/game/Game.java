@@ -35,7 +35,6 @@ public class Game {
         int bitBoard=getBitBoard(move.getType());
         bitBoard=bitBoard & ~move.getLocation();
         bitBoard=bitBoard | move.getDestination();
-        System.out.println(getNumRepresentation(move.getDestination()));
         setBitBoard(bitBoard, move.getType());
         if (hasJumps) {
             removePieces(move.getSequentialJumps());
@@ -73,7 +72,6 @@ public class Game {
         }
         if (currentMoves.size()==0) {gameOver(currentTurn.other());}
         else if (hasJumps) {
-            System.out.println("hasjumps");
             eraseNonJumpMoves(currentMoves);
         }
     }
@@ -195,7 +193,6 @@ public class Game {
         }
     }
     private void getMultipleJumpMoves(Move move) {
-        Move temp;
         if (move.getDown()) {
             if (inOddRow(move.getDestination())) {
                 if (!isLeftBorder(move.getDestination())) {
@@ -225,7 +222,7 @@ public class Game {
     }
 
     private void checkDoubleJumpDestination(Move move, int offset) {
-        int tempDestination=getOffset(move.getLocation(),offset);
+        int tempDestination=getOffset(move.getDestination(),offset);
         checkDoubleJump(move,tempDestination);
     }
 
@@ -289,25 +286,40 @@ public class Game {
     private void checkJump(Move move) {
         if (isNotEdge(move.getDestination()) && isEnemyOccupied(move.getType(),move.getDestination())) {
             if (!spaceAfterJumpOccupied(move.getLocation(), move.getDestination())) {
+                int oldDest=move.getDestination();
                 addJump(move);
                 move.setJump(true);
                 currentMoves.add(move);
                 pieceMoves.add(move);
-                getMultipleJumpMoves(move);
+                Move multiJumpMove=new Move(move.getPiece(),move.getDestination());
+                multiJumpMove.addJump(getPieceType(oldDest),oldDest);
+                getMultipleJumpMoves(multiJumpMove);
             }
         }
     }
 
     private void checkDoubleJump(Move move, int newDest) {
+        System.out.println("loc = "+getNumRepresentation(move.getDestination()));
+        System.out.println("newDest = "+getNumRepresentation(newDest));
+        System.out.println("isNotEdge = "+isNotEdge(newDest));
+        System.out.println("isEnemyOccupied = "+isEnemyOccupied(move.getType(),newDest));
+        System.out.println("space after jump occupied = "+(!spaceAfterJumpOccupied(move.getDestination(),newDest)));
         if (isNotEdge(newDest) && isEnemyOccupied(move.getType(),newDest)) {
             if (!spaceAfterJumpOccupied(move.getDestination(),newDest)) {
-                addDoubleJump(move,newDest);
+                System.out.println("is double jump");
+                addDoubleJump(move, newDest);
                 move.setJump(true);
-                currentMoves.add(move);//check if base jumps are mutated
+                currentMoves.add(move);
                 pieceMoves.add(move);
-                getMultipleJumpMoves(move);
+                Move multiJumpMove=new Move(move.getPiece(),move.getDestination());
+                for (int i=1; i<move.getSequentialJumps().size(); i++) {
+                    int location=move.getSequentialJumps().get(i).location;
+                    multiJumpMove.addJump(getPieceType(location),location);
+                }
+                getMultipleJumpMoves(multiJumpMove);
             }
         }
+        System.out.println();
     }
 
     private void addJump(Move move) {
@@ -318,7 +330,6 @@ public class Game {
     }
 
     private void addDoubleJump(Move move, int newDest) {
-        hasJumps=true;
         move.addJump(getPieceType(move.getDestination()),move.getDestination());
         newDest=getJumpDestination(move.getDestination(),newDest);
         move.setDestination(newDest);
@@ -379,13 +390,10 @@ public class Game {
     }
 
 
-    private boolean isEdge(int space) {
-        return isHorizontalBorder(space) || isVerticalBorder(space);
+    private boolean isNotEdge(int space) {
+        return !isHorizontalBorder(space) && !isVerticalBorder(space);
     }
-    private boolean isNotEdge(int space) {return !isEdge(space);}
-    private boolean isHorizontalBorder(int space) {
-        return (space & 0xF000000F) !=0;
-    }
+    private boolean isHorizontalBorder(int space) {return (space & 0xF000000F) !=0;}
     private boolean isVerticalBorder(int space) {return isLeftBorder(space) || isRightBorder(space);}
     private boolean isLeftBorder(int space) {return (space & 0x8080808)!=0;}
     private boolean isRightBorder(int space) {return (space & 0x10101010)!=0;}

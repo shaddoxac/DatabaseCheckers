@@ -118,8 +118,6 @@ public class Controller {
     private void updateGraveyards() {
     	int newWhiteDead = game.getNumDead(Player.WHITE) - numWhiteDead;
 		int newBlackDead = game.getNumDead(Player.BLACK) - numBlackDead;
-		System.out.println(newWhiteDead);
-		System.out.println(newBlackDead);
 		if (newWhiteDead != 0){addToGraveyard(Player.WHITE);}
 		if (newBlackDead != 0){addToGraveyard(Player.BLACK);}
     }
