@@ -62,6 +62,7 @@ public class Controller {
     private int numBlackDead;
     private ArrayList<Button> legalMoves = new ArrayList<>();
     private InferenceEngine ai;
+    private int outOfBounds = 5000;
 
     @FXML
 	private void initialize() {
@@ -88,6 +89,17 @@ public class Controller {
     	numBlackDead = 0;
     	deselect();
     	hideComputerMove();
+    }
+    
+    private void gameOver() {
+    	gameStarted = false;
+    	turnIndicator.setText(game.winner.toString() + " wins!");
+    	String color = game.winner.equals(Player.BLACK) ? "black" : "white";
+        turnIndicator.setStyle("-fx-text-inner-color: " + color + ";");
+    }
+    
+    private void checkGameOver() {
+    	if (game.gameOver) {gameOver();}
     }
     
     private void setUpAI()  {
@@ -160,6 +172,10 @@ public class Controller {
     	Image img2 = new Image("/img/Wooden Board/CPU_Highlight.png");
     	cpuBox1 = new ImageView(img1);
     	cpuBox2 = new ImageView(img2);
+    	cpuBox1.setLayoutX(outOfBounds);
+    	cpuBox1.setLayoutY(outOfBounds);
+    	cpuBox2.setLayoutX(outOfBounds);
+    	cpuBox2.setLayoutY(outOfBounds);
     	cpuBox1.setVisible(false);
     	cpuBox2.setVisible(false);
     	canvas.getChildren().add(cpuBox1);
@@ -192,11 +208,13 @@ public class Controller {
 	
     @FXML
 	private void deselect() {
-		selectionBox.setVisible(false);
-		selectedButton = null;
-		clearLegalMoves();
-		showComputerMove();
-	}
+    	if (gameStarted){
+			selectionBox.setVisible(false);
+			selectedButton = null;
+			clearLegalMoves();
+			showComputerMove();
+		}
+    }
 	
 	private void switchTurns() {
         if (!game.gameOver) {
@@ -207,6 +225,7 @@ public class Controller {
             turnIndicator.setText(newTurn);
             turnIndicator.setStyle("-fx-text-inner-color: " + newColor + ";");
             game.changeTurn();
+            checkGameOver();
             if (!game.isPlayerTurn()) {
                 hideComputerMove();
                 requestAIMove();
@@ -219,15 +238,15 @@ public class Controller {
 		turnIndicator.setStyle("-fx-text-inner-color: black;");
 	}
 	
-    private void requestAIMove() {
-        if (!game.gameOver) {
-            Move move = game.commitAIMove();
-            updateTurnCount();
-            setCheckerLocations();
-            deselect();
-            switchTurns();
-            highlightComputerMove(move);
-        }
+	private void requestAIMove() {
+		if (gameStarted) {
+        	Move move=game.commitAIMove();
+	        highlightComputerMove(move);
+			updateTurnCount();
+	        setCheckerLocations();
+	        deselect();
+			switchTurns();
+		}
 	}
 
     private void highlightComputerMove(Move move) {
@@ -237,9 +256,9 @@ public class Controller {
     	Button endTile = getButton(endLocation);
     	cpuBox1.setLayoutX(startTile.getLayoutX());
     	cpuBox1.setLayoutY(startTile.getLayoutY());
+    	cpuBox1.setVisible(true);
     	cpuBox2.setLayoutX(endTile.getLayoutX());
     	cpuBox2.setLayoutY(endTile.getLayoutY());
-    	cpuBox1.setVisible(true);
     	cpuBox2.setVisible(true);
     }
     
@@ -253,14 +272,10 @@ public class Controller {
     	cpuBox2.setVisible(false);
     }
     
-    private void makeKing() {
-    	
-    }
-    
     private void onAction(Button b) {
-        if (!game.gameOver) {
+        if (gameStarted) {
             clearLegalMoves();
-            if (gameStarted && game.isPlayerTurn()) {
+            if (!game.gameOver && game.isPlayerTurn()) {
                 int location = numSquares + 1 - locationMap.get(b);
                 location = game.getBitRepresentation(location);
                 if (game.spaceOccupied(location)) {

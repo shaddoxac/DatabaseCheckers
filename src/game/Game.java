@@ -292,21 +292,22 @@ public class Game {
 
     private void checkMove(Move move) {
         if (inBounds(move.getDestination())) {
-            if (spaceNotOccupied(move.getDestination())) {
-                currentMoves.add(move);
-                pieceMoves.add(move);
-            }
-            else if (checkJump(move)) {
+        	if (checkJump(move)) {
                 move.setJump(true);
                 currentMoves.add(move);
                 pieceMoves.add(move);
             }
+        	else if (spaceNotOccupied(move.getDestination())) {
+                currentMoves.add(move);
+                pieceMoves.add(move);
+            }
+            
         }
     }
 
 
     private boolean isEdge(int space) {
-        return isHorizontalBorder(space) && isVerticalBorder(space);
+        return isHorizontalBorder(space) || isVerticalBorder(space);
     }
     private boolean isNotEdge(int space) {return !isEdge(space);}
     private boolean isHorizontalBorder(int space) {
