@@ -17,6 +17,7 @@ public class Game {
     public ArrayList<Move> pieceMoves=new ArrayList<>();
 
     private int lastIndex=0x80000000;
+    private int numPieces=12;
 
     public Game() {
         currentTurn=Player.BLACK;
@@ -116,15 +117,18 @@ public class Game {
     }
     
     public int getNumDead(Player p) {
-    	int numDead;
     	if (p.equals(Player.BLACK)) {
-    		numDead = 12 - getNumPieces(board.blackPos | board.blackKingPos);
-    	}else{
-    		numDead = 12 - getNumPieces(board.whitePos | board.whiteKingPos);
+    		return numPieces - getNumPieces(board.blackPos | board.blackKingPos);
     	}
-    	return numDead;
+    	return numPieces - getNumPieces(board.whitePos | board.whiteKingPos);
     }
 
+    public void setBitBoard(int bitBoard, PieceType pieceType) {
+        if (pieceType.equals(PieceType.BLACK)) {board.blackPos=bitBoard;}
+        else if (pieceType.equals(PieceType.WHITE)) {board.whitePos=bitBoard;}
+        else if (pieceType.equals(PieceType.BLACKKING)) {board.blackKingPos=bitBoard;}
+        else {board.whiteKingPos=bitBoard;}
+    }
 
     private void makeKings() {
 		int blackPawns = board.blackPos;
@@ -267,13 +271,6 @@ public class Game {
         else if (piece.type.equals(PieceType.WHITE)) {board.whitePos=board.whitePos & changedBit;}
         else if (piece.type.equals(PieceType.BLACKKING)) {board.blackKingPos=board.blackKingPos & changedBit;}
         else {board.whiteKingPos=board.whiteKingPos & changedBit;}
-    }
-
-    private void setBitBoard(int bitBoard, PieceType pieceType) {
-        if (pieceType.equals(PieceType.BLACK)) {board.blackPos=bitBoard;}
-        else if (pieceType.equals(PieceType.WHITE)) {board.whitePos=bitBoard;}
-        else if (pieceType.equals(PieceType.BLACKKING)) {board.blackKingPos=bitBoard;}
-        else {board.whiteKingPos=bitBoard;}
     }
 
     private int getBitBoard(PieceType pieceType) {

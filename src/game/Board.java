@@ -13,16 +13,17 @@ public class Board {
         blackKingPos =0;
     }
 
-    public String toString() {
-        StringBuilder sb=new StringBuilder();
-        sb.append(getStringOf(whitePos));
-        sb.append(" ");
-        sb.append(getStringOf(blackPos));
-        sb.append(" ");
-        sb.append(getStringOf(whiteKingPos));
-        sb.append(" ");
-        sb.append(getStringOf(blackKingPos));
-        return sb.toString();
+    public String toWhiteString() {
+        return getStringOf(whitePos);
+    }
+    public String toWhiteKingString() {
+        return getStringOf(whiteKingPos);
+    }
+    public String toBlackString() {
+        return getStringOf(blackPos);
+    }
+    public String toBlackKingString() {
+        return getStringOf(blackKingPos);
     }
 
     private String getStringOf(int num) {

@@ -4,6 +4,7 @@ import game.*;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.ArrayList;
 import java.util.Random;
 
 import static org.junit.Assert.*;
@@ -54,9 +55,37 @@ public class GameTests {
     }
 
     @Test
-    public void testJumps() {
+    public void testVictory() {
+        setBitBoard(0, PieceType.WHITE);
+        changeTurn();
+        assertTrue(game.gameOver);
 
+        game=new Game();
+        setBitBoard(bits(5), PieceType.WHITE);
+        setBitBoard(bits(1), PieceType.BLACK);
+        changeTurn();
+        assertTrue(game.gameOver);
     }
+
+    @Test
+    public void testStart() {
+        for (int i=1; i<=12; i++) {
+            checkInSpace(Player.BLACK, i);
+        }
+        for (int i=21; i<=32; i++) {
+            checkInSpace(Player.WHITE, i);
+        }
+    }
+
+    @Test
+    public void testJump() {
+        setBitBoard(bits(1), PieceType.BLACK);
+        setBitBoard(bits(6), PieceType.WHITE);
+        getValidMoves(PieceType.BLACK, 1);
+        game.commitMove(getRandMove(game.pieceMoves));
+        checkInSpace(Player.BLACK,10);
+    }
+
 
 
     private int bits(int space) {
@@ -65,10 +94,21 @@ public class GameTests {
     private void changeTurn() {
         game.changeTurn();
     }
+
     private void getValidMoves(PieceType type, int location) {
         Piece piece=new Piece(type, location);
         game.getMovesForPiece(piece);
     }
+
+    private Move getRandMove(ArrayList<Move> list) {
+        int index=rand.nextInt(list.size());
+        return list.get(index);
+    }
+
+    private void setBitBoard(int bitBoard, PieceType type) {
+        game.setBitBoard(bitBoard, type);
+    }
+
     private Move getRandomMove() {
         int index=rand.nextInt(game.pieceMoves.size());
         return game.pieceMoves.get(index);
@@ -82,8 +122,13 @@ public class GameTests {
     private void checkNotOccupied(int loc) {
         assertTrue(game.spaceNotOccupied(loc));
     }
+
     private void compareNumAndBit(int num1, int num2) {
         assertEquals(game.getBitRepresentation(num1), num2);
         assertEquals(game.getNumRepresentation(num2), num1);
+    }
+
+    private void checkInSpace(Player player, int space) {
+        assertTrue(game.spaceOccupiedByTeam(player, bits(space)));
     }
 }
