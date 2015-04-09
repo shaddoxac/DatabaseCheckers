@@ -297,15 +297,16 @@ public class Game {
 
     private void checkMove(Move move) {
         if (inBounds(move.getDestination())) {
-            if (spaceNotOccupied(move.getDestination())) {
-                currentMoves.add(move);
-                pieceMoves.add(move);
-            }
-            else if (checkJump(move)) {
+        	if (checkJump(move)) {
                 move.setJump(true);
                 currentMoves.add(move);
                 pieceMoves.add(move);
             }
+        	else if (spaceNotOccupied(move.getDestination())) {
+                currentMoves.add(move);
+                pieceMoves.add(move);
+            }
+            
         }
     }
 
