@@ -268,7 +268,7 @@ public class Controller {
                     if (spacePlayerOccupied(type)) {
                         setSelected(b);
                         Piece piece = new Piece(type, location);
-                        game.getValidMoves(piece);
+                        game.getMovesForPiece(piece);
                         showPossibleMoves(game.pieceMoves);
                     }
                 } else {

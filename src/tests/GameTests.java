@@ -67,7 +67,7 @@ public class GameTests {
     }
     private void getValidMoves(PieceType type, int location) {
         Piece piece=new Piece(type, location);
-        game.getValidMoves(piece);
+        game.getMovesForPiece(piece);
     }
     private Move getRandomMove() {
         int index=rand.nextInt(game.pieceMoves.size());
