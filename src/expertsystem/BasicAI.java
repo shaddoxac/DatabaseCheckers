@@ -61,12 +61,15 @@ public class BasicAI extends InferenceEngine{
 		if(locOne != Integer.MIN_VALUE && (locOne < locTwo))
 			return isSameCol(locTwo, locOne);
 		
+		if(locOne == Integer.MIN_VALUE && locOne == locTwo)
+			return true;
+		
 		while(locOne == Integer.MIN_VALUE || locOne > locTwo) {
-			if(locOne == locTwo)
-				return true;
 			locOne = locOne >>> 8;
 		}
 		
+		if(locOne == locTwo)
+			return true;
 		return false;
 	}
 	
@@ -74,8 +77,15 @@ public class BasicAI extends InferenceEngine{
 		if(locOne != Integer.MIN_VALUE && (locOne < locTwo))
 			return isSameCol(locTwo, locOne);
 		
-		if(locOne !=)
+		if(locOne == Integer.MIN_VALUE && locOne == locTwo)
+			return true;
 		
+		while(locOne == Integer.MIN_VALUE || locOne > locTwo) {
+			locOne = locOne >>> 1;
+		}
+		
+		if(locOne == locTwo)
+			return true;
 		return false;
 	}
 
