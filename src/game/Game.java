@@ -91,9 +91,22 @@ public class Game {
 
     public boolean spaceOccupiedByTeam(Player team, int loc) {
         if (team.equals(Player.BLACK)) {
-            return (isOccupied(board.blackPos, loc) || isOccupied(board.blackKingPos, loc));
+            return blackOccupied(loc) || blackKingOccupied(loc);
         }
-        return (isOccupied(board.whitePos, loc) || isOccupied(board.whiteKingPos, loc));
+        return (whiteOccupied(loc) || whiteKingOccupied(loc));
+    }
+
+    public boolean blackOccupied(int loc) {
+        return isOccupied(board.blackPos, loc);
+    }
+    public boolean blackKingOccupied(int loc) {
+        return isOccupied(board.blackKingPos, loc);
+    }
+    public boolean whiteOccupied(int loc) {
+        return isOccupied(board.whitePos, loc);
+    }
+    public boolean whiteKingOccupied(int loc) {
+        return isOccupied(board.whiteKingPos, loc);
     }
 
     public PieceType getPieceType(int dest) {
@@ -197,32 +210,36 @@ public class Game {
         }
     }
     private void getMultipleJumpMoves(Move move) {
+        int offset1=0;
+        int offset2=0;
         if (move.getDown()) {
             if (inOddRow(move.getDestination())) {
                 if (!isLeftBorder(move.getDestination())) {
-                    checkDoubleJumpDestination(move, -3);
+                    offset1=-3;
                 }
             }
             else {
                 if (!isRightBorder(move.getDestination())) {
-                    checkDoubleJumpDestination(move, -5);
+                    offset1=-5;
                 }
             }
-            checkDoubleJumpDestination(move, -4);
+            offset2=-4;
         }
         if (move.getUp()) {
             if (inOddRow(move.getDestination())) {
                 if (!isLeftBorder(move.getDestination())) {
-                    checkDoubleJumpDestination(move, 5);
+                    offset1=5;
                 }
             }
             else {
                 if (!isRightBorder(move.getDestination())) {
-                    checkDoubleJumpDestination(move, 3);
+                    offset1=3;
                 }
             }
-            checkDoubleJumpDestination(move, 4);
+            offset2=4;
         }
+        if (offset1!=0) {checkDoubleJump(move,offset1);}
+        if (offset2!=0) {checkDoubleJump(move,offset2);}
     }
 
     private void checkDoubleJumpDestination(Move move, int offset) {
