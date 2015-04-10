@@ -41,7 +41,7 @@ public class GameTests {
         getValidMoves(PieceType.BLACK, 11);
         game.commitMove(getRandomMove());
         checkNotOccupied(11);
-        checkOccupied(bits(15), bits(16));
+        checkOneIsOccupied(bits(15), bits(16));
         changeTurn();
         if (game.spaceOccupied(bits(15))) {
             getValidMoves(PieceType.BLACK, 10);
@@ -79,7 +79,22 @@ public class GameTests {
 
     @Test
     public void testMoving() {
+        setBitBoard(bits(1), PieceType.BLACK);
+        setBitBoard(bits(32), PieceType.WHITE);
+        commitMove(PieceType.BLACK, 1,5);
+        checkNotOccupied(1);
+        checkOccupied(5);
+        commitMove(PieceType.BLACK, 5,9);
+        checkNotOccupied(5);
+        checkOccupied(9);
 
+        setBitBoard(bits(4), PieceType.BLACK);
+        commitMove(PieceType.BLACK, 4,8);
+        checkNotOccupied(4);
+        checkOccupied(8);
+        commitMove(PieceType.BLACK, 8,12);
+        checkNotOccupied(8);
+        checkOccupied(12);
     }
 
     @Test
@@ -87,14 +102,36 @@ public class GameTests {
         setBitBoard(bits(1), PieceType.BLACK);
         setBitBoard(bits(6), PieceType.WHITE);
         getValidMoves(PieceType.BLACK, 1);
+        assertTrue(game.hasJumps);
         game.commitMove(getRandMove(game.pieceMoves));
         checkInSpace(Player.BLACK, 10);
         checkNotOccupied(6);
+        checkNotOccupied(1);
         changeTurn();
         checkGameOver();
 
-        //TODO test other direction
-        //TODO test can't jump teammates
+        game=new Game();
+        setBitBoard(bits(27), PieceType.BLACK);
+        setBitBoard(bits(31), PieceType.WHITE);
+        changeTurn();
+        getValidMoves(PieceType.WHITE, 31);
+        assertTrue(game.hasJumps);
+        game.commitMove(getRandMove(game.pieceMoves));
+        checkInSpace(Player.WHITE, 24);
+        checkNotOccupied(27);
+        checkNotOccupied(31);
+        changeTurn();
+        checkGameOver();
+
+        game=new Game();
+        setBitBoard(bits(3) + bits(7), PieceType.BLACK);
+        getValidMoves(PieceType.BLACK, 3);
+        assertFalse(game.hasJumps);
+        game.commitMove(getRandMove(game.pieceMoves));
+        checkInSpace(Player.BLACK, 8);
+        checkInSpace(Player.BLACK, 7);
+        checkNotOccupied(3);
+        changeTurn();
     }
 
     @Test
@@ -103,6 +140,7 @@ public class GameTests {
         setBitBoard(bits(1), PieceType.BLACK);
         setBitBoard(bits(6) + bits(14), PieceType.WHITE);
         getValidMoves(PieceType.BLACK, 1);
+        assertTrue(game.hasJumps);
         tempMove=getMoveWithDest(game.pieceMoves, 17);
         if (tempMove==null) {fail();}
         game.commitMove(tempMove);
@@ -117,6 +155,7 @@ public class GameTests {
         setBitBoard(bits(27)+bits(19)+bits(18), PieceType.WHITE);
         setBitBoard(bits(31), PieceType.BLACKKING);
         getValidMoves(PieceType.BLACKKING, 31);
+        assertTrue(game.hasJumps);
         tempMove=getMoveWithDest(game.pieceMoves, 22);
         if (tempMove==null) {fail();}
         game.commitMove(tempMove);
@@ -130,20 +169,21 @@ public class GameTests {
 
     @Test
     public void testMakingKings() {
-
+        setBitBoard(bits(28), PieceType.BLACK);
+        setBitBoard(bits(6), PieceType.WHITE);
+        commitMove(PieceType.BLACK,28,32);
+        commitMove(PieceType.WHITE,6,2);
+        assertFalse(game.blackOccupied(bits(32)));
+        assertFalse(game.whiteOccupied(bits(2)));
+        assertTrue(game.blackKingOccupied(bits(32)));
+        assertTrue(game.whiteKingOccupied(bits(2)));
     }
 
     @Test
     public void testIllegalMove() {
 
     }
-
-    @Test
-    public void testMustJump() {
-
-    }
-
-
+    
 
     private int bits(int space) {return game.getBitRepresentation(space);}
     private int num(int space) {return game.getNumRepresentation(space);}
@@ -155,6 +195,10 @@ public class GameTests {
     private void getValidMoves(PieceType type, int location) {
         Piece piece=new Piece(type, bits(location));
         game.getMovesForPiece(piece);
+    }
+
+    private void commitMove(PieceType type, int loc, int dest) {
+        game.commitMove(new Move(type, bits(loc), bits(dest)));
     }
 
     private Move getRandMove(ArrayList<Move> list) {
@@ -182,11 +226,13 @@ public class GameTests {
         return game.pieceMoves.get(index);
     }
 
-    private void checkOccupied(int loc1, int loc2) {
+    private void checkOneIsOccupied(int loc1, int loc2) {
         if (game.spaceNotOccupied(loc1) && game.spaceNotOccupied(loc2)) {
             fail();
         }
     }
+
+    private void checkOccupied(int loc) {assertTrue(game.spaceOccupied(bits(loc)));}
     private void checkNotOccupied(int loc) {
         assertTrue(game.spaceNotOccupied(bits(loc)));
     }
