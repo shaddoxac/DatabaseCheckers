@@ -30,11 +30,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="Game.java" pinned="false" current-in-tab="false">
+      <file leaf-file-name="Game.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/game/Game.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="1242" max-vertical-offset="6919">
-              <caret line="94" column="9" selection-start-line="94" selection-start-column="9" selection-end-line="94" selection-end-column="9" />
+            <state vertical-scroll-proportion="-1.3754209" vertical-offset="5781" max-vertical-offset="6987">
+              <caret line="308" column="69" selection-start-line="308" selection-start-column="69" selection-end-line="308" selection-end-column="69" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -42,14 +42,14 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="GameTests.java" pinned="false" current-in-tab="true">
+      <file leaf-file-name="GameTests.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/tests/GameTests.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.7441077" vertical-offset="2550" max-vertical-offset="4080">
-              <caret line="185" column="4" selection-start-line="185" selection-start-column="4" selection-end-line="185" selection-end-column="4" />
+            <state vertical-scroll-proportion="0.0" vertical-offset="2499" max-vertical-offset="4080">
+              <caret line="181" column="0" selection-start-line="181" selection-start-column="0" selection-end-line="184" selection-end-column="5" />
               <folding>
-                <element signature="e#6971#6972#0" expanded="true" />
-                <element signature="e#7044#7045#0" expanded="true" />
+                <element signature="e#6967#6968#0" expanded="true" />
+                <element signature="e#7040#7041#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -108,8 +108,8 @@
         <option value="$PROJECT_DIR$/src/game/Move.java" />
         <option value="$PROJECT_DIR$/src/GUI/Controller.java" />
         <option value="$PROJECT_DIR$/src/game/Board.java" />
-        <option value="$PROJECT_DIR$/src/game/Game.java" />
         <option value="$PROJECT_DIR$/src/tests/GameTests.java" />
+        <option value="$PROJECT_DIR$/src/game/Game.java" />
       </list>
     </option>
   </component>
@@ -1079,23 +1079,23 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/game/Game.java">
+    <entry file="file://$PROJECT_DIR$/src/tests/GameTests.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="1242" max-vertical-offset="6919">
-          <caret line="94" column="9" selection-start-line="94" selection-start-column="9" selection-end-line="94" selection-end-column="9" />
+        <state vertical-scroll-proportion="0.0" vertical-offset="2499" max-vertical-offset="4080">
+          <caret line="181" column="0" selection-start-line="181" selection-start-column="0" selection-end-line="184" selection-end-column="5" />
           <folding>
-            <element signature="imports" expanded="true" />
+            <element signature="e#6967#6968#0" expanded="true" />
+            <element signature="e#7040#7041#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/tests/GameTests.java">
+    <entry file="file://$PROJECT_DIR$/src/game/Game.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.7441077" vertical-offset="2550" max-vertical-offset="4080">
-          <caret line="185" column="4" selection-start-line="185" selection-start-column="4" selection-end-line="185" selection-end-column="4" />
+        <state vertical-scroll-proportion="-1.3754209" vertical-offset="5781" max-vertical-offset="6987">
+          <caret line="308" column="69" selection-start-line="308" selection-start-column="69" selection-end-line="308" selection-end-column="69" />
           <folding>
-            <element signature="e#6971#6972#0" expanded="true" />
-            <element signature="e#7044#7045#0" expanded="true" />
+            <element signature="imports" expanded="true" />
           </folding>
         </state>
       </provider>

@@ -183,7 +183,7 @@ public class GameTests {
     public void testIllegalMove() {
 
     }
-    
+
 
     private int bits(int space) {return game.getBitRepresentation(space);}
     private int num(int space) {return game.getNumRepresentation(space);}
