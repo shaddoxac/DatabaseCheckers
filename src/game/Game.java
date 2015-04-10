@@ -298,17 +298,18 @@ public class Game {
     private void checkDoubleJump(Move move, int newDest) {
         if (isNotEdge(newDest) && isEnemyOccupied(move.getType(),newDest)) {
             if (!spaceAfterJumpOccupied(move.getDestination(),newDest)) {
-                addDoubleJump(move, newDest);
-                move.setJump(true);
-                currentMoves.add(move);
-                pieceMoves.add(move);
-                Move multiJumpMove=new Move(move.getPiece(),move.getDestination());
-                for (int i=0; i<move.getSequentialJumps().size(); i++) {
-                    int location=move.getSequentialJumps().get(i).location;
-                    multiJumpMove.addJump(getPieceType(location),location);
+                if (!hasBeenJumpedAlready(move.getSequentialJumps(),newDest)) {
+                    addDoubleJump(move, newDest);
+                    move.setJump(true);
+                    currentMoves.add(move);
+                    pieceMoves.add(move);
+                    Move multiJumpMove = new Move(move.getPiece(), move.getDestination());
+                    for (int i = 0; i < move.getSequentialJumps().size(); i++) {
+                        int location = move.getSequentialJumps().get(i).location;
+                        multiJumpMove.addJump(getPieceType(location), location);
+                    }
+                    getMultipleJumpMoves(multiJumpMove);
                 }
-
-                getMultipleJumpMoves(multiJumpMove);
             }
         }
     }
@@ -324,6 +325,15 @@ public class Game {
         move.addJump(getPieceType(newDest),newDest);
         newDest=getJumpDestination(move.getDestination(),newDest);
         move.setDestination(newDest);
+    }
+
+    private boolean hasBeenJumpedAlready(ArrayList<Piece> list, int loc) {
+        for (int i=0; i<list.size(); i++) {
+            if (list.get(i).location==loc) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private boolean isEnemyOccupied(PieceType type, int loc) {
