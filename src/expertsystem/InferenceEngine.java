@@ -41,7 +41,7 @@ public abstract class InferenceEngine {
 		
 		String queryString = "";
 		try {
-			reader = new Scanner(new FileReader(new File("expertsystem/SQL_QUERY")));
+			reader = new Scanner(new FileReader(new File("SQL_QUERY")));
 			reader.useDelimiter("#");
 			
 			String part;

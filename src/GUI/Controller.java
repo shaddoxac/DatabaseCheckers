@@ -248,6 +248,7 @@ public class Controller {
 	private void requestAIMove() {
 		if (gameStarted) {
         	Move move=game.commitAIMove();
+        	System.out.println(move);
 	        highlightComputerMove(move);
 			updateTurnCount();
 	        setCheckerLocations();
