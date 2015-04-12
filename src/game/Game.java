@@ -50,12 +50,12 @@ public class Game {
     	System.out.println(currentMoves == null);
     	try {
 			System.out.println(ai.getMove(board, currentMoves));
-		} catch (SQLException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-        try {return commitMove(ai.getMove(board, currentMoves));}
-        catch (SQLException e) {return null;}
+            return commitMove(ai.getMove(board, currentMoves));
+        }
+        catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
     
     public boolean isPlayerTurn() {

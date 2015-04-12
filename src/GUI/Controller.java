@@ -321,7 +321,7 @@ public class Controller {
         	int moveLocation = numSquares+1 - locationMap.get(b);
         	int moveBitLocation = game.getBitRepresentation(moveLocation);
             for (int idx=0; idx<game.pieceMoves.size(); idx++) {
-                if (game.pieceMoves.get(idx).getDestination()==moveBitLocation) {
+                if (game.pieceMoves.get(idx).getDestination() == moveBitLocation) {
                     game.commitMove(game.pieceMoves.get(idx));
                     updateTurnCount();
                     setCheckerLocations();

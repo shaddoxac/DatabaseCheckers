@@ -24,14 +24,10 @@ public class BasicAI extends InferenceEngine{
 
 		int[] moveScores = new int[legalMoves.size()];
 		ResultSet results = super.getMoveSet(b);
-		
-		results.last();
-		int lastRow = results.getRow();
-		results.first();
-		
 		String move;
 		int score;
-		while(results.getRow() <= lastRow) {
+
+		while(results.next()) {
 			move = results.getString("MoveDescription");
 			score = results.getInt("Score");
 			
@@ -40,8 +36,6 @@ public class BasicAI extends InferenceEngine{
 					moveScores[i] += score;
 				}
 			}
-			
-			results.next();
 		}
 		
 		results.close();
