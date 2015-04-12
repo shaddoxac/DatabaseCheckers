@@ -47,9 +47,7 @@ public class Game {
     }
     
     public Move commitAIMove() {
-    	System.out.println(currentMoves == null);
     	try {
-			System.out.println(ai.getMove(board, currentMoves));
             return commitMove(ai.getMove(board, currentMoves));
         }
         catch (SQLException e) {
@@ -217,36 +215,32 @@ public class Game {
         }
     }
     private void getMultipleJumpMoves(Move move) {
-        int offset1=0;
-        int offset2=0;
         if (move.getDown()) {
             if (inOddRow(move.getDestination())) {
                 if (!isLeftBorder(move.getDestination())) {
-                    offset1=-3;
+                    checkDoubleJumpDestination(move, -3);
                 }
             }
             else {
                 if (!isRightBorder(move.getDestination())) {
-                    offset1=-5;
+                    checkDoubleJumpDestination(move, -5);
                 }
             }
-            offset2=-4;
+            checkDoubleJumpDestination(move, -4);
         }
         if (move.getUp()) {
             if (inOddRow(move.getDestination())) {
                 if (!isLeftBorder(move.getDestination())) {
-                    offset1=5;
+                    checkDoubleJumpDestination(move, 5);
                 }
             }
             else {
                 if (!isRightBorder(move.getDestination())) {
-                    offset1=3;
+                    checkDoubleJumpDestination(move, 3);
                 }
             }
-            offset2=4;
+            checkDoubleJumpDestination(move, 4);
         }
-        if (offset1!=0) {checkDoubleJump(move,offset1);}
-        if (offset2!=0) {checkDoubleJump(move,offset2);}
     }
 
     private void checkDoubleJumpDestination(Move move, int offset) {
@@ -307,14 +301,7 @@ public class Game {
     private void checkJump(Move move) {
         if (isNotEdge(move.getDestination()) && isEnemyOccupied(move.getType(),move.getDestination())) {
             if (!spaceAfterJumpOccupied(move.getLocation(), move.getDestination())) {
-                int oldDest=move.getDestination();
-                addJump(move);
-                move.setJump(true);
-                currentMoves.add(move);
-                pieceMoves.add(move);
-                Move multiJumpMove=new Move(move.getPiece(),move.getDestination());
-                multiJumpMove.addJump(getPieceType(oldDest),oldDest);
-                getMultipleJumpMoves(multiJumpMove);
+                isLegalJump(move);
             }
         }
     }
@@ -323,17 +310,48 @@ public class Game {
         if (isNotEdge(newDest) && isEnemyOccupied(move.getType(),newDest)) {
             if (!spaceAfterJumpOccupied(move.getDestination(),newDest)) {
                 if (!hasBeenJumpedAlready(move.getSequentialJumps(),newDest)) {
-                    addDoubleJump(move, newDest);
-                    move.setJump(true);
-                    currentMoves.add(move);
-                    pieceMoves.add(move);
-                    Move multiJumpMove = new Move(move.getPiece(), move.getDestination());
-                    for (int i = 0; i < move.getSequentialJumps().size(); i++) {
-                        int location = move.getSequentialJumps().get(i).location;
-                        multiJumpMove.addJump(getPieceType(location), location);
-                    }
-                    getMultipleJumpMoves(multiJumpMove);
+                    isLegalDoubleJump(move,newDest);
                 }
+            }
+        }
+    }
+
+    private void isLegalJump(Move move) {
+        int oldDest=move.getDestination();
+        addJump(move);
+        move.setJump(true);
+        currentMoves.add(move);
+        pieceMoves.add(move);
+        Move multiJumpMove=new Move(move.getPiece(),move.getDestination());
+        multiJumpMove.addJump(getPieceType(oldDest),oldDest);
+        getMultipleJumpMoves(multiJumpMove);
+    }
+
+    private void isLegalDoubleJump(Move move, int newDest) {
+        clearLesserJumps(move.getLocation());
+        addDoubleJump(move, newDest);
+        move.setJump(true);
+        currentMoves.add(move);
+        pieceMoves.add(move);
+        Move multiJumpMove = new Move(move.getPiece(), move.getDestination());
+        for (int i = 0; i < move.getSequentialJumps().size(); i++) {
+            int location = move.getSequentialJumps().get(i).location;
+            multiJumpMove.addJump(getPieceType(location), location);
+        }
+        getMultipleJumpMoves(multiJumpMove);
+    }
+
+    private void clearLesserJumps(int loc) {
+        for (int idx=0; idx>currentMoves.size(); idx++) {
+            if (currentMoves.get(idx).getLocation() == loc) {
+                currentMoves.remove(idx);
+                idx--;
+            }
+        }
+        for (int idx=0; idx>pieceMoves.size(); idx++) {
+            if (pieceMoves.get(idx).getLocation() == loc) {
+                pieceMoves.remove(idx);
+                idx--;
             }
         }
     }
