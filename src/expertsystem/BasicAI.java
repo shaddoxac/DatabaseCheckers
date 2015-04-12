@@ -31,19 +31,23 @@ public class BasicAI extends InferenceEngine{
 		while(results.next()) {
 			move = results.getString("MoveDescription");
 			score = results.getInt("Score");
-			
 			for(int i=0; i<legalMoves.size(); i++) {
 				if(translateDirection(legalMoves.get(i)).equals(move.substring(2, 5)) && isSimilarLocation(legalMoves.get(i), move)) {
 					moveScores[i] += score;
 					
 					if(isSameLocation(legalMoves.get(i), move))
-						moveScores[i]++;
+						moveScores[i]=moveScores[i]+1;
 				}
 			}
 		}
 		
 		results.close();
-		
+
+        int idx=0;//TODO erase
+        for (Move moves : legalMoves) {
+            System.out.println(getNumRepresentation(moves.getLocation()) + " "+getNumRepresentation(moves.getDestination()) +" "+moveScores[idx]);
+            idx++;
+        }
 		Move suggestion = legalMoves.get(getIndexOfLargest(moveScores));
 		return suggestion;
 	}
@@ -61,6 +65,16 @@ public class BasicAI extends InferenceEngine{
 		
 		return getRow(moveLocation) == getRow(suggestedLoc) && getCol(moveLocation) == getCol(suggestedLoc);
 	}
+
+    public int getNumRepresentation(int bits) {//TODO erase
+        if (bits==0x80000000) {return 32;}
+        int counter=1;
+        while (bits>1) {
+            bits=bits >> 1;
+            counter++;
+        }
+        return counter;
+    }
 	
 	private int getCol(int location) {
 		switch(location) {
