@@ -185,6 +185,22 @@ public class Game {
         }
     }
 
+    private void analyzeGroup(int bitBoard, PieceType type) {
+        boolean cond=true;
+        int idx=1;
+        int temp;
+        while (cond) {
+            if (idx==lastIndex) {
+                cond=false;
+            }
+            temp=idx & bitBoard;
+            if (temp!=0) {
+                getValidMoves(new Piece(type, idx));
+            }
+            idx = idx << 1;
+        }
+    }
+
     private void getValidMoves(Piece piece) {
         pieceMoves.clear();
         if (piece.down) {
@@ -243,31 +259,15 @@ public class Game {
         }
     }
 
-    private void checkDoubleJumpDestination(Move move, int offset) {
-        int tempDestination=getOffset(move.getDestination(),offset);
-        checkDoubleJump(move,tempDestination);
-    }
-
-    private void analyzeGroup(int bitBoard, PieceType type) {
-        boolean cond=true;
-        int idx=1;
-        int temp;
-        while (cond) {
-            if (idx==lastIndex) {
-                cond=false;
-            }
-            temp=idx & bitBoard;
-            if (temp!=0) {
-                getValidMoves(new Piece(type, idx));
-            }
-            idx = idx << 1;
-        }
-    }
-
     private void checkDestination(Piece piece, int offset) {
         int tempDestination=getOffset(piece.location,offset);
         Move tempMove=new Move(piece.type, piece.location, tempDestination);
         checkMove(tempMove);
+    }
+
+    private void checkDoubleJumpDestination(Move move, int offset) {
+        int tempDestination=getOffset(move.getDestination(),offset);
+        checkDoubleJump(move,tempDestination);
     }
 
     private int getOffset(int loc, int offset) {
@@ -388,7 +388,7 @@ public class Game {
     }
 
     private int getJumpDestination(int loc, int dest) {
-        if (loc > dest) {
+        if (loc > dest || getNumRepresentation(loc)==32) {
             if (inOddRow(dest)) {
                 if ((loc >>> 5) == dest) {
                     return dest >>> 4;
