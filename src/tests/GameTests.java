@@ -180,8 +180,17 @@ public class GameTests {
     }
 
     @Test
-    public void testIllegalMove() {
-
+    public void testCornerJump() {
+        setBitBoard(0, PieceType.BLACK);
+        setBitBoard(bits(32), PieceType.BLACKKING);
+        setBitBoard(bits(27), PieceType.WHITE);
+        game.getMovesForPiece(new Piece(PieceType.BLACKKING, bits(32)));
+        Move tempMove=getMoveWithDest(game.currentMoves,23);
+        if (tempMove==null) {
+            fail();
+        }
+        game.commitMove(tempMove);
+        assertFalse(game.whiteOccupied(bits(27)));
     }
 
 
@@ -217,8 +226,8 @@ public class GameTests {
     }
 
 
-    private void setBitBoard(int bitBoard, PieceType type) {
-        game.setBitBoard(bitBoard, type);
+    private void setBitBoard(int bits, PieceType type) {
+        game.setBitBoard(bits, type);
     }
 
     private Move getRandomMove() {
