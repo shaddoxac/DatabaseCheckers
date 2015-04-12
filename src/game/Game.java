@@ -342,13 +342,13 @@ public class Game {
     }
 
     private void clearLesserJumps(int loc) {
-        for (int idx=0; idx>currentMoves.size(); idx++) {
+        for (int idx=0; idx < currentMoves.size(); idx++) {
             if (currentMoves.get(idx).getLocation() == loc) {
                 currentMoves.remove(idx);
                 idx--;
             }
         }
-        for (int idx=0; idx>pieceMoves.size(); idx++) {
+        for (int idx=0; idx < pieceMoves.size(); idx++) {
             if (pieceMoves.get(idx).getLocation() == loc) {
                 pieceMoves.remove(idx);
                 idx--;
