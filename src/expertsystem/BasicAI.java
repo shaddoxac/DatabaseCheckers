@@ -35,6 +35,9 @@ public class BasicAI extends InferenceEngine{
 			for(int i=0; i<legalMoves.size(); i++) {
 				if(translateDirection(legalMoves.get(i)).equals(move.substring(2, 5)) && isSimilarLocation(legalMoves.get(i), move)) {
 					moveScores[i] += score;
+					
+					if(isSameLocation(legalMoves.get(i), move))
+						moveScores[i]++;
 				}
 			}
 		}
@@ -50,6 +53,13 @@ public class BasicAI extends InferenceEngine{
 		int moveLocation = m.getLocation();
 		
 		return getRow(moveLocation) == getRow(suggestedLoc) || getCol(moveLocation) == getCol(suggestedLoc);
+	}
+	
+	private boolean isSameLocation(Move m, String suggestion) {
+		int suggestedLoc = Integer.parseInt(suggestion.substring(0, suggestion.length()-3));
+		int moveLocation = m.getLocation();
+		
+		return getRow(moveLocation) == getRow(suggestedLoc) && getCol(moveLocation) == getCol(suggestedLoc);
 	}
 	
 	private int getCol(int location) {
