@@ -25,11 +25,10 @@ public class BasicAI extends InferenceEngine{
 
 		int[] moveScores = new int[legalMoves.size()];
 		ResultSet results = super.getMoveSet(b);
-		System.out.println("results are empty? " + results.isAfterLast());
 		String move;
 		int score;
 
-		while(!results.isAfterLast()) {
+		while(results.isAfterLast()) {
 			move = results.getString("MoveDescription");
 			score = results.getInt("Score");
 			for(int i=0; i<legalMoves.size(); i++) {
@@ -40,6 +39,7 @@ public class BasicAI extends InferenceEngine{
 						moveScores[i]=moveScores[i]+1;
 				}
 			}
+			results.next();
 		}
 		
 		results.close();
