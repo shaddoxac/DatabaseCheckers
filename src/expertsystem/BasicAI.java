@@ -17,6 +17,7 @@ public class BasicAI extends InferenceEngine{
 		super(tableName);
 	}
 	
+	@Override
 	public Move getMove(Board b, ArrayList<Move> legalMoves) throws SQLException{
 		if(legalMoves.size() == 1) {
 			return legalMoves.get(0);
@@ -48,39 +49,91 @@ public class BasicAI extends InferenceEngine{
 		int suggestedLoc = Integer.parseInt(suggestion.substring(0, suggestion.length()-3));
 		int moveLocation = m.getLocation();
 		
-		return isSameCol(moveLocation, suggestedLoc) || isSameRow(moveLocation, suggestedLoc);
+		return getRow(moveLocation) == getRow(suggestedLoc) || getCol(moveLocation) == getCol(suggestedLoc);
 	}
 	
-	private boolean isSameCol(int locOne, int locTwo) {
-		if(locOne != Integer.MIN_VALUE && (locOne < locTwo))
-			return isSameCol(locTwo, locOne);
-		
-		if(locOne == Integer.MIN_VALUE && locOne == locTwo)
-			return true;
-		
-		while(locOne == Integer.MIN_VALUE || locOne > locTwo) {
-			locOne = locOne >>> 8;
+	private int getCol(int location) {
+		switch(location) {
+		case Integer.MIN_VALUE:
+		case Integer.MIN_VALUE >>> 8:
+		case Integer.MIN_VALUE >>> 16:
+		case Integer.MIN_VALUE >>> 24:
+			return 1;
+		case Integer.MIN_VALUE >>> 1:
+		case Integer.MIN_VALUE >>> 9:
+		case Integer.MIN_VALUE >>> 17:
+		case Integer.MIN_VALUE >>> 25:
+			return 3;
+		case Integer.MIN_VALUE >>> 2:
+		case Integer.MIN_VALUE >>> 10:
+		case Integer.MIN_VALUE >>> 18:
+		case Integer.MIN_VALUE >>> 26:
+			return 5;
+		case Integer.MIN_VALUE >>> 3:
+		case Integer.MIN_VALUE >>> 11:
+		case Integer.MIN_VALUE >>> 19:
+		case Integer.MIN_VALUE >>> 27:
+			return 7;
+		case Integer.MIN_VALUE >>> 4:
+		case Integer.MIN_VALUE >>> 12:
+		case Integer.MIN_VALUE >>> 20:
+		case Integer.MIN_VALUE >>> 28:
+			return 0;
+		case Integer.MIN_VALUE >>> 5:
+		case Integer.MIN_VALUE >>> 13:
+		case Integer.MIN_VALUE >>> 21:
+		case Integer.MIN_VALUE >>> 29:
+			return 2;
+		case Integer.MIN_VALUE >>> 6:
+		case Integer.MIN_VALUE >>> 14:
+		case Integer.MIN_VALUE >>> 22:
+		case Integer.MIN_VALUE >>> 30:
+			return 4;
+		default:
+			return 6;
 		}
-		
-		if(locOne == locTwo)
-			return true;
-		return false;
 	}
 	
-	private boolean isSameRow(int locOne, int locTwo) {
-		if(locOne != Integer.MIN_VALUE && (locOne < locTwo))
-			return isSameCol(locTwo, locOne);
-		
-		if(locOne == Integer.MIN_VALUE && locOne == locTwo)
-			return true;
-		
-		while(locOne == Integer.MIN_VALUE || locOne > locTwo) {
-			locOne = locOne >>> 1;
+	private int getRow(int location) {
+		switch(location) {
+		case Integer.MIN_VALUE:
+		case Integer.MIN_VALUE >>> 1:
+		case Integer.MIN_VALUE >>> 2:
+		case Integer.MIN_VALUE >>> 3:
+			return 0;
+		case Integer.MIN_VALUE >>> 4:
+		case Integer.MIN_VALUE >>> 5:
+		case Integer.MIN_VALUE >>> 6:
+		case Integer.MIN_VALUE >>> 7:
+			return 1;
+		case Integer.MIN_VALUE >>> 8:
+		case Integer.MIN_VALUE >>> 9:
+		case Integer.MIN_VALUE >>> 10:
+		case Integer.MIN_VALUE >>> 11:
+			return 2;
+		case Integer.MIN_VALUE >>> 12:
+		case Integer.MIN_VALUE >>> 13:
+		case Integer.MIN_VALUE >>> 14:
+		case Integer.MIN_VALUE >>> 15:
+			return 3;
+		case Integer.MIN_VALUE >>> 16:
+		case Integer.MIN_VALUE >>> 17:
+		case Integer.MIN_VALUE >>> 18:
+		case Integer.MIN_VALUE >>> 19:
+			return 4;
+		case Integer.MIN_VALUE >>> 20:
+		case Integer.MIN_VALUE >>> 21:
+		case Integer.MIN_VALUE >>> 22:
+		case Integer.MIN_VALUE >>> 23:
+			return 5;
+		case Integer.MIN_VALUE >>> 24:
+		case Integer.MIN_VALUE >>> 25:
+		case Integer.MIN_VALUE >>> 26:
+		case Integer.MIN_VALUE >>> 27:
+			return 6;
+		default:
+			return 7;
 		}
-		
-		if(locOne == locTwo)
-			return true;
-		return false;
 	}
 
 	private String translateDirection(Move m) {
