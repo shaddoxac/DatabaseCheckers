@@ -209,7 +209,6 @@ public class GameTests {
     private Move getMoveWithDest(ArrayList<Move> list, int dest) {
         for (int idx=0; idx<list.size(); idx++) {
             Move move=list.get(idx);
-            System.out.println(num(move.getDestination()));
             if (move.getDestination()==bits(dest)) {
                 return move;
             }
