@@ -1,14 +1,6 @@
 SELECT MoveDescription, Score FROM #tableName#
-WHERE '#whitePawns#' LIKE (
-		SELECT WhitePawns FROM #tableName#
-		WHERE '#blackPawns#' LIKE (
-				SELECT BlackPawns FROM #tableName#
-				WHERE '#whiteKings#' LIKE (
-						SELECT WhiteKings FROM #tableName#
-						WHERE '#blackKings#' LIKE (
-								SELECT BlackKings FROM #tableName#
-						)
-				)
-		)
-)
-ORDER BY score DESC;
+WHERE '#whitePawns#' LIKE WhitePawns
+	AND '#blackPawns#' LIKE BlackPawns
+	AND '#whiteKings#' LIKE WhiteKings
+	AND '#blackKings#' LIKE BlackKings
+ORDER BY Score DESC;

@@ -56,7 +56,7 @@ public abstract class InferenceEngine {
 					queryString += blackPawns;
 				else if(part.equals("whiteKings"))
 					queryString += whiteKings;
-				else if(part.equals("blackPawns"))
+				else if(part.equals("blackKings"))
 					queryString += blackKings;
 				else if(part.equals("whitePawnThreshold"))
 					queryString += WHT_PAWN_THRESHOLD;
@@ -75,6 +75,7 @@ public abstract class InferenceEngine {
 		}
 		
 		reader.close();
+		System.out.println(queryString);
 		return query.executeQuery(queryString);
 	}
 	

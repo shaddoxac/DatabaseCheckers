@@ -14,28 +14,15 @@ public class Board {
     }
 
     public String toWhiteString() {
-        return getStringOf(whitePos);
+        return Integer.toBinaryString(whitePos);
     }
     public String toWhiteKingString() {
-        return getStringOf(whiteKingPos);
+        return Integer.toBinaryString(whiteKingPos);
     }
     public String toBlackString() {
-        return getStringOf(blackPos);
+        return Integer.toBinaryString(blackPos);
     }
     public String toBlackKingString() {
-        return getStringOf(blackKingPos);
-    }
-
-    private String getStringOf(int num) {
-        StringBuilder sb=new StringBuilder();
-        int tempNum=num;
-        int value;
-        while (0 < tempNum) {
-            value=tempNum & 1;
-            sb.append(value);
-            tempNum=tempNum >>> 1;
-        }
-        sb.reverse();
-        return sb.toString();
+        return Integer.toBinaryString(blackKingPos);
     }
 }
