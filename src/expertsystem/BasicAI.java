@@ -28,18 +28,20 @@ public class BasicAI extends InferenceEngine{
 		String move;
 		int score;
 
-		while(results.isAfterLast()) {
+		while(results.next()) {
 			move = results.getString("MoveDescription");
 			score = results.getInt("Score");
+            System.out.println("\nmove = "+move);
 			for(int i=0; i<legalMoves.size(); i++) {
-				if(translateDirection(legalMoves.get(i)).equals(move.substring(2, 5)) && isSimilarLocation(legalMoves.get(i), move)) {
+                System.out.println("score ="+score);
+                System.out.println("translate: "+translateDirection(legalMoves.get(i)).equals(move.substring(move.length()-2, move.length())));
+                System.out.println("similar loc: "+isSimilarLocation(legalMoves.get(i), move));
+				if(translateDirection(legalMoves.get(i)).equals(move.substring(move.length()-2, move.length())) && isSimilarLocation(legalMoves.get(i), move)) {
 					moveScores[i] += score;
-					
 					if(isSameLocation(legalMoves.get(i), move))
 						moveScores[i]=moveScores[i]+1;
 				}
 			}
-			results.next();
 		}
 		
 		results.close();
@@ -55,6 +57,7 @@ public class BasicAI extends InferenceEngine{
 	
 	private boolean isSimilarLocation(Move m, String suggestion) {
 		int suggestedLoc = Integer.parseInt(suggestion.substring(0, suggestion.length()-3));
+        suggestedLoc = (int) Math.pow(2,suggestedLoc);
 		int moveLocation = m.getLocation();
 		
 		return getRow(moveLocation) == getRow(suggestedLoc) || getCol(moveLocation) == getCol(suggestedLoc);
@@ -175,18 +178,18 @@ public class BasicAI extends InferenceEngine{
 		
 		if(location == Integer.MIN_VALUE) {
 			if(destination == Math.pow(2, 27)) {
-				return ">SW";
+				return "SW";
 			} else {
-				return ">SE";
+				return "SE";
 			}
 		} else if((location > destination) && (destination == location/closeMod)) {
-			return ">SW";
+			return "SW";
 		} else if((location > destination) && (destination == location/farMod)) {
-			return ">SE";
+			return "SE";
 		} else if((location < destination) && (location == destination/closeMod)) {
-			return ">NE";
+			return "NE";
 		} else if((location < destination && location == destination/farMod)) {
-			return ">NW";
+			return "NW";
 		}
 		
 		return "err";
