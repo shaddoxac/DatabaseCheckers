@@ -5,6 +5,7 @@ public class Board {
     public int whitePos, blackPos, whiteKingPos, blackKingPos;
     private int whiteStartingPos=0xFFF00000;
     private int blackStartingPos=0x00000FFF;
+    private int numDigits=8;
 
     public Board() {
         whitePos =0xFFF00000;
@@ -13,16 +14,26 @@ public class Board {
         blackKingPos =0;
     }
 
-    public String toWhiteString() {
-        return Integer.toBinaryString(whitePos);
+    public String helper(int bitBoard) {
+        int num=Integer.MIN_VALUE;
+        int count = 0;
+        while ((num & bitBoard) != num) {
+            num = num >>> 1;
+            count++;
+        }
+        String zeroes="";
+        for (int idx=0; idx<count; idx++) {
+            zeroes += "0";
+        }
+        return zeroes+Integer.toBinaryString(bitBoard);
     }
-    public String toWhiteKingString() {
-        return Integer.toBinaryString(whiteKingPos);
-    }
+
+    public String toWhiteString() {return helper(whitePos);}
+    public String toWhiteKingString() {return helper(whiteKingPos);}
     public String toBlackString() {
-        return Integer.toBinaryString(blackPos);
+        return helper(blackPos);
     }
     public String toBlackKingString() {
-        return Integer.toBinaryString(blackKingPos);
+        return helper(blackKingPos);
     }
 }
