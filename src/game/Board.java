@@ -14,7 +14,7 @@ public class Board {
         blackKingPos =0;
     }
 
-    public String helper(int bitBoard) {
+    public String toBinaryString(int bitBoard) {
         int num=Integer.MIN_VALUE;
         int count = 0;
         while ((num & bitBoard) != num) {
@@ -28,12 +28,12 @@ public class Board {
         return zeroes+Integer.toBinaryString(bitBoard);
     }
 
-    public String toWhiteString() {return helper(whitePos);}
-    public String toWhiteKingString() {return helper(whiteKingPos);}
+    public String toWhiteString() {return toBinaryString(whitePos);}
+    public String toWhiteKingString() {return toBinaryString(whiteKingPos);}
     public String toBlackString() {
-        return helper(blackPos);
+        return toBinaryString(blackPos);
     }
     public String toBlackKingString() {
-        return helper(blackKingPos);
+        return toBinaryString(blackKingPos);
     }
 }

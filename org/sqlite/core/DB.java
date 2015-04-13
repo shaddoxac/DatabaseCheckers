@@ -26,8 +26,8 @@ import org.sqlite.SQLiteConnection;
 import org.sqlite.SQLiteErrorCode;
 
 /*
- * This class is the interface to SQLite. It provides some helper functions
- * used by other parts of the driver. The goal of the helper functions here
+ * This class is the interface to SQLite. It provides some toBinaryString functions
+ * used by other parts of the driver. The goal of the toBinaryString functions here
  * are not only to provide functionality, but to handle contractual
  * differences between the JDBC specification and the SQLite C API.
  *
