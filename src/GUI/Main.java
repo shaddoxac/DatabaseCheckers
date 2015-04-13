@@ -27,3 +27,4 @@ public class Main extends Application {
 		launch(args);
 	}
 }
+//when two double jumps same loc, erase, save numJumps, erase lower num
