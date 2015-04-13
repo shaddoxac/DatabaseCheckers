@@ -69,9 +69,6 @@ public class BasicAI extends InferenceEngine{
 		int suggestedLoc = Integer.parseInt(suggestion.substring(0, suggestion.length()-3));
         suggestedLoc = (int) Math.pow(2,suggestedLoc);
 		int moveLocation = m.getLocation();
-
-
-		
 		return getRow(moveLocation) == getRow(suggestedLoc) && getCol(moveLocation) == getCol(suggestedLoc);
 	}
 
