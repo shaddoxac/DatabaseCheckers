@@ -38,8 +38,10 @@ public class BasicAI extends InferenceEngine{
                 System.out.println("similar loc: "+isSimilarLocation(legalMoves.get(i), move));
 				if(translateDirection(legalMoves.get(i)).equals(move.substring(move.length()-2, move.length())) && isSimilarLocation(legalMoves.get(i), move)) {
 					moveScores[i] += score;
-					if(isSameLocation(legalMoves.get(i), move))
-						moveScores[i]=moveScores[i]+1;
+					if(isSameLocation(legalMoves.get(i), move)) {
+                        System.out.println("SameLocation is true");
+                        moveScores[i]++;
+                    }
 				}
 			}
 		}
@@ -48,7 +50,7 @@ public class BasicAI extends InferenceEngine{
 
         int idx=0;//TODO erase
         for (Move moves : legalMoves) {
-            System.out.println(getNumRepresentation(moves.getLocation()) + " "+getNumRepresentation(moves.getDestination()) +" "+moveScores[idx]);
+            System.out.println(getNumRepresentation(moves.getLocation())-1 + " "+(getNumRepresentation(moves.getDestination())-1)+" "+moveScores[idx]);
             idx++;
         }
 		Move suggestion = legalMoves.get(getIndexOfLargest(moveScores));
@@ -65,7 +67,10 @@ public class BasicAI extends InferenceEngine{
 	
 	private boolean isSameLocation(Move m, String suggestion) {
 		int suggestedLoc = Integer.parseInt(suggestion.substring(0, suggestion.length()-3));
+        suggestedLoc = (int) Math.pow(2,suggestedLoc);
 		int moveLocation = m.getLocation();
+
+
 		
 		return getRow(moveLocation) == getRow(suggestedLoc) && getCol(moveLocation) == getCol(suggestedLoc);
 	}
