@@ -151,7 +151,7 @@ public class Controller {
     }
 
     private void setUpBoxes() {
-        difficultyBox.getItems().addAll("Easy", "Medium", "Hard");
+        difficultyBox.getItems().addAll("Easy", "Medium");
         difficultyBox.setValue("Medium");
     }
     
