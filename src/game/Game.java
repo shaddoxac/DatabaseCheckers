@@ -328,7 +328,7 @@ public class Game {
     }
 
     private void isLegalDoubleJump(Move move, int newDest) {
-        clearLesserJumps(move.getLocation());
+        clearLesserJumps(move);
         addDoubleJump(move, newDest);
         move.setJump(true);
         currentMoves.add(move);
@@ -341,15 +341,22 @@ public class Game {
         getMultipleJumpMoves(multiJumpMove);
     }
 
-    private void clearLesserJumps(int loc) {
+    private int getNumJumps(Move move) {return move.getSequentialJumps().size();}
+
+    private void clearLesserJumps(Move move) {
+        int loc = move.getLocation();
+        int numJumps = getNumJumps(move);
+        Move tempMove;
         for (int idx=0; idx < currentMoves.size(); idx++) {
-            if (currentMoves.get(idx).getLocation() == loc) {
+            tempMove=currentMoves.get(idx);
+            if ((tempMove.getLocation() == loc) && (getNumJumps(tempMove) < numJumps)) {
                 currentMoves.remove(idx);
                 idx--;
             }
         }
         for (int idx=0; idx < pieceMoves.size(); idx++) {
-            if (pieceMoves.get(idx).getLocation() == loc) {
+            tempMove = pieceMoves.get(idx);
+            if ((tempMove.getLocation() == loc) && (getNumJumps(tempMove) < numJumps)) {
                 pieceMoves.remove(idx);
                 idx--;
             }
